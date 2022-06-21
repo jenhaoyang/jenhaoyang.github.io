@@ -25,4 +25,4 @@ git checkout v1.11.1
 ```bash
 build.bat --cudnn_home "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.4" --cuda_home "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.4" --use_tensorrt --tensorrt_home C:\TensorRT-8.2.3.0 --cuda_version 11.4 --msvc_toolset 14.11
 ```
-4. 如果編譯失敗請刪掉城市產生的onnxruntime\build資料夾後再重下指令
+4. 如果編譯失敗請刪掉程式產生的onnxruntime\build資料夾後再重下指令
