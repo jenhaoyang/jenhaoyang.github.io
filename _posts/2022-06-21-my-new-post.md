@@ -1,9 +1,9 @@
 ---
 layout: post
-title: My New Post
+title: 編譯onnxruntime Tensorrt ExecutionProvider
 date: 2022-06-21 17:28 +0800
 categories: [深度學習工具]
-tags: [Tensorrt]     # TAG names should always be lowercase
+tags: [tensorrt]     # TAG names should always be lowercase
 ---
 
 # 1. 安裝CUDA、cuDNN、Tensorrt
