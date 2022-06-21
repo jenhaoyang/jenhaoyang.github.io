@@ -23,7 +23,15 @@ git checkout v1.11.1
 1. 不一定要機器上要插著顯卡才能編譯，沒顯卡的機器也可以編譯
 2. 為了保險起見我是用系統管理員權限執行cmd，沒試過普通的cmd可不可以
 3. 基本上官方提供的build.bat 沒特別做什麼事，只是幫你呼叫build.py而已，所以所有參數都可以直接看build.py需要什麼，如果直接下官方文件的指令下會出錯。
+4. onnxrumtime 的github ci pipeline是恨好的參考，可以用來作為build.py指令參數的參考例如[windows onnxruntime tensorrt](https://github.com/microsoft/onnxruntime/blob/4e9e01cb3c008335a2471c27dbdf7dd5d12e4224/tools/ci_build/github/azure-pipelines/win-gpu-tensorrt-ci-pipeline.yml#L80)
+
+
+[CUDA architectures查詢](https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-feature-list)
+
 ```shell
-build.bat --cudnn_home "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.4" --cuda_home "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.4" --use_tensorrt --tensorrt_home C:\TensorRT-8.2.3.0 --cuda_version 11.4 --msvc_toolset 14.11
+build.bat --config RelWithDebInfo --build_shared_lib --build_wheel --enable_onnx_tests --cudnn_home "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.4" --cuda_home "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.4" --use_tensorrt --tensorrt_home C:\TensorRT-8.2.3.0 --cuda_version 11.4 --cmake_extra_defines CMAKE_CUDA_ARCHITECTURES=80
 ```
-4. 如果編譯失敗請刪掉程式產生的onnxruntime\build資料夾後再重下指令
+5. 如果編譯失敗請刪掉程式產生的onnxruntime\build資料夾後再重下指令
+
+6. 從docker file我們可以發現如何安裝編譯好的onnx tensorrt
+https://github.com/microsoft/onnxruntime/blob/859ef277a0d75e90bdfc0b3f35d4f9194791aabc/dockerfiles/Dockerfile.tensorrt#L29
