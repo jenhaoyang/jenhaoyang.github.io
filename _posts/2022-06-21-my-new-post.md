@@ -33,5 +33,4 @@ build.bat --config RelWithDebInfo --build_shared_lib --build_wheel --enable_onnx
 ```
 5. 如果編譯失敗請刪掉程式產生的onnxruntime\build資料夾後再重下指令
 
-6. 從docker file我們可以發現如何安裝編譯好的onnx tensorrt
-https://github.com/microsoft/onnxruntime/blob/859ef277a0d75e90bdfc0b3f35d4f9194791aabc/dockerfiles/Dockerfile.tensorrt#L29
+6. 從[docker file](https://github.com/microsoft/onnxruntime/blob/859ef277a0d75e90bdfc0b3f35d4f9194791aabc/dockerfiles/Dockerfile.tensorrt#L29)我們可以發現如何安裝編譯好的onnx tensorrt
