@@ -7,11 +7,11 @@ tags: [tensorrt]     # TAG names should always be lowercase
 ---
 
 # 1. 安裝CUDA、cuDNN、Tensorrt
-Visual Studio 2019(注意  先安裝visual studio 再安裝CUDA，因為CUDA包含給visual studio使用的原件)
-cmake: 3.24.0
-CUDA: 11.4
-cuDNN: 8.2
-Tensorrt:8.2.3.0
+* Visual Studio 2019(注意  先安裝visual studio 再安裝CUDA，因為CUDA包含給visual studio使用的原件)
+* cmake: 3.24.0
+* CUDA: 11.4
+* cuDNN: 8.2
+* Tensorrt:8.2.3.0
 
 # 2.下載onnxruntime github原始碼並且切換到想要的onnxruntime 版本
 ```shell
@@ -29,8 +29,12 @@ git checkout v1.11.1
 [CUDA architectures查詢](https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-feature-list)
 
 ```shell
-build.bat --config RelWithDebInfo --build_shared_lib --build_wheel --enable_onnx_tests --cudnn_home "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.4" --cuda_home "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.4" --use_tensorrt --tensorrt_home C:\TensorRT-8.2.3.0 --cuda_version 11.4 --cmake_extra_defines CMAKE_CUDA_ARCHITECTURES=80
+build.bat --parallel --config Release --build_shared_lib --build_wheel --skip_tests --cudnn_home "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.4" --cuda_home "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.4" --use_tensorrt --tensorrt_home C:\TensorRT-8.2.3.0 --cuda_version 11.4 --cmake_extra_defines "CMAKE_CUDA_ARCHITECTURES=80"
 ```
 5. 如果編譯失敗請刪掉程式產生的onnxruntime\build資料夾後再重下指令
 
 6. 從[docker file](https://github.com/microsoft/onnxruntime/blob/859ef277a0d75e90bdfc0b3f35d4f9194791aabc/dockerfiles/Dockerfile.tensorrt#L29)我們可以發現如何安裝編譯好的onnx tensorrt
+
+```
+pip install <onnxruntime 資料夾>/build/Windows/Release/Release/dist/onnxruntime_gpu-1.11.1-cp38-cp38-win_amd64.whl
+```
