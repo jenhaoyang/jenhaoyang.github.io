@@ -7,6 +7,8 @@ tags: [tensorrt]     # TAG names should always be lowercase
 ---
 
 # 1. 安裝CUDA、cuDNN、Tensorrt
+## 我的環境
+* Windows10
 * Visual Studio 2019(注意  先安裝visual studio 再安裝CUDA，因為CUDA包含給visual studio使用的原件)
 * cmake: 3.24.0
 * CUDA: 11.4

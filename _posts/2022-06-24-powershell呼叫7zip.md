@@ -19,8 +19,11 @@ Set-Alias 7zip $7zipPath
 $Source = "c:\BackupFrom\backMeUp.txt"
 $Target = "c:\BackupFolder\backup.zip"
 
-7zip a -mx=9 $Target $Source
+7zip a -v50m -mx=9 $Target $Source #-v50m 代表將檔案分割成每50MB一包
 ```
+
+[7-zip 指令參考](https://info.nrao.edu/computing/guide/file-access-and-archiving/7zip/7z-7za-command-line-guide)
+
 
 ---
 參考:
