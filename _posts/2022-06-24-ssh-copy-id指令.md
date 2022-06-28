@@ -1,6 +1,6 @@
 ---
 layout: post
-title: ssh常用指令
+title: ssh-copy-id指令
 date: 2022-06-24 23:12 +0800
 categories: [環境設定與部屬]
 tags: [ssh]
