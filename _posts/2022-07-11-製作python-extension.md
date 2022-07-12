@@ -11,11 +11,11 @@ CMake 3.24
 Python3.8.10
 
 ## 設定Opencv
-* (編譯OpenCV)[https://docs.opencv.org/4.6.0/d3/d52/tutorial_windows_install.html]  
-* 設定windows的環境變數 OpenCV_ROOT 到OpenCVConfig.cmake所在的資料夾(CMake 3.12之後的功能，(說明)[https://cmake.org/cmake/help/latest/envvar/PackageName_ROOT.html#packagename-root])
+* [編譯OpenCV](https://docs.opencv.org/4.6.0/d3/d52/tutorial_windows_install.html) 
+* 設定windows的環境變數 OpenCV_ROOT 到OpenCVConfig.cmake所在的資料夾(CMake 3.12之後的功能，[文件](https://cmake.org/cmake/help/latest/envvar/PackageName_ROOT.html#packagename-root)
 * 從編譯好的OpenCVConfig.cmake我們可以看OpenCV提供了那些CMake變數給我們使用，可以參考[這裡](https://github.com/opencv/opencv/blob/139c44377032f58849bbab2ae454fcf14e89d762/cmake/templates/OpenCVConfig.cmake.in#L6-L43)
 
-* (讓CMake複製dll)[https://gist.github.com/Rod-Persky/e6b93e9ee31f9516261b]
+* [讓CMake複製dll文件](https://gist.github.com/Rod-Persky/e6b93e9ee31f9516261b)
 
 * 設定CMake尋找Python.h
 
@@ -53,6 +53,6 @@ endif()
 
 
 參考:  
-Python.h位置:https://docs.microsoft.com/zh-tw/visualstudio/python/working-with-c-cpp-python-in-visual-studio?view=vs-2022  
+[Python.h位置](https://docs.microsoft.com/zh-tw/visualstudio/python/working-with-c-cpp-python-in-visual-studio?view=vs-2022)  
 
-CMake尋找Python: https://cmake.org/cmake/help/latest/module/FindPython.html
+[CMake尋找Python](https://cmake.org/cmake/help/latest/module/FindPython.html)
