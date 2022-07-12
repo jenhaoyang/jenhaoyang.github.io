@@ -18,7 +18,8 @@ Python3.8.10
 * (讓CMake複製dll)[https://gist.github.com/Rod-Persky/e6b93e9ee31f9516261b]
 
 * 設定CMake尋找Python.h
-```
+
+```cmake
 find_package(Python 3 REQUIRED 
 COMPONENTS Interpreter Development.Module NumPy) # New in cmake 3.19
 
