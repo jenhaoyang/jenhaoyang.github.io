@@ -32,7 +32,7 @@ cmake_policy(SET CMP0074 NEW)
 ```
 
 詳細寫法可以參考這個範例
-https://github.com/jenhaoyang/sort-python/blob/main/CMakeLists.txt
+https://gist.github.com/jenhaoyang/924698b31f7e3baede14286c67d6059a
 
 # Eigen3.4.0
 使用`find_package(Eigen3 REQUIRED)`後需要`get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)`
