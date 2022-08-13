@@ -21,3 +21,12 @@ categories: [TOP_CATEGORIE, SUB_CATEGORIE]
 tags: [TAG]     # TAG names should always be lowercase
 ---
 ```
+
+
+目前類別:
+環境設定與部屬
+IDE
+程式撰寫
+機器學習
+網路運作原理
+深度學習工具
