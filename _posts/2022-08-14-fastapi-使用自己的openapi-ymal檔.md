@@ -1,6 +1,6 @@
 ---
 layout: post
-title: fastapi 使用自己的openapi ymal檔
+title: fastapi使用自己的openapi檔
 date: 2022-08-14 17:46 +0800
 categories: [Web API開發]
 tags: [fastapi]
