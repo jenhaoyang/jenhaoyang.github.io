@@ -31,3 +31,4 @@ IDE
 網路運作原理
 深度學習工具
 Web API開發
+MLOps
