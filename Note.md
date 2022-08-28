@@ -8,6 +8,9 @@ bundle exec jekyll help 查看有那些文章類型可以建立
 建立新post
 bundle exec jekyll compose "文章名稱" --collection "posts"
 
+啟動本地端server預覽
+bundle exec jekyll s
+
 文章設定，layout已經預設為post，不需要再設定  
 為了讓文章時間準確，每篇文章最好也設定timezone
 例如+/-TTTT 改為  +0800
