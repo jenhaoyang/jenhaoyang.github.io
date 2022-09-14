@@ -6,11 +6,12 @@ categories: [模型部屬]
 tags: [pythoncpp]
 ---
 
-```
-我製作了一個SORT: Simple online and realtime tracking的C++的Python binding  
-，歡迎參考看看  
-https://github.com/jenhaoyang/sort-cpp-pybind11
-```
+> 我製作了一個SORT: Simple online and realtime tracking的C++的Python binding  
+> 歡迎參考看看  
+> [sort-cpp-pybind11](https://github.com/jenhaoyang/sort-cpp-pybind11)
+{: .prompt-tip }
+
+
 
 * 作業系統: Ubuntu 20.04
 * IDE: VSCode
