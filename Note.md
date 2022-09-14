@@ -35,3 +35,4 @@ IDE
 深度學習工具
 Web API開發
 MLOps
+模型部屬
