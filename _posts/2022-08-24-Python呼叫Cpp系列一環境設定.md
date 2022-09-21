@@ -81,14 +81,14 @@ Implement)都放在原碼檔。就像上圖的Num.h那樣。
 # 站在CMake之上來管理Python C++混和呼叫的專案上:scikit-build
 Python C++混和的專案面臨到更多複雜的設定，單純使用CMake並不好寫，而scikit-build幫我們處理好Python C++混和型的專案常用的工具或是編譯流程，省去我們重新造輪子的工。
 
-# 從單純CMake、C++到Python呼叫C++的混合專案
+<!-- # 從單純CMake、C++到Python呼叫C++的混合專案
 
 * 建立一個簡單的C++程式
 利用上面C++的程式碼，在一個資料夾中把檔案都建立好，並且多一個CMakeLists.txt
 
 * 建立一個動態函式庫
 
-* 調整header file和source file位置
+* 調整header file和source file位置 -->
 
 
 # 參考:  
