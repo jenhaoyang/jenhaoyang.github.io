@@ -107,11 +107,11 @@ python3 -m venv venv
 . venv/bin/activate
 pip install pybind11
 ```
-## 測試安裝
-* 首先建立一個簡單的python c++ extension  
+## 測試安裝  
+* 首先建立一個簡單的python c++ extension程式  
 
-```cpp
-#include <pybind11/pybind11.h>
+```c++
+include <pybind11/pybind11.h>
 
 int add(int i, int j) {
     return i + j;
@@ -123,7 +123,6 @@ PYBIND11_MODULE(example, m) {
     m.def("add", &add, "A function that adds two numbers");
 }
 ```
-
 * 編譯extension，注意venv必須已經啟動並且已經安裝pybind11，接著輸入以下指令，你會發現資料夾多了一個example.cpython-310-x86_64-linux-gnu.so檔案，代表動態函式庫已經編譯完成，你已經成功製作了一個python C++ extension  
 ```bash
 c++ -O3 -Wall -shared -std=c++11 -fPIC $(python3 -m pybind11 --includes) example.cpp -o example$(python3-config --extension-suffix)
