@@ -4,6 +4,7 @@ title: Python呼叫C++系列(一)環境設定
 date: 2022-08-24 12:30 +0800
 categories: [模型部屬]
 tags: [pythoncpp]
+pin: true
 ---
 
 > 我製作了一個SORT: Simple online and realtime tracking的C++的Python binding  
@@ -11,7 +12,7 @@ tags: [pythoncpp]
 > [sort-cpp-pybind11](https://github.com/jenhaoyang/sort-cpp-pybind11)
 {: .prompt-tip }
 
-
+[第二篇連結](../python呼叫c-系列-二-scikit-build//)
 
 * 作業系統: Ubuntu 22.04
 * IDE: VSCode
