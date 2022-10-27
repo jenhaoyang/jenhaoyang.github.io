@@ -7,6 +7,11 @@ tags: [Linux]
 ---
 
 
+
+# Docker container 透過ssh x11 forwarding傳送影像到遠端電腦
+以DeepStream container 為例  
+docker run --gpus all -it --rm --net=host --privileged -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY --volume="$HOME/.Xauthority:/root/.Xauthority:rw" -w /opt/nvidia/deepstream/deepstream-6.1 nvcr.io/nvidia/deepstream:6.1.1-devel 
+
 參考:  
 https://dreamanddead.github.io/post/ssh-x11-forward/  
 
