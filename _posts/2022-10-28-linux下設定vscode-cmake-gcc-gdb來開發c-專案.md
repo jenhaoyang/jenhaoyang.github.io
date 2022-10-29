@@ -17,6 +17,13 @@ sudo apt-get update
 sudo apt-get install build-essential gdb
 gcc -v #確認GCC安裝成功
 ```
+
+> 注意:
+> GDB 12.09 版本在VSCode除錯的時候會有錯誤，可以參考下面方式將GDB升級到12.10以上版本  
+> [升級GDB](https://stackoverflow.com/a/54239291)  
+> [GDB issue](https://github.com/microsoft/vscode-cpptools/issues/9135)  
+{: .prompt-warning  }
+
 * 安裝CMake
 直接用`sudo apt install cmake`，安裝的版本會比較舊，因此如果想用CMake最新的功能可以按照[官方網站的安裝方式](https://apt.kitware.com/)
 
@@ -78,4 +85,24 @@ int main()
 * 在程式碼下一個中斷點，並且點及旁邊的執行按鈕並且選擇Debug就可以開始除錯了
 ![c++ breakpoint](/assets/img/2022-10-28-18-10/breakpoint.png){: w="700" h="400" }
 ![c++ run debug](/assets/img/2022-10-28-18-10/run-debug.png){: w="700" h="400" }
-![c++ selece run debug](/assets/img/2022-10-28-18-10/selece-run-debug.png){: w="700" h="400" }
+![c++ selece run debug](/assets/img/2022-10-28-18-10/select-run-debug.png){: w="350" h="200" }
+
+# 設定在啟動程式時傳入參數給程式
+如果像在啟動程式時傳入一些參數，可以利用`launch.json`，要建立`launch.json`只需要案價旁邊的齒輪並選擇G++，VSCode就會自動幫你建立一份
+![c++ add launch](/assets/img/2022-10-28-18-10/add-launch.png){: w="350" h="200" }
+![c++ add launch](/assets/img/2022-10-28-18-10/add-launch-config.png){: w="700" h="400" }  
+
+在`launch.json`裡面有幾個的比較重要的點
+  * `program`是要執行的執行檔名稱，也就是我們編譯後產生的`helloworld`檔
+  * `args`是執行時要傳給***執行檔***的參數 
+
+# C/C++的其他設定
+通常編寫C/C++的時候也會用到很多函式庫，我們可以指定這些函式庫的路徑讓VSCode的Intelligence Scope懂這些函式庫。  
+首先按下`Ctrl+Shift+P`並且輸入C/C++，按下`C/C++: Edit Configurations (UI)`，後VSCode會幫我們產生一個`c_cpp_properties.json`。
+在`Include path`的地方加入我們要包含的路徑。或者我們也可以在`c_cpp_properties.json`configurations下的includePath直接做修改
+
+![c++ config](/assets/img/2022-10-28-18-10/cpp-config.png){: w="700" h="400" }  
+
+
+參考:  
+https://code.visualstudio.com/docs/cpp/config-linux  
