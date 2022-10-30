@@ -4,7 +4,6 @@ title: Python呼叫C++系列(一)環境設定
 date: 2022-08-24 12:30 +0800
 categories: [模型部屬]
 tags: [pythoncpp]
-pin: true
 ---
 
 > 我製作了一個SORT: Simple online and realtime tracking的C++的Python binding  
