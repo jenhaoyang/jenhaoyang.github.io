@@ -11,7 +11,7 @@ tags: [pythoncpp]
 > [sort-cpp-pybind11](https://github.com/jenhaoyang/sort-cpp-pybind11)
 {: .prompt-tip }
 
-[第二篇連結](../python呼叫c-系列-二-scikit-build//)
+[第二篇連結](/posts/python呼叫c-系列-二-scikit-build//)
 
 * 作業系統: Ubuntu 22.04
 * IDE: VSCode

@@ -162,4 +162,7 @@ g++ -Wall main.cpp -lpal
 
 參考:  
 https://www.fayewilliams.com/2015/07/07/creating-a-shared-library/  
-https://www.fayewilliams.com/2015/07/14/installing-and-accessing-shared-libraries/ 
+https://www.fayewilliams.com/2015/07/14/installing-and-accessing-shared-libraries/  
+
+相關文章:  
+[Linux安裝prebuild函式庫以OpenCV為例](/posts/Linux安裝prebuild函式庫以OpenCV為例/)

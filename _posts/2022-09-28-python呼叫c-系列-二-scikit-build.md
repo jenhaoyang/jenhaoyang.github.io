@@ -5,7 +5,7 @@ date: 2022-09-28 17:08 +0800
 categories: [模型部屬]
 tags: [pythoncpp]
 ---
-[第一篇連結](../Python呼叫Cpp系列一環境設定/)
+[第一篇連結](/posts/Python呼叫Cpp系列一環境設定/)
 # 本篇重點
 我們將建立一個可安裝的c++ extension套件，可以用pip install 安裝
 
