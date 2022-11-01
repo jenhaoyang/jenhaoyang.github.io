@@ -230,16 +230,17 @@ code .
 * 用CMake extension建立CMakeLists.txt
 按下`Ctrl+Shift+P`，輸入`CMake: Quick Start`並且選擇`CMake: Quick Start`，輸入你的專案名稱，選擇Executable，如果被問要什麼kit就選擇GCC，就會產生一個`CMakeLists.txt`檔和一個build資料夾。CMake最重要而且也是唯一需要的東西就是`CMakeLists.txt`檔而已，build資料夾裡面的東西都是CMake自動產生的，隨時需要刪掉都可以。
 
-![cmake select kit](/assets/img/2022-10-28-18-10/cmake-select-kit.png){: w="300" h="200" } 
-
 ![cmake command palette](/assets/img/2022-10-28-18-10/cmake-quickstart-command-palette.png){: w="300" h="200" } 
 
+![cmake select kit](/assets/img/2022-10-28-18-10/cmake-select-kit.png){: w="700" h="200" } 
 
 ![cmake choose type](/assets/img/2022-10-28-18-10/cmake-choose-type.png){: w="700" h="200" } 
 
 
 
 參考:  
+
+
 https://code.visualstudio.com/docs/cpp/config-linux  
 
 Display an image in an OpenCV window  
