@@ -28,7 +28,10 @@ gcc -v #確認GCC安裝成功
 {: .prompt-warning  }
 
 * 安裝CMake
-直接用`sudo apt install cmake`，安裝的版本會比較舊，因此如果想用CMake最新的功能可以按照[官方網站的安裝方式](https://apt.kitware.com/)
+直接用`sudo apt install cmake`，安裝的版本會比較舊，因此如果想用CMake最新的功能可以按照[官方網站的安裝方式](https://apt.kitware.com/)，安裝後我們可以測試一下CMake安裝成功，在這裡我們CMake的版本至少要大於3.15
+```
+cmake --version
+```
 
 # 編譯C++檔
 用以下指令建立一個專案資料夾，最後一行`code .`會直接打開一個新的VScode並且以這個資料夾作為工作目錄
@@ -215,9 +218,24 @@ $ pkg-config --libs --cflags opencv4
 接下來VSCode就可以順利編譯程式並產生執行檔了。
 
 # 用CMake管理跨Windows和Linux的C++專案
-如果開發團隊中有人用Windows OS開發，有人用Linux OS開發，而Windows的人只熟悉Visual Studio。這時候要一起合作完成專案在編譯的時候就會遇到困難。CMake跨平台的專案產生器就是專門解決這個問題。只要寫好一次CMake檔，他就可以在Windows幫你產生Visual Studio專案檔.sln，或是在Linux產生Makefile。
+如果開發團隊中有人用Windows OS開發，有人用Linux OS開發，而Windows的人只熟悉Visual Studio。這時候要一起合作完成專案在編譯的時候就會遇到困難。CMake跨平台的專案產生器就是專門解決這個問題。只要寫好一次CMake檔，他就可以在Windows幫你產生Visual Studio專案檔.sln，或是在Linux產生Makefile。  
+
+* 建立一個CMake專案資料夾
+用以下指令建立一個資料夾
+```bash
+mkdir cmakeQuickStart
+cd cmakeQuickStart
+code .
+```
+* 用CMake extension建立CMakeLists.txt
+按下`Ctrl+Shift+P`，輸入`CMake: Quick Start`並且選擇`CMake: Quick Start`，輸入你的專案名稱，選擇Executable，如果被問要什麼kit就選擇GCC，就會產生一個`CMakeLists.txt`檔和一個build資料夾。CMake最重要而且也是唯一需要的東西就是`CMakeLists.txt`檔而已，build資料夾裡面的東西都是CMake自動產生的，隨時需要刪掉都可以。
+
+![cmake select kit](/assets/img/2022-10-28-18-10/cmake-select-kit.png){: w="300" h="200" } 
+
+![cmake command palette](/assets/img/2022-10-28-18-10/cmake-quickstart-command-palette.png){: w="300" h="200" } 
 
 
+![cmake choose type](/assets/img/2022-10-28-18-10/cmake-choose-type.png){: w="700" h="200" } 
 
 
 
@@ -229,6 +247,12 @@ https://docs.opencv.org/4.x/db/deb/tutorial_display_image.html
 
 pkg-config尋找opencv函式庫
 https://answers.opencv.org/question/227890/using-l-in-g-command-line/
+
+Get started with CMake Tools on Linux
+https://code.visualstudio.com/docs/cpp/cmake-linux
+
+CMake Tools for Visual Studio Code documentation
+https://github.com/microsoft/vscode-cmake-tools/blob/main/docs/README.md
 
 Guide: "A modern, open source C++ dev environment with Visual Studio Code, vcpkg, and CMake"  
 https://www.reddit.com/r/cpp/comments/j1dh9w/guide_a_modern_open_source_c_dev_environment_with/
