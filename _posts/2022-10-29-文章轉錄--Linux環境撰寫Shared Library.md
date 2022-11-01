@@ -2,7 +2,7 @@
 layout: post
 title: 文章轉錄--Linux環境撰寫Shared Library
 date: 2022-10-29 20:43 +0800
-categories: [模型部屬]
+categories: [環境設定與部屬]
 tags: [cpp]
 pin: true
 ---

@@ -2,6 +2,8 @@
 layout: post
 title: Linux安裝prebuild函式庫以OpenCV為例
 date: 2022-10-30 22:02 +0800
+categories: [環境設定與部屬]
+tags: [cpp]
 ---
 > 我的部落格[文章轉錄--Linux環境撰寫Shared Library](/posts/文章轉錄-Linux環境撰寫Shared-Library)有詳細介紹如何製作和安裝Shared Library，如果想要了解更多Shared Library安裝和製作方式可以參考這篇。
 {: .prompt-tip }
