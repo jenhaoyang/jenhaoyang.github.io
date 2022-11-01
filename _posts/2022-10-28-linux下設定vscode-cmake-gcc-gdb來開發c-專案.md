@@ -212,6 +212,15 @@ $ pkg-config --libs --cflags opencv4
 ```
 {: file='tasks.json'}
 
+接下來VSCode就可以順利編譯程式並產生執行檔了。
+
+# 用CMake管理跨Windows和Linux的C++專案
+如果開發團隊中有人用Windows OS開發，有人用Linux OS開發，而Windows的人只熟悉Visual Studio。這時候要一起合作完成專案在編譯的時候就會遇到困難。CMake跨平台的專案產生器就是專門解決這個問題。只要寫好一次CMake檔，他就可以在Windows幫你產生Visual Studio專案檔.sln，或是在Linux產生Makefile。
+
+
+
+
+
 參考:  
 https://code.visualstudio.com/docs/cpp/config-linux  
 
@@ -220,3 +229,6 @@ https://docs.opencv.org/4.x/db/deb/tutorial_display_image.html
 
 pkg-config尋找opencv函式庫
 https://answers.opencv.org/question/227890/using-l-in-g-command-line/
+
+Guide: "A modern, open source C++ dev environment with Visual Studio Code, vcpkg, and CMake"  
+https://www.reddit.com/r/cpp/comments/j1dh9w/guide_a_modern_open_source_c_dev_environment_with/
