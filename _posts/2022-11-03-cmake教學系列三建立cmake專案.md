@@ -4,6 +4,7 @@ title: CMake教學系列三建立CMake專案
 date: 2022-11-03 16:50 +0800
 categories: [環境設定與部屬]
 tags: [cmake]
+pin: true
 ---
 # 下載範例
 下面指令將會下載本文所需的範例
