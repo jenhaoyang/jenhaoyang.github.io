@@ -109,7 +109,7 @@ find_package(MyPackage 1.2)
 ```
 這個命令會首先尋找[CMAKE_MODULE_PATH](https://cmake.org/cmake/help/latest/variable/CMAKE_MODULE_PATH.html)這份路徑清單，在這些路徑底下尋找`FindMyPackage.cmake`這個檔案，注意他是直接把`find_package`第一個參數`MyPackage`產生出`FindMyPackage.cmake`這個搜尋目標，所以如果我們寫成`find_package(OpenCV 3)`，那搜尋目標就是`FindOpenCV.cmake`。  
 如果找不到`FindMyPackage.cmake`他就會接著尋找`MyPackageConfig.cmake`，如果`MyPackage_DIR`存在的話也會搜尋這個路徑。
-在CMake3.12+之後，如果你的套件不是安裝在系統預設路徑，你可以設定環境變數[<PackageName>_ROOT](https://cmake.org/cmake/help/latest/envvar/PackageName_ROOT.html)讓CMake搜尋。以下以Bash命令設定環境變數為例
+在CMake3.12+之後，如果你的套件不是安裝在系統預設路徑，你可以設定環境變數[`<PackageName>_ROOT`](https://cmake.org/cmake/help/latest/envvar/PackageName_ROOT.html)讓CMake搜尋。以下以Bash命令設定環境變數為例
 ```
 export HDF5_ROOT=$HOME/software/hdf5-1.12.0
 ```
@@ -122,11 +122,18 @@ export CMAKE_PREFIX_PATH=$HOME/software/hdf5-1.12.0:$HOME/software/boost-1.74.0:
 這是舊方法(`MODULE`方法)，這裡有CMake提供的[FindPackage清單](https://cmake.org/cmake/help/latest/manual/cmake-modules.7.html#find-modules)
 
 ## PackageConfig
-這是由package開發者所提供，簡而言之如果你是package開發者，你應該提供<package>Config.cmake並且自行維護。
+這是由package開發者所提供，簡而言之如果你是package開發者，你應該提供`<package>Config.cmake`並且自行維護。
 
+# CMake結合PkgConfig
 
 
 參考:  
 https://hsf-training.github.io/hsf-training-cmake-webpage/08-debugging/index.html  
 
-https://hsf-training.github.io/hsf-training-cmake-webpage/09-findingpackages/index.html
+https://hsf-training.github.io/hsf-training-cmake-webpage/09-findingpackages/index.html  
+
+現代CMake觀念
+https://pabloariasal.github.io/2018/02/19/its-time-to-do-cmake-right/  
+
+CMake結合PkgConfig
+https://stackoverflow.com/a/74038236
