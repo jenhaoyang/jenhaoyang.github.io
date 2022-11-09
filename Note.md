@@ -16,6 +16,10 @@ bundle exec jekyll s
 例如+/-TTTT 改為  +0800
 tag永遠都要用小寫
 
+開啟Latex
+https://github.com/cotes2020/jekyll-theme-chirpy/issues/55
+
+
 ```
 ---
 title: TITLE
@@ -36,3 +40,4 @@ IDE
 Web API開發
 MLOps
 模型部屬
+深度學習
