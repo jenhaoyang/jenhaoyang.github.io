@@ -341,10 +341,13 @@ cd darknet
 {= file:'launch.json'}
 
 ## 設定啟動時參數
+首先要先下載`yolov1.cfg`和`yolov1.weights`並且放到`cfg`資料夾
 Darknet執行檔啟動時需要參數，我們可以在`launch.json`的`args`設定。
 ```json
 "args": ["detect", "cfg/yolov1.cfg", "cfg/yolov1.weights", "data/dog.jpg"],
 ```
+
+## 執行
 
 
 參考:  
