@@ -134,7 +134,7 @@ Make breakpoint pending on future shared library load? (y or [n])
 (gdb) run myscript.py
 ```
 
-# debug Python好用的指令
+# debug Python 好用的指令
 
 
 
