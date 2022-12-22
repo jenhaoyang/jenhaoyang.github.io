@@ -35,3 +35,6 @@ sudo apt install cmake
 
 * 測試安裝套件
 pip install -v 
+
+
+# Debug
