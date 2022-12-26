@@ -7,7 +7,7 @@ tags: [pythoncpp]
 ---
 [第一篇連結](/posts/Python呼叫Cpp系列一環境設定/)
 # 本篇重點
-我們將建立一個可安裝的c++ extension套件，可以用pip install 安裝
+我們將建立一個可安裝的c++ extension套件，可以用pip install 安裝，本篇教學將延續第一篇的範例`example.cpp`
 
 # 準備環境
 * 安裝所需套件和scikit-build
