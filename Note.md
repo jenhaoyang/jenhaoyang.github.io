@@ -1,5 +1,10 @@
+# 安裝jekyll
+https://jekyllrb.com/docs/installation/ubuntu/
 
-run server
+# 安裝套件
+bundle
+
+# run server
 bundle exec jekyll s
 
 建立新文章(已設定為使用jekyll-compose)
