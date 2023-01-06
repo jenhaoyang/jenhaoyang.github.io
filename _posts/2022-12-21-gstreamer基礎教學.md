@@ -9,7 +9,7 @@ GStreamer建立在GObject和GLib之上，熟悉GObject和GLib對於學習GStream
 
 # 簡單範例
 ## 範例
-下面程式碼是一個最基礎的GStreamer範例
+下面程式碼是一個最基礎的GStreamer範例`basic-tutorial-1.c`
 ```c
 #include <gst/gst.h>
 
@@ -71,4 +71,16 @@ main (int argc, char *argv[])
 在Linux下可以用以下指令編譯。
 ```
 gcc basic-tutorial-1.c -o basic-tutorial-1 `pkg-config --cflags --libs gstreamer-1.0`
+```
+
+## 解說
+首先所有的Gstreamer都必須呼叫`gst_init()`，他有三個功能
+* 初始化GStreamer
+* 確認plug-ins都可以使用
+* 執行命令列的[參數選項](https://gstreamer.freedesktop.org/documentation/gstreamer/gst.html#gst_init)，可以直接將main函式的`argc`和`argv`直接傳入`gst_init()`
+```
+  /* Initialize GStreamer */
+  gst_init (&argc, &argv);
+
+  /* Build the pipeline */
 ```
