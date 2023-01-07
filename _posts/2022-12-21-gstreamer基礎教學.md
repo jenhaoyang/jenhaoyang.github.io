@@ -373,7 +373,7 @@ GStreamer bus是用來將元素所產生的GstMessage按順序傳送給應用程
 
 ## 範例
 下面範例`basic-tutorial-3.c`將示範動態pipeline
-```
+```c
 #include <gst/gst.h>
 
 /* Structure to contain all our information, so we can pass it to callbacks */
@@ -527,3 +527,137 @@ exit:
 }
 ```
 {:file='basic-tutorial-3.c'}
+
+## 解說
+首先我們先將資料組成一個struct以便後面使用
+```
+/* Structure to contain all our information, so we can pass it to callbacks */
+typedef struct _CustomData {
+  GstElement *pipeline;
+  GstElement *source;
+  GstElement *convert;
+  GstElement *resample;
+  GstElement *sink;
+} CustomData;
+```
+接下來這行是`forward reference`晚一點會實做這個函式。
+```
+/* Handler for the pad-added signal */
+static void pad_added_handler (GstElement *src, GstPad *pad, CustomData *data);
+```
+接下來建立element，在這裡`uridecodebin`會自動初始化需要的element(sources, demuxers and decoders)以便將URI轉換成影音串流。跟`playbin`比起來他只完成了一半，因為它包含了`demuxers`，所以只有到執行階段的時候`source pad`才會被初始化。
+
+`audioconvert`用來轉換audio的格式。`audioresample`用來調整audio的sample rate。
+
+`autoaudiosink`和`autovideosink`類似，他將會把聲音串流輸出到音效卡
+```
+/* Create the elements */
+data.source = gst_element_factory_make ("uridecodebin", "source");
+data.convert = gst_element_factory_make ("audioconvert", "convert");
+data.resample = gst_element_factory_make ("audioresample", "resample");
+data.sink = gst_element_factory_make ("autoaudiosink", "sink");
+```
+
+## 串接element
+接下來我們將converter, resample and sink這些element連接起來。注意這時候還不可以連接source，因為這時候souce還沒有source pad。  
+```c
+if (!gst_element_link_many (data.convert, data.resample, data.sink, NULL)) {
+  g_printerr ("Elements could not be linked.\n");
+  gst_object_unref (data.pipeline);
+  return -1;
+}
+```
+然後設定source要讀取的URI
+```
+/* Set the URI to play */
+g_object_set (data.source, "uri", "https://www.freedesktop.org/software/gstreamer-sdk/data/media/sintel_trailer-480p.webm", NULL);
+```
+
+## Signals
+`GSignals`是GStreamer的一個重點，他讓我們可以在我們感興趣的事情發生的時候通知我們。GStreamer用名稱來區分signal，而每一個`GObject`也都有自己的signal。
+``
+在這個範例我們將會關心source(也就是uridecodebin element)發出來的`pad-added`這個訊號。我們必須用`g_signal_connect()`來連接訊號並且給他callback function(pad_added_handler)和我們的data pointer，讓callback functiony在號發生的時候執行。
+
+GStreamer不會對data pointer做任何事情，他只是單純的把data pointer傳進我們的callback function，以便我們可以傳送參數給callback function。  
+```c
+/* Connect to the pad-added signal */
+g_signal_connect (data.source, "pad-added", G_CALLBACK (pad_added_handler), &data);
+```
+
+在這個範例我們傳入字定義的data struct `CustomData`。
+
+## 我們的callback function
+當source element有足夠的資訊可以產生source pad的時候，就會觸發"pad-added"訊號，而這時候我們的callback就會被呼叫。
+```c
+static void pad_added_handler (GstElement *src, GstPad *new_pad, CustomData *data)
+```
+在我們的callback中，第一個參數是觸發訊號的`GstElement`，也就是`uridecodebin`。  
+
+第二個參數是source剛剛產生的pad，也就是我們想要連接的pad。  
+
+第三個參數是一個pointer，我們將用他來傳入我麼的參數給callback。
+
+在callback裡面，我們將CustomData裡的converter element，利用`gst_element_get_static_pad ()`將他的sink pad取出來。他也就是要跟source新產生的pad對接的pad。
+```
+GstPad *sink_pad = gst_element_get_static_pad (data->convert, "sink");
+```
+在上一個範例我們讓GStreamer自己決定要連接的pad，在這裡我們將手動連接pad。首先加入下面這段程式碼以免pad重複被連接
+```c
+/* If our converter is already linked, we have nothing to do here */
+if (gst_pad_is_linked (sink_pad)) {
+  g_print ("We are already linked. Ignoring.\n");
+  goto exit;
+}
+```
+接下來我們檢查新產生的pad他產生的資料是什麼，因為我們只需要連接audio而忽略video。而且我們不能把video的pad和audio的pad對接。
+
+`gst_pad_get_current_caps()`可以查到pad會輸出什麼資料，pad的"能力"(capabilities)被紀錄在`GstCaps`裡面。而pad所有可用的能力可以用`gst_pad_query_caps()`查詢
+
+GstCaps 裡面可能包含許多的GstStructure，每一個都代表不同的"能力"。
+
+由於目前我們知道新產生的pad只會有一個capabilities，所以我們直接用`gst_caps_get_structure()`取得他的第一個GstStructure。
+
+最後再利用`gst_structure_get_name()`來取得這個GstStructure的名稱，這裡將會有關於pad傳出來的資料格式。
+
+假如我們拿到的pad輸出的資料格式不是`audio/x-raw`，那就不是我們要的pad。如果是的話我們就連接他。
+
+用`gst_element_link()`可以直接連接兩個pad，參數的順序是source在來sink，而且這兩個pad所在的element必須要在同一個bin裡面才可以連接。如此一來我們就完成了。
+```c
+/* Attempt the link */
+ret = gst_pad_link (new_pad, sink_pad);
+if (GST_PAD_LINK_FAILED (ret)) {
+  g_print ("Type is '%s' but link failed.\n", new_pad_type);
+} else {
+  g_print ("Link succeeded (type '%s').\n", new_pad_type);
+}
+```
+
+## GStreamer States
+GStreamer共有四種狀態
+* NULL: 無狀態或初始狀態
+* READY: element已經準備好進入PAUSED狀態
+* PAUSED: element已經暫停，並且準備好處理資料。sink element這時候只接受一個buffer，之後就阻塞
+* PLAYING: element正在撥放，clock正在運作，資料正在傳輸。
+
+注意，你只能從移動到鄰近的狀態。也就是不可以直接從NUL跳到PLAYING。當你設定pipeline 為PLAYING的時候，GSstreamer自動幫你處理這些事情。
+
+下面這段程式監聽message bus，每當狀態有改變的時候就印出來讓你知道。每一個element都會丟出目前狀態的訊息，所以我們過濾出pipeline的狀態訊息。
+
+```
+case GST_MESSAGE_STATE_CHANGED:
+  /* We are only interested in state-changed messages from the pipeline */
+  if (GST_MESSAGE_SRC (msg) == GST_OBJECT (data.pipeline)) {
+    GstState old_state, new_state, pending_state;
+    gst_message_parse_state_changed (msg, &old_state, &new_state, &pending_state);
+    g_print ("Pipeline state changed from %s to %s:\n",
+        gst_element_state_get_name (old_state), gst_element_state_get_name (new_state));
+  }
+  break;
+```
+
+# 時間管理
+在這節將會學習到GStreamer時間相關的功能包含
+* 向pipeline詢問資訊例如目前串流的位置和長度。
+* 尋找(跳躍)到串流上不同的位置(時間)
+
+## 
