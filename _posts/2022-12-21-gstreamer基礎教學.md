@@ -1822,3 +1822,170 @@ gstreamer可以將你的pipeline輸出成.dot檔可以用例如GraphViz來開啟
 gst-launch-1.0可以用用GST_DEBUG_DUMP_DOT_DIR來設定儲存圖片的資料夾並開啟這項功能。每當pipeline的狀態改變的時候都會畫一張圖，如此一來就可以看到pipeline的變化
 
 # Streaming
+這裡將介紹streaming要注意的點
+* 開啟buffering
+* 斷線重連
+通常網路串流會因為網路連線的關係造成串流封包沒有準時到達而造成跨面卡住。而這個問題的解法就是使用`buffer`。`buffer`讓一些影音chunks儲存在queue裡面，如此一來雖然剛開始影片會稍微延遲一點，但是如果網路連線不穩的話話面不會卡住，因為queue裡面還有chunks。
+
+## clock
+應用程式應該隨時監看`buffer`的狀態，如果`buffer`太少，就應該暫停撥放。為了達到所有的sink都可以同步，GStreamer有一個global clock，所有的element都會共用這個global clock。
+有時候如果切換streaming或是切換輸出裝置，clock會消失，這時候就必須重選clock，下面的範例將會解說這個步驟。
+
+當clock消失的時候應用程式會接收到訊息，這時候只需要將pipeline設為PAUSED再設為PLAYING就可以選擇新的clock。
+
+## 範例
+範例`basic-tutorial-12.c`
+```c
+#include <gst/gst.h>
+#include <string.h>
+
+typedef struct _CustomData {
+  gboolean is_live;
+  GstElement *pipeline;
+  GMainLoop *loop;
+} CustomData;
+
+static void cb_message (GstBus *bus, GstMessage *msg, CustomData *data) {
+
+  switch (GST_MESSAGE_TYPE (msg)) {
+    case GST_MESSAGE_ERROR: {
+      GError *err;
+      gchar *debug;
+
+      gst_message_parse_error (msg, &err, &debug);
+      g_print ("Error: %s\n", err->message);
+      g_error_free (err);
+      g_free (debug);
+
+      gst_element_set_state (data->pipeline, GST_STATE_READY);
+      g_main_loop_quit (data->loop);
+      break;
+    }
+    case GST_MESSAGE_EOS:
+      /* end-of-stream */
+      gst_element_set_state (data->pipeline, GST_STATE_READY);
+      g_main_loop_quit (data->loop);
+      break;
+    case GST_MESSAGE_BUFFERING: {
+      gint percent = 0;
+
+      /* If the stream is live, we do not care about buffering. */
+      if (data->is_live) break;
+
+      gst_message_parse_buffering (msg, &percent);
+      g_print ("Buffering (%3d%%)\r", percent);
+      /* Wait until buffering is complete before start/resume playing */
+      if (percent < 100)
+        gst_element_set_state (data->pipeline, GST_STATE_PAUSED);
+      else
+        gst_element_set_state (data->pipeline, GST_STATE_PLAYING);
+      break;
+    }
+    case GST_MESSAGE_CLOCK_LOST:
+      /* Get a new clock */
+      gst_element_set_state (data->pipeline, GST_STATE_PAUSED);
+      gst_element_set_state (data->pipeline, GST_STATE_PLAYING);
+      break;
+    default:
+      /* Unhandled message */
+      break;
+    }
+}
+
+int main(int argc, char *argv[]) {
+  GstElement *pipeline;
+  GstBus *bus;
+  GstStateChangeReturn ret;
+  GMainLoop *main_loop;
+  CustomData data;
+
+  /* Initialize GStreamer */
+  gst_init (&argc, &argv);
+
+  /* Initialize our data structure */
+  memset (&data, 0, sizeof (data));
+
+  /* Build the pipeline */
+  pipeline = gst_parse_launch ("playbin uri=https://www.freedesktop.org/software/gstreamer-sdk/data/media/sintel_trailer-480p.webm", NULL);
+  bus = gst_element_get_bus (pipeline);
+
+  /* Start playing */
+  ret = gst_element_set_state (pipeline, GST_STATE_PLAYING);
+  if (ret == GST_STATE_CHANGE_FAILURE) {
+    g_printerr ("Unable to set the pipeline to the playing state.\n");
+    gst_object_unref (pipeline);
+    return -1;
+  } else if (ret == GST_STATE_CHANGE_NO_PREROLL) {
+    data.is_live = TRUE;
+  }
+
+  main_loop = g_main_loop_new (NULL, FALSE);
+  data.loop = main_loop;
+  data.pipeline = pipeline;
+
+  gst_bus_add_signal_watch (bus);
+  g_signal_connect (bus, "message", G_CALLBACK (cb_message), &data);
+
+  g_main_loop_run (main_loop);
+
+  /* Free resources */
+  g_main_loop_unref (main_loop);
+  gst_object_unref (bus);
+  gst_element_set_state (pipeline, GST_STATE_NULL);
+  gst_object_unref (pipeline);
+  return 0;
+}
+```
+
+## 說明
+在這個範例中比較特別的是下面這一段，注意如果收到`GST_STATE_CHANGE_NO_PREROLL`而不是`GST_STATE_CHANGE_SUCCESS`，這代表目前正再撥放直撥串流。
+
+因為直撥串流是不能暫停的，所以就算把pipeline的狀態設為PAUSED他的行為還是跟PLAYING一樣。而且即使我們嘗試將pipeline設為PLAYING也會收到這個訊息。
+
+因為我們想要關閉直撥串流的`buffering`，所以我們用`gst_element_set_state()`在data裡面做記號
+```c
+/* Start playing */
+ret = gst_element_set_state (pipeline, GST_STATE_PLAYING);
+if (ret == GST_STATE_CHANGE_FAILURE) {
+  g_printerr ("Unable to set the pipeline to the playing state.\n");
+  gst_object_unref (pipeline);
+  return -1;
+} else if (ret == GST_STATE_CHANGE_NO_PREROLL) {
+  data.is_live = TRUE;
+}
+```
+
+## callback
+接下來我們看一下message parsing callback，首先如果發現是直撥串流，就不要打開`buffering`。接下來用`gst_message_parse_buffering()`來取得 buffering level。
+
+然後我們印出 buffering level並且設定當 buffering level小於100%的時候就暫停pipeline，如果超過就設為PLAYING。
+
+程式執行的時候會看到buffer慢慢攀升到100%，然後如果網路不穩到buffer小於100%，就會暫停撥放直到回復100%後才重新撥放。
+```c
+case GST_MESSAGE_BUFFERING: {
+  gint percent = 0;
+
+  /* If the stream is live, we do not care about buffering. */
+  if (data->is_live) break;
+
+  gst_message_parse_buffering (msg, &percent);
+  g_print ("Buffering (%3d%%)\r", percent);
+  /* Wait until buffering is complete before start/resume playing */
+  if (percent < 100)
+    gst_element_set_state (data->pipeline, GST_STATE_PAUSED);
+  else
+    gst_element_set_state (data->pipeline, GST_STATE_PLAYING);
+  break;
+}
+```
+
+
+## lost clock
+另一個我們要處理的消息是遺失clock，我們只需要將pipeline設為PAUSED再設為PLAYING就可以了。
+```c
+case GST_MESSAGE_CLOCK_LOST:
+  /* Get a new clock */
+  gst_element_set_state (data->pipeline, GST_STATE_PAUSED);
+  gst_element_set_state (data->pipeline, GST_STATE_PLAYING);
+  break;
+```
