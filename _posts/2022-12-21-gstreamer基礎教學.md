@@ -1333,3 +1333,40 @@ video_sink = gst_element_factory_make ("autovideosink", "video_sink");
 g_object_set (audio_source, "freq", 215.0f, NULL);
 g_object_set (visual, "shader", 0, "style", 1, NULL);
 ```
+
+## 將element放進pipeline
+將所有element放入pipeline並且連接所有`Always Pads`
+```c
+/* Link all elements that can be automatically linked because they have "Always" pads */
+gst_bin_add_many (GST_BIN (pipeline), audio_source, tee, audio_queue, audio_convert, audio_sink,
+    video_queue, visual, video_convert, video_sink, NULL);
+if (gst_element_link_many (audio_source, tee, NULL) != TRUE ||
+    gst_element_link_many (audio_queue, audio_convert, audio_sink, NULL) != TRUE ||
+    gst_element_link_many (video_queue, visual, video_convert, video_sink, NULL) != TRUE) {
+  g_printerr ("Elements could not be linked.\n");
+  gst_object_unref (pipeline);
+  return -1;
+}
+```
+注意:  
+`gst_element_link_many()`其實也可以自動連接`Request Pads`。因為它會自動請求新的pad。但是問題是你還是必須要手動釋放`Request Pads`。所以最好的做法是手動連接`Request Pads`。
+
+## 連接Request Pads
+要連接`Request Pads`必須要先跟element請求
+```c
+/* Manually link the Tee, which has "Request" pads */
+tee_audio_pad = gst_element_get_request_pad (tee, "src_%u");
+g_print ("Obtained request pad %s for audio branch.\n", gst_pad_get_name (tee_audio_pad));
+queue_audio_pad = gst_element_get_static_pad (audio_queue, "sink");
+tee_video_pad = gst_element_get_request_pad (tee, "src_%u");
+g_print ("Obtained request pad %s for video branch.\n", gst_pad_get_name (tee_video_pad));
+queue_video_pad = gst_element_get_static_pad (video_queue, "sink");
+if (gst_pad_link (tee_audio_pad, queue_audio_pad) != GST_PAD_LINK_OK ||
+    gst_pad_link (tee_video_pad, queue_video_pad) != GST_PAD_LINK_OK) {
+  g_printerr ("Tee could not be linked.\n");
+  gst_object_unref (pipeline);
+  return -1;
+}
+gst_object_unref (queue_audio_pad);
+gst_object_unref (queue_video_pad);
+```
