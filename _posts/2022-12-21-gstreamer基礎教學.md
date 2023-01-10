@@ -1352,7 +1352,15 @@ if (gst_element_link_many (audio_source, tee, NULL) != TRUE ||
 `gst_element_link_many()`其實也可以自動連接`Request Pads`。因為它會自動請求新的pad。但是問題是你還是必須要手動釋放`Request Pads`。所以最好的做法是手動連接`Request Pads`。
 
 ## 連接Request Pads
-要連接`Request Pads`必須要先跟element請求
+要連接`Request Pads`必須要先跟element請求，而因為element有時候可以產生不同的request pads，所以要提供所需的Pad Template名稱。
+
+在tee的文件中可以看到他有兩個Pad Template，一個是"sink"，另一個是"src_%u"(也就是Request pads)，我們可以用`gst_element_request_pad_simple()`函式來請求兩個Pads(一個給audio一個給video)。
+
+接著我們需要取得下游queue element的Always pad，因此用`gst_element_get_static_pad()`。
+
+我們用`gst_pad_link()`連接Pads。`gst_pad_link()`內部其實就是`gst_element_link()`和`gst_element_link_many()`
+
+我們用來儲存下游queue always pad的變數`queue_audio_pad`和`queue_video_pad`要記得釋放，以免佔用reference count。
 ```c
 /* Manually link the Tee, which has "Request" pads */
 tee_audio_pad = gst_element_get_request_pad (tee, "src_%u");
@@ -1370,3 +1378,447 @@ if (gst_pad_link (tee_audio_pad, queue_audio_pad) != GST_PAD_LINK_OK ||
 gst_object_unref (queue_audio_pad);
 gst_object_unref (queue_video_pad);
 ```
+
+最後在程式結束後，要記得釋放request pad
+```c
+/* Release the request pads from the Tee, and unref them */
+gst_element_release_request_pad (tee, tee_audio_pad);
+gst_element_release_request_pad (tee, tee_video_pad);
+gst_object_unref (tee_audio_pad);
+gst_object_unref (tee_video_pad);
+```
+`gst_element_release_request_pad()`從tee釋放requests pads，`gst_object_unref`釋放`tee_audio_pad`變數
+
+# hort-cutting the pipeline Goal
+pipeline的資料並不是封閉的，我們可以從外界注入資料給pipeline，也可以從pipeline內取得資料
+
+## appsrc、appsink
+把資料注入pipeline的element為`appsrc`，相反的從pipeline取得資料的element是`appsink`。這裡sink和source的概念是從GStreamer應用程式的角度來看，你可以想像`appsrc`也是一個source，只不過他的資料來源是來自於應用程式，相反的`appsink`就像普通的`sink`只是他最後流向應用程式。
+
+appsrc有多種模式，在`pull`模式每當需要的時候他將會向應用程式索取資料。在`push`模式則是應用程式主動推送資料進去。在`push`模式中應用程式還可以阻塞push function當已經推入足夠多的資料到pipeline裡面的時候，或者他可以監聽`enough-data`和`need-data`訊號。
+
+## Buffers
+數據以Chunks方式進入pipeline的方式稱為Buffers，Buffers代表一單位的資料，但是每一個Buffers大小不一定一樣大。注意，我們不應該假設一個Buffers進入element就同時會有一個離開element。element可以隨意地讓Buffers停留在element內部。
+
+Source pad產生Buffers，而sink pad接收Buffers，Gstreamer將這些Buffers一流過每一個element。
+
+## GstBuffer 和 GstMemory 
+GstBuffers 可能包含一個或一個以上的memory buffer，而真正的記憶體buffer被抽像化為`GstMemory`，因此一個`GstBuffer`可以包含一個或一個以上的`GstMemory`
+
+每一個buffer都有時間戳和長度，以及他需要被decode的長度。
+
+## 範例
+下面範例延續Multithreading and Pad Availability的範例並擴展。
+
+首先`audiotestsrc`被置換成`appsrc`來產生audio資料。
+
+第二個是增加一個新的`tee`分支，這隻分支會接著`appsink`，`appsink`會將資訊回傳給應用程式。
+
+範例`basic-tutorial-8.c`的程式如下
+```c
+#include <gst/gst.h>
+#include <gst/audio/audio.h>
+#include <string.h>
+
+#define CHUNK_SIZE 1024   /* Amount of bytes we are sending in each buffer */
+#define SAMPLE_RATE 44100 /* Samples per second we are sending */
+
+/* Structure to contain all our information, so we can pass it to callbacks */
+typedef struct _CustomData {
+  GstElement *pipeline, *app_source, *tee, *audio_queue, *audio_convert1, *audio_resample, *audio_sink;
+  GstElement *video_queue, *audio_convert2, *visual, *video_convert, *video_sink;
+  GstElement *app_queue, *app_sink;
+
+  guint64 num_samples;   /* Number of samples generated so far (for timestamp generation) */
+  gfloat a, b, c, d;     /* For waveform generation */
+
+  guint sourceid;        /* To control the GSource */
+
+  GMainLoop *main_loop;  /* GLib's Main Loop */
+} CustomData;
+
+/* This method is called by the idle GSource in the mainloop, to feed CHUNK_SIZE bytes into appsrc.
+ * The idle handler is added to the mainloop when appsrc requests us to start sending data (need-data signal)
+ * and is removed when appsrc has enough data (enough-data signal).
+ */
+static gboolean push_data (CustomData *data) {
+  GstBuffer *buffer;
+  GstFlowReturn ret;
+  int i;
+  GstMapInfo map;
+  gint16 *raw;
+  gint num_samples = CHUNK_SIZE / 2; /* Because each sample is 16 bits */
+  gfloat freq;
+
+  /* Create a new empty buffer */
+  buffer = gst_buffer_new_and_alloc (CHUNK_SIZE);
+
+  /* Set its timestamp and duration */
+  GST_BUFFER_TIMESTAMP (buffer) = gst_util_uint64_scale (data->num_samples, GST_SECOND, SAMPLE_RATE);
+  GST_BUFFER_DURATION (buffer) = gst_util_uint64_scale (num_samples, GST_SECOND, SAMPLE_RATE);
+
+  /* Generate some psychodelic waveforms */
+  gst_buffer_map (buffer, &map, GST_MAP_WRITE);
+  raw = (gint16 *)map.data;
+  data->c += data->d;
+  data->d -= data->c / 1000;
+  freq = 1100 + 1000 * data->d;
+  for (i = 0; i < num_samples; i++) {
+    data->a += data->b;
+    data->b -= data->a / freq;
+    raw[i] = (gint16)(500 * data->a);
+  }
+  gst_buffer_unmap (buffer, &map);
+  data->num_samples += num_samples;
+
+  /* Push the buffer into the appsrc */
+  g_signal_emit_by_name (data->app_source, "push-buffer", buffer, &ret);
+
+  /* Free the buffer now that we are done with it */
+  gst_buffer_unref (buffer);
+
+  if (ret != GST_FLOW_OK) {
+    /* We got some error, stop sending data */
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+/* This signal callback triggers when appsrc needs data. Here, we add an idle handler
+ * to the mainloop to start pushing data into the appsrc */
+static void start_feed (GstElement *source, guint size, CustomData *data) {
+  if (data->sourceid == 0) {
+    g_print ("Start feeding\n");
+    data->sourceid = g_idle_add ((GSourceFunc) push_data, data);
+  }
+}
+
+/* This callback triggers when appsrc has enough data and we can stop sending.
+ * We remove the idle handler from the mainloop */
+static void stop_feed (GstElement *source, CustomData *data) {
+  if (data->sourceid != 0) {
+    g_print ("Stop feeding\n");
+    g_source_remove (data->sourceid);
+    data->sourceid = 0;
+  }
+}
+
+/* The appsink has received a buffer */
+static GstFlowReturn new_sample (GstElement *sink, CustomData *data) {
+  GstSample *sample;
+
+  /* Retrieve the buffer */
+  g_signal_emit_by_name (sink, "pull-sample", &sample);
+  if (sample) {
+    /* The only thing we do in this example is print a * to indicate a received buffer */
+    g_print ("*");
+    gst_sample_unref (sample);
+    return GST_FLOW_OK;
+  }
+
+  return GST_FLOW_ERROR;
+}
+
+/* This function is called when an error message is posted on the bus */
+static void error_cb (GstBus *bus, GstMessage *msg, CustomData *data) {
+  GError *err;
+  gchar *debug_info;
+
+  /* Print error details on the screen */
+  gst_message_parse_error (msg, &err, &debug_info);
+  g_printerr ("Error received from element %s: %s\n", GST_OBJECT_NAME (msg->src), err->message);
+  g_printerr ("Debugging information: %s\n", debug_info ? debug_info : "none");
+  g_clear_error (&err);
+  g_free (debug_info);
+
+  g_main_loop_quit (data->main_loop);
+}
+
+int main(int argc, char *argv[]) {
+  CustomData data;
+  GstPad *tee_audio_pad, *tee_video_pad, *tee_app_pad;
+  GstPad *queue_audio_pad, *queue_video_pad, *queue_app_pad;
+  GstAudioInfo info;
+  GstCaps *audio_caps;
+  GstBus *bus;
+
+  /* Initialize custom data structure */
+  memset (&data, 0, sizeof (data));
+  data.b = 1; /* For waveform generation */
+  data.d = 1;
+
+  /* Initialize GStreamer */
+  gst_init (&argc, &argv);
+
+  /* Create the elements */
+  data.app_source = gst_element_factory_make ("appsrc", "audio_source");
+  data.tee = gst_element_factory_make ("tee", "tee");
+  data.audio_queue = gst_element_factory_make ("queue", "audio_queue");
+  data.audio_convert1 = gst_element_factory_make ("audioconvert", "audio_convert1");
+  data.audio_resample = gst_element_factory_make ("audioresample", "audio_resample");
+  data.audio_sink = gst_element_factory_make ("autoaudiosink", "audio_sink");
+  data.video_queue = gst_element_factory_make ("queue", "video_queue");
+  data.audio_convert2 = gst_element_factory_make ("audioconvert", "audio_convert2");
+  data.visual = gst_element_factory_make ("wavescope", "visual");
+  data.video_convert = gst_element_factory_make ("videoconvert", "video_convert");
+  data.video_sink = gst_element_factory_make ("autovideosink", "video_sink");
+  data.app_queue = gst_element_factory_make ("queue", "app_queue");
+  data.app_sink = gst_element_factory_make ("appsink", "app_sink");
+
+  /* Create the empty pipeline */
+  data.pipeline = gst_pipeline_new ("test-pipeline");
+
+  if (!data.pipeline || !data.app_source || !data.tee || !data.audio_queue || !data.audio_convert1 ||
+      !data.audio_resample || !data.audio_sink || !data.video_queue || !data.audio_convert2 || !data.visual ||
+      !data.video_convert || !data.video_sink || !data.app_queue || !data.app_sink) {
+    g_printerr ("Not all elements could be created.\n");
+    return -1;
+  }
+
+  /* Configure wavescope */
+  g_object_set (data.visual, "shader", 0, "style", 0, NULL);
+
+  /* Configure appsrc */
+  gst_audio_info_set_format (&info, GST_AUDIO_FORMAT_S16, SAMPLE_RATE, 1, NULL);
+  audio_caps = gst_audio_info_to_caps (&info);
+  g_object_set (data.app_source, "caps", audio_caps, "format", GST_FORMAT_TIME, NULL);
+  g_signal_connect (data.app_source, "need-data", G_CALLBACK (start_feed), &data);
+  g_signal_connect (data.app_source, "enough-data", G_CALLBACK (stop_feed), &data);
+
+  /* Configure appsink */
+  g_object_set (data.app_sink, "emit-signals", TRUE, "caps", audio_caps, NULL);
+  g_signal_connect (data.app_sink, "new-sample", G_CALLBACK (new_sample), &data);
+  gst_caps_unref (audio_caps);
+
+  /* Link all elements that can be automatically linked because they have "Always" pads */
+  gst_bin_add_many (GST_BIN (data.pipeline), data.app_source, data.tee, data.audio_queue, data.audio_convert1, data.audio_resample,
+      data.audio_sink, data.video_queue, data.audio_convert2, data.visual, data.video_convert, data.video_sink, data.app_queue,
+      data.app_sink, NULL);
+  if (gst_element_link_many (data.app_source, data.tee, NULL) != TRUE ||
+      gst_element_link_many (data.audio_queue, data.audio_convert1, data.audio_resample, data.audio_sink, NULL) != TRUE ||
+      gst_element_link_many (data.video_queue, data.audio_convert2, data.visual, data.video_convert, data.video_sink, NULL) != TRUE ||
+      gst_element_link_many (data.app_queue, data.app_sink, NULL) != TRUE) {
+    g_printerr ("Elements could not be linked.\n");
+    gst_object_unref (data.pipeline);
+    return -1;
+  }
+
+  /* Manually link the Tee, which has "Request" pads */
+  tee_audio_pad = gst_element_request_pad_simple (data.tee, "src_%u");
+  g_print ("Obtained request pad %s for audio branch.\n", gst_pad_get_name (tee_audio_pad));
+  queue_audio_pad = gst_element_get_static_pad (data.audio_queue, "sink");
+  tee_video_pad = gst_element_request_pad_simple (data.tee, "src_%u");
+  g_print ("Obtained request pad %s for video branch.\n", gst_pad_get_name (tee_video_pad));
+  queue_video_pad = gst_element_get_static_pad (data.video_queue, "sink");
+  tee_app_pad = gst_element_request_pad_simple (data.tee, "src_%u");
+  g_print ("Obtained request pad %s for app branch.\n", gst_pad_get_name (tee_app_pad));
+  queue_app_pad = gst_element_get_static_pad (data.app_queue, "sink");
+  if (gst_pad_link (tee_audio_pad, queue_audio_pad) != GST_PAD_LINK_OK ||
+      gst_pad_link (tee_video_pad, queue_video_pad) != GST_PAD_LINK_OK ||
+      gst_pad_link (tee_app_pad, queue_app_pad) != GST_PAD_LINK_OK) {
+    g_printerr ("Tee could not be linked\n");
+    gst_object_unref (data.pipeline);
+    return -1;
+  }
+  gst_object_unref (queue_audio_pad);
+  gst_object_unref (queue_video_pad);
+  gst_object_unref (queue_app_pad);
+
+  /* Instruct the bus to emit signals for each received message, and connect to the interesting signals */
+  bus = gst_element_get_bus (data.pipeline);
+  gst_bus_add_signal_watch (bus);
+  g_signal_connect (G_OBJECT (bus), "message::error", (GCallback)error_cb, &data);
+  gst_object_unref (bus);
+
+  /* Start playing the pipeline */
+  gst_element_set_state (data.pipeline, GST_STATE_PLAYING);
+
+  /* Create a GLib Main Loop and set it to run */
+  data.main_loop = g_main_loop_new (NULL, FALSE);
+  g_main_loop_run (data.main_loop);
+
+  /* Release the request pads from the Tee, and unref them */
+  gst_element_release_request_pad (data.tee, tee_audio_pad);
+  gst_element_release_request_pad (data.tee, tee_video_pad);
+  gst_element_release_request_pad (data.tee, tee_app_pad);
+  gst_object_unref (tee_audio_pad);
+  gst_object_unref (tee_video_pad);
+  gst_object_unref (tee_app_pad);
+
+  /* Free resources */
+  gst_element_set_state (data.pipeline, GST_STATE_NULL);
+  gst_object_unref (data.pipeline);
+  return 0;
+}
+```
+
+## 加入appsrc和appsink 
+首先要先設定appsrc的caps，他決定了appsrc所輸出的資料類型。我們可以用字串來建立`GstCaps`物件，只需要用`gst_caps_from_string()`函式。
+
+另外我們還必須連接`need-data`和`enough-data`訊號。這兩個訊號是`appsrc`發出來的。
+```c
+/* Configure appsrc */
+gst_audio_info_set_format (&info, GST_AUDIO_FORMAT_S16, SAMPLE_RATE, 1, NULL);
+audio_caps = gst_audio_info_to_caps (&info);
+g_object_set (data.app_source, "caps", audio_caps, NULL);
+g_signal_connect (data.app_source, "need-data", G_CALLBACK (start_feed), &data);
+g_signal_connect (data.app_source, "enough-data", G_CALLBACK (stop_feed), &data);
+```
+
+## new-sample訊號
+另外我們還要接上`app_sink`的訊號`new-sample`，這個訊號預設是關閉的所以必須手動打開這個訊號，由`emit-signals`可以設定。
+```c
+/* Configure appsink */
+g_object_set (data.app_sink, "emit-signals", TRUE, "caps", audio_caps, NULL);
+g_signal_connect (data.app_sink, "new-sample", G_CALLBACK (new_sample), &data);
+gst_caps_unref (audio_caps);
+```
+
+## callback function
+我們的callback function在每當`appsrc`內部的queue快要沒資料的時候被呼叫。他唯一做的事情就是註冊一個GLib的函式`g_idle_add()`，他將會給`appsrc`資料直到`appsrc`滿了為止。
+
+我們將`g_idle_add()`回傳的id做個紀錄以便等一下可以停止他。
+```c
+/* This signal callback triggers when appsrc needs data. Here, we add an idle handler
+ * to the mainloop to start pushing data into the appsrc */
+static void start_feed (GstElement *source, guint size, CustomData *data) {
+  if (data->sourceid == 0) {
+    g_print ("Start feeding\n");
+    data->sourceid = g_idle_add ((GSourceFunc) push_data, data);
+  }
+}
+```
+
+下面這個callback function當`appsrc`內部的queue滿的時候會被呼叫。在這裡我們就直接用`g_source_remove()`移除idle function
+```c
+/* This callback triggers when appsrc has enough data and we can stop sending.
+ * We remove the idle handler from the mainloop */
+static void stop_feed (GstElement *source, CustomData *data) {
+  if (data->sourceid != 0) {
+    g_print ("Stop feeding\n");
+    g_source_remove (data->sourceid);
+    data->sourceid = 0;
+  }
+}
+```
+
+接下來這個function是推送資料給`appsrc`的callback，是給GLib的`g_idle_add()`呼叫用的。
+
+首先他的工作是建立一個新的buffer並且給定大小(這個範例設為1024 bytes)，設定大小可以用`gst_buffer_new_and_alloc()`。
+
+接下例我們計算我們已經餵給`appsrc`的資料數目，並且用`CustomData.num_samples`紀錄，如此一來就可以給這個buffer時間戳，時皆戳可以用`GstBuffer`的`GST_BUFFER_TIMESTAMP` marco。
+
+因為我們每次都提供相同大小的buffer，他的長度都是相同的，我們可以用`GstBuffer`的`GST_BUFFER_DURATION`marco來設定duration。
+
+`gst_util_uint64_scale()`是用來放大或縮小大數字的函式，用這個函是就不用擔心overflows。
+
+buffer的大小可以用GstBuffer 可以用GST_BUFFER_DATA 取得。
+
+```c
+/* This method is called by the idle GSource in the mainloop, to feed CHUNK_SIZE bytes into appsrc.
+ * The ide handler is added to the mainloop when appsrc requests us to start sending data (need-data signal)
+ * and is removed when appsrc has enough data (enough-data signal).
+ */
+static gboolean push_data (CustomData *data) {
+  GstBuffer *buffer;
+  GstFlowReturn ret;
+  int i;
+  gint16 *raw;
+  gint num_samples = CHUNK_SIZE / 2; /* Because each sample is 16 bits */
+  gfloat freq;
+
+  /* Create a new empty buffer */
+  buffer = gst_buffer_new_and_alloc (CHUNK_SIZE);
+
+  /* Set its timestamp and duration */
+  GST_BUFFER_TIMESTAMP (buffer) = gst_util_uint64_scale (data->num_samples, GST_SECOND, SAMPLE_RATE);
+  GST_BUFFER_DURATION (buffer) = gst_util_uint64_scale (num_samples, GST_SECOND, SAMPLE_RATE);
+
+  /* Generate some psychodelic waveforms */
+  raw = (gint16 *)GST_BUFFER_DATA (buffer);
+```
+
+最後就是把生成好的資料推送進`appsrc`裡面，並且會觸發`push-buffer`訊號。
+```c
+/* Push the buffer into the appsrc */
+g_signal_emit_by_name (data->app_source, "push-buffer", buffer, &ret);
+
+/* Free the buffer now that we are done with it */
+gst_buffer_unref (buffer);
+```
+
+而當`appsink`接收到資料的時候下面的函式會被呼叫。我們用`pull-sample`動作訊號來取得buffer並且應到螢幕上。利用`GST_BUFFER_DATA`取得資料的指針以及`GST_BUFFER_SIZE`取得資料大小。
+
+注意，在這裡的buffer不一定會跟我們在前面指定的buffer大小一樣，因為任何element都有可能去更動buffer，雖然在這個範例buffer並沒有被改動。
+
+# Debugging tools
+## debug log
+debug log是由`GST_DEBUG`環境變數控制。下面是GST_DEBUG=2的時候的debug log。
+```
+0:00:00.868050000  1592   09F62420 WARN                 filesrc gstfilesrc.c:1044:gst_file_src_start:<filesrc0> error: No such file "non-existing-file.webm"
+```
+通常我們不會把debug log全部打開以免訊息塞爆文件或是訊息視窗。下面是各種等級的debug log會輸出的資料。
+```
+| # | Name    | Description                                                    |
+|---|---------|----------------------------------------------------------------|
+| 0 | none    | No debug information is output.                                |
+| 1 | ERROR   | Logs all fatal errors. These are errors that do not allow the  |
+|   |         | core or elements to perform the requested action. The          |
+|   |         | application can still recover if programmed to handle the      |
+|   |         | conditions that triggered the error.                           |
+| 2 | WARNING | Logs all warnings. Typically these are non-fatal, but          |
+|   |         | user-visible problems are expected to happen.                  |
+| 3 | FIXME   | Logs all "fixme" messages. Those typically that a codepath that|
+|   |         | is known to be incomplete has been triggered. It may work in   |
+|   |         | most cases, but may cause problems in specific instances.      |
+| 4 | INFO    | Logs all informational messages. These are typically used for  |
+|   |         | events in the system that only happen once, or are important   |
+|   |         | and rare enough to be logged at this level.                    |
+| 5 | DEBUG   | Logs all debug messages. These are general debug messages for  |
+|   |         | events that happen only a limited number of times during an    |
+|   |         | object's lifetime; these include setup, teardown, change of    |
+|   |         | parameters, etc.                                               |
+| 6 | LOG     | Logs all log messages. These are messages for events that      |
+|   |         | happen repeatedly during an object's lifetime; these include   |
+|   |         | streaming and steady-state conditions. This is used for log    |
+|   |         | messages that happen on every buffer in an element for example.|
+| 7 | TRACE   | Logs all trace messages. Those are message that happen very    |
+|   |         | very often. This is for example is each time the reference     |
+|   |         | count of a GstMiniObject, such as a GstBuffer or GstEvent, is  |
+|   |         | modified.                                                      |
+| 9 | MEMDUMP | Logs all memory dump messages. This is the heaviest logging and|
+|   |         | may include dumping the content of blocks of memory.           |
++------------------------------------------------------------------------------+
+```
+
+## 設置element的debug log
+如果要設置個別element的debug level，範例如下。如此一來`audiotestsrc`的level是6，其他的都是2
+```
+GST_DEBUG=2,audiotestsrc:6
+```
+
+## GST_DEBUG格是
+GST_DEBUG的第一個參數是optional的，他會設定全域的debug level。參數之間以逗號`,`區隔，除了第一個參數，每一個設定的格式都是`category:level`。
+
+`*`也可以被用在GST_DEBUG裡面，例如`GST_DEBUG=2,audio*:6`會把所有開頭為audio的element都設為level 6，其他保持level 2。
+
+## 增加自訂除錯訊息
+如果要讓category 看起來更有意義，可以加入下面兩行
+```c
+GST_DEBUG_CATEGORY_STATIC (my_category);
+#define GST_CAT_DEFAULT my_category
+```
+以及下面這行在`gst_init()`被呼叫之後。
+```c
+GST_DEBUG_CATEGORY_INIT (my_category, "my category", 0, "This is my very own");
+```
+
+## 取得pipeline的圖
+gstreamer可以將你的pipeline輸出成.dot檔可以用例如GraphViz來開啟。
+
+如果在程式內想開啟這項功能可以用`GST_DEBUG_BIN_TO_DOT_FILE()` 和 `GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS()`marco來開啟這個功能。
+
+gst-launch-1.0可以用用GST_DEBUG_DUMP_DOT_DIR來設定儲存圖片的資料夾並開啟這項功能。每當pipeline的狀態改變的時候都會畫一張圖，如此一來就可以看到pipeline的變化
+
+# Streaming
