@@ -1676,7 +1676,9 @@ gst_caps_unref (audio_caps);
 ```
 
 ## callback function
-我們的callback function在每當`appsrc`內部的queue快要沒資料的時候被呼叫。他唯一做的事情就是註冊一個GLib的函式`g_idle_add()`，他將會給`appsrc`資料直到`appsrc`滿了為止。
+我們的callback function在每當`appsrc`內部的queue快要沒資料的時候被呼叫。他唯一做的事情就是註冊一個GLib的函式`g_idle_add()`，他將會給`appsrc`資料直到`appsrc`滿了為止。  
+
+Glib的main event loop更進一步說明可以參考[這裡](https://zhuanlan.zhihu.com/p/567441726)  
 
 我們將`g_idle_add()`回傳的id做個紀錄以便等一下可以停止他。
 ```c
