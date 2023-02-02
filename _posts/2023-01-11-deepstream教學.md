@@ -25,8 +25,32 @@ GST_DEBUG_BIN_TO_DOT_FILE(pipeline, GST_DEBUG_GRAPH_SHOW_ALL, "dstest1-pipeline"
 gst-launch-1.0 rtspsrc location='rtsp://192.168.1.10:554/user=admin_password=xxxxxx_channel=1_stream=0.sdp' ! rtph264depay ! h264parse ! nvv4l2decoder ! nvvideoconvert ! video/x-raw,format=BGRx ! videoconvert ! video/x-raw,format=BGR ! autovideosink
 ```
 
-## 將指令轉換成程式碼
+## 將python的範例程式轉成c++
+https://github.com/NVIDIA-AI-IOT/deepstream_python_apps/tree/master/apps/deepstream-rtsp-in-rtsp-out
 
+
+## 建立mjpeg串流
+1. 指令方式
+```
+gst-launch-1.0 -v rtspsrc location="rtsp://<rtsp url>/live1.sdp" \
+! rtph264depay ! avdec_h264 \
+! timeoverlay halignment=right valignment=bottom \
+! videorate ! video/x-raw,framerate=37000/1001 ! jpegenc ! multifilesink location="snapshot.jpeg"
+```
+https://stackoverflow.com/questions/59885450/jpeg-live-stream-in-html-slow
+
+
+## 查詢deepstream bin的說明
+```
+gst-inspect-1.0 nvurisrcbin
+```
+
+## gst-launch-1.0輸出除錯訊息到檔案
+參考:  
+https://www.cnblogs.com/xleng/p/12228720.html
+```
+GST_DEBUG_NO_COLOR=1 GST_DEBUG_FILE=pipeline.log GST_DEBUG=5 gst-launch-1.0 -v rtspsrc location="rtsp://192.168.8.19/live.sdp" user-id="root" user-pw="3edc\$RFV" ! rtph264depay ! avdec_h264 ! timeoverlay halignment=right valignment=bottom ! videorate ! video/x-raw,framerate=37000/1001 ! jpegenc ! multifilesink location="snapshot.jpeg"
+```
 
 參考:
 https://gstreamer.freedesktop.org/documentation/tutorials/basic/debugging-tools.html?gi-language=c  
