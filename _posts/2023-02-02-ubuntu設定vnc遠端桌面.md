@@ -10,7 +10,7 @@ sudo ufw allow 5901/tcp
 ```
 2. 安裝套件
 ```shell
-apt install xfce4 xfce4-goodies tightvncserver
+sudo apt install xfce4 xfce4-goodies tightvncserver
 ```
 3. 用sudo開啟VNC服務並設定密碼
 ```
