@@ -66,13 +66,14 @@ WantedBy=multi-user.target
 ```
 
 重載systemd
+
 ```
-systemctl daemon-reload
+sudo systemctl daemon-reload
 ```
 
 enable自動載入
 ```
-systemctl enable --now vncserver
+sudo systemctl enable --now vncserver
 ```
 
 7. 在Windows用TightVNC測試連線
