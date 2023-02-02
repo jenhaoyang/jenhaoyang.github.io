@@ -18,22 +18,26 @@ sudo vncserver
 ```
 4. 關閉session
 ```
-vncserver -kill :1
+sudo vncserver -kill :1
 ```
 
 5. 設定config
 設定root的設定檔
-```
-nano /root/.vnc/xstartup
+
+```shell
+sudo nano /root/.vnc/xstartup
 ```
 
-再最下面加入這行
+在最下面加入這行
+
 ```
 startxfce4
 ```
+
 然後重啟server
+
 ```
-vncserver
+sudo vncserver
 ```
 
 6. autorun
@@ -42,7 +46,8 @@ vncserver
 sudo nano /etc/systemd/system/vncserver.service
 ```
 加入下面指令
-```
+
+```shell
 [Unit]
 Description=TightVNC server
 After=syslog.target network.target
