@@ -6,7 +6,7 @@ date: 2023-02-02 22:25 +0800
 
 1. 開防火牆
 ```shell
-ufw allow 5901/tcp
+sudo ufw allow 5901/tcp
 ```
 2. 安裝套件
 ```shell
