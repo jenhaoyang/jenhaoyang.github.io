@@ -58,3 +58,23 @@ GST_DEBUG_NO_COLOR=1 GST_DEBUG_FILE=pipeline.log GST_DEBUG=5 gst-launch-1.0 -v r
 參考:
 https://gstreamer.freedesktop.org/documentation/tutorials/basic/debugging-tools.html?gi-language=c  
 https://embeddedartistry.com/blog/2018/02/22/generating-gstreamer-pipeline-graphs/  
+
+## 本地端觀看udp傳送影像
+host設為本機ip或127.0.0.1
+
+send:
+```
+gst-launch-1.0 -v videotestsrc ! x264enc tune=zerolatency bitrate=500 speed-preset=superfast ! rtph264pay ! udpsink port=5000 host=$HOST
+```
+
+receive:
+```
+gst-launch-1.0 -v udpsrc port=5000 ! "application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, payload=(int)96" ! rtph264depay ! h264parse ! avdec_h264 ! videoconvert ! autovideosink
+```
+
+## 範例
+https://gist.github.com/liviaerxin/bb34725037fd04afa76ef9252c2ee875#tips-for-debug
+
+
+參考:  
+https://www.gclue.jp/2022/06/gstreamer.html  
