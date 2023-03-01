@@ -18,6 +18,9 @@ GST_DEBUG_BIN_TO_DOT_FILE(pipeline, GST_DEBUG_GRAPH_SHOW_ALL, "dstest1-pipeline"
 最後執行程式後就會產生`.dot`在前面設定的資料夾，你可以下載[Graphviz](http://www.graphviz.org/)，或是用[VScode的插件](https://marketplace.visualstudio.com/items?itemName=tintinweb.graphviz-interactive-preview)來看圖
 
 
+## Deepstream 說明書
+https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_gst-nvdsxfer.html
+
 ## gst-launch-1.0建立rtsp輸入源的pipeline
 首先先用`gst-launch-1.0`建立一個簡單的rtsp輸入、螢幕輸出的pipeline
 
