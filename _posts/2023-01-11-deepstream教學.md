@@ -69,6 +69,12 @@ receive:
 gst-launch-1.0 -v udpsrc port=5000 ! "application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, payload=(int)96" ! rtph264depay ! h264parse ! avdec_h264 ! videoconvert ! autovideosink
 ```
 
+## Glibs說明書
+http://irtfweb.ifa.hawaii.edu/SoftwareDocs/gtk20/glib/glib-hash-tables.html#g-int-hash
+
+## GDB文字圖形介面
+https://blog.louie.lu/2016/09/12/gdb-%E9%8C%A6%E5%9B%8A%E5%A6%99%E8%A8%88/
+
 ## 範例
 https://gist.github.com/liviaerxin/bb34725037fd04afa76ef9252c2ee875#tips-for-debug
 
