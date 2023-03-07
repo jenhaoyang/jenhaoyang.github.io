@@ -1820,8 +1820,39 @@ GST_DEBUG_CATEGORY_INIT (my_category, "my category", 0, "This is my very own");
 gstreamer可以將你的pipeline輸出成.dot檔可以用例如GraphViz來開啟。
 
 如果在程式內想開啟這項功能可以用`GST_DEBUG_BIN_TO_DOT_FILE()` 和 `GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS()`marco來開啟這個功能。
+範例:  
+可以在程式中加入下面程式碼來儲存pipeline圖  
+[官方文件](https://gstreamer.freedesktop.org/documentation/gstreamer/debugutils.html#gst_debug_bin_to_dot_file)  
+[圖案參數](https://gstreamer.freedesktop.org/documentation/gstreamer/debugutils.html?gi-language=c#GstDebugGraphDetails)  
+[參考來源](https://github.com/nnstreamer/nnstreamer/blob/main/tools/debugging/README.md)
+```c
+GST_DEBUG_BIN_TO_DOT_FILE(pipeline, GST_DEBUG_GRAPH_SHOW_ALL, "pipeline"); //三個參數分別為 pipeline的instance, 圖案參數, 檔案名稱
+```
+這行程式記得加在將pipeline state設定為`playing`之前，這樣才能完整看到pipeline的樣子。
+
+然後執行程式之前先設定環境變數`GST_DEBUG_DUMP_DOT_DIR`來指定儲存位置
+```bash
+export GST_DEBUG_DUMP_DOT_DIR=./tracing/
+mkdir tracing
+```
+
+接下來就會在tracing看到`pipeline.dot`檔
+
+安裝`xdot`來讀取.dot檔
+```bash
+sudo apt install xdot
+xdot pipeline.dot
+```
+
 
 gst-launch-1.0可以用用GST_DEBUG_DUMP_DOT_DIR來設定儲存圖片的資料夾並開啟這項功能。每當pipeline的狀態改變的時候都會畫一張圖，如此一來就可以看到pipeline的變化
+
+
+# gst-debugger
+[遠端除錯gstreamer](https://github.com/GNOME/gst-debugger.git)
+
+安裝protoc  
+http://google.github.io/proto-lens/installing-protoc.html
 
 # Streaming
 這裡將介紹streaming要注意的點
