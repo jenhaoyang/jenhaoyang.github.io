@@ -81,6 +81,22 @@ https://blog.louie.lu/2016/09/12/gdb-%E9%8C%A6%E5%9B%8A%E5%A6%99%E8%A8%88/
 ## 範例
 https://gist.github.com/liviaerxin/bb34725037fd04afa76ef9252c2ee875#tips-for-debug
 
+## rtsp 元件nvrtspoutsinkbin
+nvrtspoutsinkbin沒有說明書，只能用gst-inspect-1.0看
+
+## 設定source id
+https://forums.developer.nvidia.com/t/how-to-get-sources-index-in-deepstream/244461  
+
+## 切換輸入源
+https://forums.developer.nvidia.com/t/how-switch-camera-output-gst-nvmultistreamtiler/233062
+
+```
+tiler_sink_pad.add_probe(Gst.PadProbeType.BUFFER, tiler_sink_pad_buffer_probe, 0)
+
+tiler.set_property("show-source", <stream_id>) `
+```
+
+deepstream_source_yaml.cpp有範例
 
 參考:  
 https://www.gclue.jp/2022/06/gstreamer.html  
