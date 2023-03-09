@@ -83,9 +83,39 @@ https://gist.github.com/liviaerxin/bb34725037fd04afa76ef9252c2ee875#tips-for-deb
 
 ## rtsp 元件nvrtspoutsinkbin
 nvrtspoutsinkbin沒有說明書，只能用gst-inspect-1.0看
+https://forums.developer.nvidia.com/t/where-can-fine-nvrtspoutsinkbin-info/199124  
 
-## 設定source id
-https://forums.developer.nvidia.com/t/how-to-get-sources-index-in-deepstream/244461  
+範例
+/opt/nvidia/deepstream/deepstream/sources/apps/sample_apps/deepstream_reference_apps/deepstream-bodypose-3d/sources/deepstream_pose_estimation_app.cpp
+
+```c
+    /* Create RTSP output bin */
+    rtsp_out_bin = gst_element_factory_make ("nvrtspoutsinkbin", "nvrtsp-renderer");
+
+    if (!rtsp_out_bin) {
+      g_printerr ("Failed to create RTSP output elements. Exiting.\n");
+      return -1;
+    }
+
+    g_object_set (G_OBJECT (rtsp_out_bin), "sync", TRUE, NULL);
+    g_object_set (G_OBJECT (rtsp_out_bin), "bitrate", 768000, NULL);
+    g_object_set (G_OBJECT (rtsp_out_bin), "rtsp-port", rtsp_port_num, NULL);
+    g_object_set (G_OBJECT (rtsp_out_bin), "enc-type", enc_type, NULL);
+
+    gst_bin_add_many (GST_BIN (pipeline), rtsp_out_bin, NULL);
+```
+
+## 取得source id
+[https://forums.developer.nvidia.com/t/how-to-get-sources-index-in-deepstream/244461  ](https://forums.developer.nvidia.com/t/can-i-pass-source-id-from-nvinferserver-along-with-frame/205418)
+
+可以用prob取得meta data
+deepstream_test3_app.c 有範例
+
+[probe使用範例 ](https://forums.developer.nvidia.com/t/how-to-make-metadata-probe-for-classification-only-pipeline/171126) 
+
+![metadata](/assets/img/deepstream/metadata.png)
+
+
 
 ## 切換輸入源
 https://forums.developer.nvidia.com/t/how-switch-camera-output-gst-nvmultistreamtiler/233062
@@ -96,7 +126,7 @@ tiler_sink_pad.add_probe(Gst.PadProbeType.BUFFER, tiler_sink_pad_buffer_probe, 0
 tiler.set_property("show-source", <stream_id>) `
 ```
 
-deepstream_source_yaml.cpp有範例
+/opt/nvidia/deepstream/deepstream/sources/apps/apps-common/src/deepstream-yaml/deepstream_source_yaml.cpp有範例
 
 參考:  
 https://www.gclue.jp/2022/06/gstreamer.html  
