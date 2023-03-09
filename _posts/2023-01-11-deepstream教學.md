@@ -128,5 +128,20 @@ tiler.set_property("show-source", <stream_id>) `
 
 /opt/nvidia/deepstream/deepstream/sources/apps/apps-common/src/deepstream-yaml/deepstream_source_yaml.cpp有範例
 
+
+## 斷線重連
+rust的插件(可能可以編譯成c函式庫)
+https://coaxion.net/blog/2020/07/automatic-retry-on-error-and-fallback-stream-handling-for-gstreamer-sources/  
+
+https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/tree/master/utils/fallbackswitch
+
+編譯rust插件  
+https://www.collabora.com/news-and-blog/blog/2020/06/23/cross-building-rust-gstreamer-plugins-for-the-raspberry-pi/  
+
+RUST說明書
+https://rust-lang.tw/book-tw/ch01-03-hello-cargo.html  
+
+
+
 參考:  
 https://www.gclue.jp/2022/06/gstreamer.html  
