@@ -143,5 +143,28 @@ https://rust-lang.tw/book-tw/ch01-03-hello-cargo.html
 
 
 
+## 截出有物件的圖
+https://forums.developer.nvidia.com/t/saving-frame-with-detected-object-jetson-nano-ds4-0-2/121797/3
+
+## 關閉Ubuntu圖形介面
+https://linuxconfig.org/how-to-disable-enable-gui-on-boot-in-ubuntu-20-04-focal-fossa-linux-desktop
+
+
+## 關閉使用gpu的資源
+https://heary.cn/posts/Linux%E7%8E%AF%E5%A2%83%E4%B8%8B%E9%87%8D%E8%A3%85NVIDIA%E9%A9%B1%E5%8A%A8%E6%8A%A5%E9%94%99kernel-module-nvidia-modeset-in-use%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/
+
+發現nvidia smi persistence mode會占用GPU資源，必須釋放掉才能安裝新的driver
+可以用nvidia-smi的指令關掉https://docs.nvidia.com/deploy/driver-persistence/index.html#usage
+```
+nvidia-smi -pm 0
+```
+
+## 移除舊的driver
+```
+apt-get remove --purge nvidia-driver-520
+apt-get autoremove
+```
+
+
 參考:  
 https://www.gclue.jp/2022/06/gstreamer.html  
