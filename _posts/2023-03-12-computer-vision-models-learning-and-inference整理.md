@@ -10,3 +10,9 @@ date: 2023-03-12 21:47 +0800
 1. maximum likelihood
 2. maximum a posteriori
 3. Bayesian approach
+
+
+
+## log likehood
+log likehood好處
+https://bookdown.org/dereksonderegger/571/13-maximum-likelihood-estimation.html#likelihood-function
