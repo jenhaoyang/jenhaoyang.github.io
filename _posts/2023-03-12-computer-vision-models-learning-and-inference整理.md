@@ -13,3 +13,8 @@ date: 2023-03-12 21:47 +0800
 
 ## maximum likelihood
 maximum likelihood目標是要找到一組參數$$\hat{\theta}$$
+
+
+## log likehood
+log likehood好處
+https://bookdown.org/dereksonderegger/571/13-maximum-likelihood-estimation.html#likelihood-function
