@@ -174,5 +174,7 @@ https://coaxion.net/blog/2014/01/gstreamer-dynamic-pipelines/
 
 https://erit-lvx.medium.com/probes-handling-in-gstreamer-pipelines-3f96ea367f31
 
+## 注意element的名稱不要一樣以免出錯
+
 參考:  
 https://www.gclue.jp/2022/06/gstreamer.html  

@@ -10,3 +10,6 @@ date: 2023-03-12 21:47 +0800
 1. maximum likelihood
 2. maximum a posteriori
 3. Bayesian approach
+
+## maximum likelihood
+maximum likelihood目標是要找到一組參數$$\hat{\theta}$$
