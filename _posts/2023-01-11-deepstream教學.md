@@ -314,6 +314,7 @@ osd_sink_pad_buffer_probe (GstPad * pad, GstPadProbeInfo * info,
 }
 
 ```
+## 注意element的名稱不要一樣以免出錯
 
 參考:  
 https://www.gclue.jp/2022/06/gstreamer.html  
