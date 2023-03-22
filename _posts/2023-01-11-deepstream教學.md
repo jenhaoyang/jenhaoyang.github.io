@@ -174,5 +174,146 @@ https://coaxion.net/blog/2014/01/gstreamer-dynamic-pipelines/
 
 https://erit-lvx.medium.com/probes-handling-in-gstreamer-pipelines-3f96ea367f31
 
+
+## deepstream-test4 用prob取得metadata的範例
+NvDsBatchMeta資料圖:
+https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_metadata.html
+```c
+static GstPadProbeReturn
+osd_sink_pad_buffer_probe (GstPad * pad, GstPadProbeInfo * info,
+    gpointer u_data)
+{
+  GstBuffer *buf = (GstBuffer *) info->data;
+  NvDsFrameMeta *frame_meta = NULL;
+  NvOSD_TextParams *txt_params = NULL;
+  guint vehicle_count = 0;
+  guint person_count = 0;
+  gboolean is_first_object = TRUE;
+  NvDsMetaList *l_frame, *l_obj;
+
+  NvDsBatchMeta *batch_meta = gst_buffer_get_nvds_batch_meta (buf);
+  if (!batch_meta) {
+    // No batch meta attached.
+    return GST_PAD_PROBE_OK;
+  }
+
+  //batch_meta : NvDsBatchMeta https://docs.nvidia.com/metropolis/deepstream/sdk-api/struct__NvDsBatchMeta.html
+  //
+  //l_frame : NvDsFrameMetaList, 本質是GList http://irtfweb.ifa.hawaii.edu/SoftwareDocs/gtk20/glib/glib-doubly-linked-lists.html#GList
+  //   struct GList
+  // {
+  //   gpointer data;
+  //   GList *next;
+  //   GList *prev;
+  // };
+
+  for (l_frame = batch_meta->frame_meta_list; l_frame; l_frame = l_frame->next) {
+    frame_meta = (NvDsFrameMeta *) l_frame->data;
+
+    if (frame_meta == NULL) {
+      // Ignore Null frame meta.
+      continue;
+    }
+
+    is_first_object = TRUE;
+
+    // frame_meta : NvDsFrameMeta https://docs.nvidia.com/metropolis/deepstream/sdk-api/struct__NvDsFrameMeta.html
+    // l_obj : NvDsObjectMetaList * 本質是GList 
+    // obj_meta : NvDsObjectMeta
+    for (l_obj = frame_meta->obj_meta_list; l_obj; l_obj = l_obj->next) {
+      NvDsObjectMeta *obj_meta = (NvDsObjectMeta *) l_obj->data;
+
+      if (obj_meta == NULL) {
+        // Ignore Null object.
+        continue;
+      }
+
+      // obj_meta : NvDsObjectMeta
+      // text_params : NvOSD_TextParams 描述物件的文字
+      // line233 - 241應該是清掉原本的文字然後放入字定義的class名稱
+      txt_params = &(obj_meta->text_params);
+      if (txt_params->display_text)
+        g_free (txt_params->display_text);
+
+      txt_params->display_text = g_malloc0 (MAX_DISPLAY_LEN);
+
+      g_snprintf (txt_params->display_text, MAX_DISPLAY_LEN, "%s ",
+          pgie_classes_str[obj_meta->class_id]);
+
+      if (obj_meta->class_id == PGIE_CLASS_ID_VEHICLE)
+        vehicle_count++;
+      if (obj_meta->class_id == PGIE_CLASS_ID_PERSON)
+        person_count++;
+
+      /* Now set the offsets where the string should appear */
+      txt_params->x_offset = obj_meta->rect_params.left;
+      txt_params->y_offset = obj_meta->rect_params.top - 25;
+
+      /* Font , font-color and font-size */
+      txt_params->font_params.font_name = "Serif";
+      txt_params->font_params.font_size = 10;
+      txt_params->font_params.font_color.red = 1.0;
+      txt_params->font_params.font_color.green = 1.0;
+      txt_params->font_params.font_color.blue = 1.0;
+      txt_params->font_params.font_color.alpha = 1.0;
+
+      /* Text background color */
+      txt_params->set_bg_clr = 1;
+      txt_params->text_bg_clr.red = 0.0;
+      txt_params->text_bg_clr.green = 0.0;
+      txt_params->text_bg_clr.blue = 0.0;
+      txt_params->text_bg_clr.alpha = 1.0;
+
+      /*
+       * Ideally NVDS_EVENT_MSG_META should be attached to buffer by the
+       * component implementing detection / recognition logic.
+       * Here it demonstrates how to use / attach that meta data.
+       */
+      if (is_first_object && !(frame_number % frame_interval)) {
+        /* Frequency of messages to be send will be based on use case.
+         * Here message is being sent for first object every frame_interval(default=30).
+         */
+
+        NvDsEventMsgMeta *msg_meta =
+            (NvDsEventMsgMeta *) g_malloc0 (sizeof (NvDsEventMsgMeta));
+        msg_meta->bbox.top = obj_meta->rect_params.top;
+        msg_meta->bbox.left = obj_meta->rect_params.left;
+        msg_meta->bbox.width = obj_meta->rect_params.width;
+        msg_meta->bbox.height = obj_meta->rect_params.height;
+        msg_meta->frameId = frame_number;
+        msg_meta->trackingId = obj_meta->object_id;
+        msg_meta->confidence = obj_meta->confidence;
+        generate_event_msg_meta (msg_meta, obj_meta->class_id, obj_meta);
+
+        // 要增加自訂的meta data必須要先用            nvds_acquire_user_meta_from_pool (batch_meta);取得
+        // https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_plugin_metadata.html#user-custom-metadata-addition-inside-nvdsbatchmeta
+
+        NvDsUserMeta *user_event_meta =
+            nvds_acquire_user_meta_from_pool (batch_meta);
+        if (user_event_meta) {
+          user_event_meta->user_meta_data = (void *) msg_meta;
+          user_event_meta->base_meta.meta_type = NVDS_EVENT_MSG_META;
+          user_event_meta->base_meta.copy_func =
+              (NvDsMetaCopyFunc) meta_copy_func;
+          user_event_meta->base_meta.release_func =
+              (NvDsMetaReleaseFunc) meta_free_func;
+          nvds_add_user_meta_to_frame (frame_meta, user_event_meta);
+        } else {
+          g_print ("Error in attaching event meta to buffer\n");
+        }
+        is_first_object = FALSE;
+      }
+    }
+  }
+  g_print ("Frame Number = %d "
+      "Vehicle Count = %d Person Count = %d\n",
+      frame_number, vehicle_count, person_count);
+  frame_number++;
+
+  return GST_PAD_PROBE_OK;
+}
+
+```
+
 參考:  
 https://www.gclue.jp/2022/06/gstreamer.html  
