@@ -316,5 +316,361 @@ osd_sink_pad_buffer_probe (GstPad * pad, GstPadProbeInfo * info,
 ```
 ## 注意element的名稱不要一樣以免出錯
 
+
+## NvDsObjEncUsrArgs參數的功用
+* bool 	isFrame : 告訴encoder要編碼整張照片還是編碼每一個偵測物件的截圖。
+  * 1: Encodes the entire frame. 
+  * 0: Encodes object of specified resolution.
+* bool 	saveImg : 會直接儲存一張照片到當前資料夾
+* bool 	attachUsrMeta : 
+  * 決定是否加上NVDS_CROP_IMAGE_META metadata
+
+
+
+# Deepstream截圖，以deepstream_image_meta_test為例
+## 第一步，設定要儲存照片的條件並且encode成jpg檔
+```c
+/* pgie_src_pad_buffer_probe will extract metadata received on pgie src pad
+ * and update params for drawing rectangle, object information etc. We also
+ * iterate through the object list and encode the cropped objects as jpeg
+ * images and attach it as user meta to the respective objects.*/
+static GstPadProbeReturn
+pgie_src_pad_buffer_probe (GstPad * pad, GstPadProbeInfo * info, gpointer ctx)
+{
+  GstBuffer *buf = (GstBuffer *) info->data;
+  GstMapInfo inmap = GST_MAP_INFO_INIT;
+  if (!gst_buffer_map (buf, &inmap, GST_MAP_READ)) {
+    GST_ERROR ("input buffer mapinfo failed");
+    return GST_PAD_PROBE_DROP;
+  }
+  NvBufSurface *ip_surf = (NvBufSurface *) inmap.data;
+  gst_buffer_unmap (buf, &inmap);
+
+  NvDsObjectMeta *obj_meta = NULL;
+  guint vehicle_count = 0;
+  guint person_count = 0;
+  NvDsMetaList *l_frame = NULL;
+  NvDsMetaList *l_obj = NULL;
+  NvDsBatchMeta *batch_meta = gst_buffer_get_nvds_batch_meta (buf);
+  for (l_frame = batch_meta->frame_meta_list; l_frame != NULL;
+      l_frame = l_frame->next) {
+    NvDsFrameMeta *frame_meta = (NvDsFrameMeta *) (l_frame->data);
+    /* For demonstration purposes, we will encode the first 10 frames. */
+    if(frame_count <= 10) {
+      NvDsObjEncUsrArgs frameData = { 0 };
+      /* Preset */
+      frameData.isFrame = 1;
+      /* To be set by user */
+      frameData.saveImg = save_img;
+      frameData.attachUsrMeta = attach_user_meta;
+      /* Set if Image scaling Required */
+      frameData.scaleImg = FALSE;
+      frameData.scaledWidth = 0;
+      frameData.scaledHeight = 0;
+      /* Quality */
+      frameData.quality = 80;
+      /* Main Function Call */
+      nvds_obj_enc_process (ctx, &frameData, ip_surf, NULL, frame_meta);
+    }
+    guint num_rects = 0;
+    for (l_obj = frame_meta->obj_meta_list; l_obj != NULL; l_obj = l_obj->next) {
+      obj_meta = (NvDsObjectMeta *) (l_obj->data);
+      if (obj_meta->class_id == PGIE_CLASS_ID_VEHICLE) {
+        vehicle_count++;
+        num_rects++;
+      }
+      if (obj_meta->class_id == PGIE_CLASS_ID_PERSON) {
+        person_count++;
+        num_rects++;
+      }
+      /* Conditions that user needs to set to encode the detected objects of
+       * interest. Here, by default all the detected objects are encoded.
+       * For demonstration, we will encode the first object in the frame. */
+      if ((obj_meta->class_id == PGIE_CLASS_ID_PERSON
+              || obj_meta->class_id == PGIE_CLASS_ID_VEHICLE)
+          && num_rects == 1) {
+        NvDsObjEncUsrArgs objData = { 0 };
+        /* To be set by user */
+        objData.saveImg = save_img;
+        objData.attachUsrMeta = attach_user_meta;
+        /* Set if Image scaling Required */
+        objData.scaleImg = FALSE;
+        objData.scaledWidth = 0;
+        objData.scaledHeight = 0;
+        /* Preset */
+        objData.objNum = num_rects;
+        /* Quality */
+        objData.quality = 80;
+        /*Main Function Call */
+        nvds_obj_enc_process (ctx, &objData, ip_surf, obj_meta, frame_meta);
+      }
+    }
+  }
+  nvds_obj_enc_finish (ctx);
+  frame_count++;
+  return GST_PAD_PROBE_OK;
+}
+```
+
+## 第二步，檢查usrMetaData是否的meta_type是不是NVDS_CROP_IMAGE_META
+如果發現是NVDS_CROP_IMAGE_META，就儲存照片
+```c
+/* osd_sink_pad_buffer_probe will extract metadata received on OSD sink pad
+ * and update params for drawing rectangle, object information. We also iterate
+ * through the user meta of type "NVDS_CROP_IMAGE_META" to find image crop meta
+ * and demonstrate how to access it.*/
+static GstPadProbeReturn
+osd_sink_pad_buffer_probe (GstPad * pad, GstPadProbeInfo * info,
+    gpointer u_data)
+{
+  GstBuffer *buf = (GstBuffer *) info->data;
+
+  guint num_rects = 0;
+  NvDsObjectMeta *obj_meta = NULL;
+  guint vehicle_count = 0;
+  guint person_count = 0;
+  NvDsMetaList *l_frame = NULL;
+  NvDsMetaList *l_obj = NULL;
+  NvDsDisplayMeta *display_meta = NULL;
+  NvDsBatchMeta *batch_meta = gst_buffer_get_nvds_batch_meta (buf);
+  g_print ("Running osd_sink_pad_buffer_probe...\n");
+  for (l_frame = batch_meta->frame_meta_list; l_frame != NULL;
+      l_frame = l_frame->next) {
+    NvDsFrameMeta *frame_meta = (NvDsFrameMeta *) (l_frame->data);
+    int offset = 0;
+    /* To verify  encoded metadata of cropped frames, we iterate through the
+    * user metadata of each frame and if a metadata of the type
+    * 'NVDS_CROP_IMAGE_META' is found then we write that to a file as
+    * implemented below.
+    */
+    char fileFrameNameString[FILE_NAME_SIZE];
+    const char *osd_string = "OSD";
+
+    /* For Demonstration Purposes we are writing metadata to jpeg images of
+      * the first 10 frames only.
+      * The files generated have an 'OSD' prefix. */
+    if (frame_number < 11) {
+      NvDsUserMetaList *usrMetaList = frame_meta->frame_user_meta_list;
+      FILE *file;
+      int stream_num = 0;
+      while (usrMetaList != NULL) {
+        NvDsUserMeta *usrMetaData = (NvDsUserMeta *) usrMetaList->data;
+        if (usrMetaData->base_meta.meta_type == NVDS_CROP_IMAGE_META) {
+          snprintf (fileFrameNameString, FILE_NAME_SIZE, "%s_frame_%d_%d.jpg",
+              osd_string, frame_number, stream_num++);
+          NvDsObjEncOutParams *enc_jpeg_image =
+              (NvDsObjEncOutParams *) usrMetaData->user_meta_data;
+          /* Write to File */
+          file = fopen (fileFrameNameString, "wb");
+          fwrite (enc_jpeg_image->outBuffer, sizeof (uint8_t),
+              enc_jpeg_image->outLen, file);
+          fclose (file);
+        }
+        usrMetaList = usrMetaList->next;
+      }
+    }
+    for (l_obj = frame_meta->obj_meta_list; l_obj != NULL; l_obj = l_obj->next) {
+      obj_meta = (NvDsObjectMeta *) (l_obj->data);
+      if (obj_meta->class_id == PGIE_CLASS_ID_VEHICLE) {
+        vehicle_count++;
+        num_rects++;
+      }
+      if (obj_meta->class_id == PGIE_CLASS_ID_PERSON) {
+        person_count++;
+        num_rects++;
+      }
+      /* To verify  encoded metadata of cropped objects, we iterate through the
+       * user metadata of each object and if a metadata of the type
+       * 'NVDS_CROP_IMAGE_META' is found then we write that to a file as
+       * implemented below.
+       */
+      char fileObjNameString[FILE_NAME_SIZE];
+
+      /* For Demonstration Purposes we are writing metadata to jpeg images of
+       * vehicles or persons for the first 100 frames only.
+       * The files generated have a 'OSD' prefix. */
+      if (frame_number < 100 && (obj_meta->class_id == PGIE_CLASS_ID_PERSON
+              || obj_meta->class_id == PGIE_CLASS_ID_VEHICLE)) {
+        NvDsUserMetaList *usrMetaList = obj_meta->obj_user_meta_list;
+        FILE *file;
+        while (usrMetaList != NULL) {
+          NvDsUserMeta *usrMetaData = (NvDsUserMeta *) usrMetaList->data;
+          if (usrMetaData->base_meta.meta_type == NVDS_CROP_IMAGE_META) {
+            NvDsObjEncOutParams *enc_jpeg_image =
+                (NvDsObjEncOutParams *) usrMetaData->user_meta_data;
+
+            snprintf (fileObjNameString, FILE_NAME_SIZE, "%s_%d_%d_%d_%s.jpg",
+                osd_string, frame_number, frame_meta->batch_id, num_rects,
+                obj_meta->obj_label);
+            /* Write to File */
+            file = fopen (fileObjNameString, "wb");
+            fwrite (enc_jpeg_image->outBuffer, sizeof (uint8_t),
+                enc_jpeg_image->outLen, file);
+            fclose (file);
+            usrMetaList = NULL;
+          } else {
+            usrMetaList = usrMetaList->next;
+          }
+        }
+      }
+    }
+    display_meta = nvds_acquire_display_meta_from_pool (batch_meta);
+    NvOSD_TextParams *txt_params = &display_meta->text_params[0];
+    txt_params->display_text = g_malloc0 (MAX_DISPLAY_LEN);
+    offset =
+        snprintf (txt_params->display_text, MAX_DISPLAY_LEN, "Person = %d ",
+        person_count);
+    offset =
+        snprintf (txt_params->display_text + offset, MAX_DISPLAY_LEN,
+        "Vehicle = %d ", vehicle_count);
+
+    /* Now set the offsets where the string should appear */
+    txt_params->x_offset = 10;
+    txt_params->y_offset = 12;
+
+    /* Font , font-color and font-size */
+    txt_params->font_params.font_name = "Serif";
+    txt_params->font_params.font_size = 10;
+    txt_params->font_params.font_color.red = 1.0;
+    txt_params->font_params.font_color.green = 1.0;
+    txt_params->font_params.font_color.blue = 1.0;
+    txt_params->font_params.font_color.alpha = 1.0;
+
+    /* Text background color */
+    txt_params->set_bg_clr = 1;
+    txt_params->text_bg_clr.red = 0.0;
+    txt_params->text_bg_clr.green = 0.0;
+    txt_params->text_bg_clr.blue = 0.0;
+    txt_params->text_bg_clr.alpha = 1.0;
+
+    nvds_add_display_meta_to_frame (frame_meta, display_meta);
+  }
+  g_print ("Frame Number = %d Number of objects = %d "
+      "Vehicle Count = %d Person Count = %d\n",
+      frame_number, num_rects, vehicle_count, person_count);
+  frame_number++;
+  return GST_PAD_PROBE_OK;
+}
+```
+
+# 加入自己客製的的metadata
+參考deepstream-user-metadata-test範例的nvinfer_src_pad_buffer_probe
+1. 有四個東西需要使用者自行提供
+   1. user_meta_data : pointer to User specific meta data
+   2. meta_type : Metadata type that user sets to identify its metadata
+   3. copy_func : Metadata copy or transform function to be provided when there is buffer transformation
+   4. release_func : Metadata release function to be provided when it is no longer required.
+
+
+2. 這個範例添加一個亂數到metadata上面，以下是要達成這個目標要準備的函式
+   1. user_meta_data
+```c
+void *set_metadata_ptr()
+{
+  int i = 0;
+  gchar *user_metadata = (gchar*)g_malloc0(USER_ARRAY_SIZE);
+
+  g_print("\n**************** Setting user metadata array of 16 on nvinfer src pad\n");
+  for(i = 0; i < USER_ARRAY_SIZE; i++) {
+    user_metadata[i] = rand() % 255;
+    g_print("user_meta_data [%d] = %d\n", i, user_metadata[i]);
+  }
+  return (void *)user_metadata;
+}   
+```
+
+   2. meta_type
+記得要在在probe function裡面定義變數
+```c
+/** set the user metadata type */
+#define NVDS_USER_FRAME_META_EXAMPLE (nvds_get_user_meta_type("NVIDIA.NVINFER.USER_META"))
+NvDsMetaType user_meta_type = NVDS_USER_FRAME_META_EXAMPLE;
+```
+
+   3. copy_func
+
+```c
+/* copy function set by user. "data" holds a pointer to NvDsUserMeta*/
+static gpointer copy_user_meta(gpointer data, gpointer user_data)
+{
+  NvDsUserMeta *user_meta = (NvDsUserMeta *)data;
+  gchar *src_user_metadata = (gchar*)user_meta->user_meta_data;
+  gchar *dst_user_metadata = (gchar*)g_malloc0(USER_ARRAY_SIZE);
+  memcpy(dst_user_metadata, src_user_metadata, USER_ARRAY_SIZE);
+  return (gpointer)dst_user_metadata;
+}
+```
+
+   4. release_func
+
+```c
+/* release function set by user. "data" holds a pointer to NvDsUserMeta*/
+static void release_user_meta(gpointer data, gpointer user_data)
+{
+  NvDsUserMeta *user_meta = (NvDsUserMeta *) data;
+  if(user_meta->user_meta_data) {
+    g_free(user_meta->user_meta_data);
+    user_meta->user_meta_data = NULL;
+  }
+}
+
+```
+
+3. 新增一個probe把資料放入metadata
+```c
+/* Set nvds user metadata at frame level. User need to set 4 parameters after
+ * acquring user meta from pool using nvds_acquire_user_meta_from_pool().
+ *
+ * Below parameters are required to be set.
+ * 1. user_meta_data : pointer to User specific meta data
+ * 2. meta_type: Metadata type that user sets to identify its metadata
+ * 3. copy_func: Metadata copy or transform function to be provided when there
+ *               is buffer transformation
+ * 4. release_func: Metadata release function to be provided when it is no
+ *                  longer required.
+ *
+ * osd_sink_pad_buffer_probe  will extract metadata received on OSD sink pad
+ * and update params for drawing rectangle, object information etc. */
+
+static GstPadProbeReturn
+nvinfer_src_pad_buffer_probe (GstPad * pad, GstPadProbeInfo * info,
+    gpointer u_data)
+{
+  GstBuffer *buf = (GstBuffer *) info->data;
+  NvDsMetaList * l_frame = NULL;
+  NvDsUserMeta *user_meta = NULL;
+  NvDsMetaType user_meta_type = NVDS_USER_FRAME_META_EXAMPLE;
+
+  NvDsBatchMeta *batch_meta = gst_buffer_get_nvds_batch_meta (buf);
+
+    for (l_frame = batch_meta->frame_meta_list; l_frame != NULL;
+      l_frame = l_frame->next) {
+        NvDsFrameMeta *frame_meta = (NvDsFrameMeta *) (l_frame->data);
+
+        /* Acquire NvDsUserMeta user meta from pool */
+        user_meta = nvds_acquire_user_meta_from_pool(batch_meta);
+
+        /* Set NvDsUserMeta below */
+        user_meta->user_meta_data = (void *)set_metadata_ptr();
+        user_meta->base_meta.meta_type = user_meta_type;
+        user_meta->base_meta.copy_func = (NvDsMetaCopyFunc)copy_user_meta;
+        user_meta->base_meta.release_func = (NvDsMetaReleaseFunc)release_user_meta;
+
+        /* We want to add NvDsUserMeta to frame level */
+        nvds_add_user_meta_to_frame(frame_meta, user_meta);
+    }
+    return GST_PAD_PROBE_OK;
+}
+```
+
+
+# 將客製化訊息傳換json以之後發送訊息
+以deepstream-test4為例，在這裡message放入了客製化訊息NvDsVehicleObject和NvDsPersonObject，如果想要客製化自己的訊息就必須要自己定義。
+
+1. 自製自己的客製化訊息
+首先可以先參考
+`/opt/nvidia/deepstream/deepstream-6.2/sources/libs/nvmsgconv/deepstream_schema/eventmsg_payload.cpp`參考客製化訊息如何定義轉換成json
+
+
 參考:  
 https://www.gclue.jp/2022/06/gstreamer.html  
