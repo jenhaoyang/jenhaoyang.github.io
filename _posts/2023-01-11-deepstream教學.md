@@ -327,7 +327,11 @@ osd_sink_pad_buffer_probe (GstPad * pad, GstPadProbeInfo * info,
 
 
 
+
 # Deepstream截圖，以deepstream_image_meta_test為例
+## 注意:
+[根據文件](https://docs.nvidia.com/metropolis/deepstream/sdk-api/group__ee__object__encoder.html#ga83f212f9db247092c2b51b6f239f7482)`nvds_obj_enc_process`是一個非阻塞的函式，使用者必須呼叫`nvds_obj_enc_finish()`以確保所有的圖片都已經確實被處理完成。
+
 ## 第一步，設定要儲存照片的條件並且encode成jpg檔
 ```c
 /* pgie_src_pad_buffer_probe will extract metadata received on pgie src pad
