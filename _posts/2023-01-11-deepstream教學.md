@@ -669,11 +669,31 @@ nvinfer_src_pad_buffer_probe (GstPad * pad, GstPadProbeInfo * info,
 
 
 # 將客製化訊息傳換json以之後發送訊息
+nvmsgconv的功能:  
+利用`NVDS_EVENT_MSG_META`metadata來產生JSON格式的"DeepStream Schema" payload。
+所產生的payload會以`NVDS_META_PAYLOAD`的型態儲存到buffer。
+除了`NvDsEventMsgMeta`定義的常用訊號結構，使用者還可以自訂客製化物件並加到`NVDS_EVENT_MSG_META`metadata。要加入自定義訊息`NvDsEventMsgMeta`提供"extMsg"和"extMsgSize"欄位。使用者可以把自定義的structure指針assign給"extMsg"，並且在"extMsgSize"指令資料大小。
+
+
 以deepstream-test4為例，在這裡message放入了客製化訊息NvDsVehicleObject和NvDsPersonObject，如果想要客製化自己的訊息就必須要自己定義。
 
-1. 自製自己的客製化訊息
-首先可以先參考
+自製自己的客製化訊息
+可以參考
 `/opt/nvidia/deepstream/deepstream-6.2/sources/libs/nvmsgconv/deepstream_schema/eventmsg_payload.cpp`參考客製化訊息如何定義轉換成json
+
+nvmsgconv的原始碼
+/opt/nvidia/deepstream/deepstream-6.2/sources/gst-plugins/gst-nvmsgconv
+/opt/nvidia/deepstream/deepstream-6.2/sources/libs/nvmsgconv
+
+1. 以deepstream-test4為例，首先將模型的偵測結果`NvDsObjectMeta`轉換成`NvDsEventMsgMeta`，在這步將訊息struct加到`extMsg`上
+2. 將製作好的`NvDsEventMsgMeta`加進buffer裡面，metadata為`NvDsUserMeta`，在這一步也要指定meta_copy_func、meta_free_func
+
+
+
+
+# 混用c 和 c++ 程式
+https://hackmd.io/@rhythm/HyOxzDkmD  
+https://embeddedartistry.com/blog/2017/05/01/mixing-c-and-c-extern-c/  
 
 
 參考:  
