@@ -685,11 +685,119 @@ nvmsgconv的原始碼
 /opt/nvidia/deepstream/deepstream-6.2/sources/gst-plugins/gst-nvmsgconv
 /opt/nvidia/deepstream/deepstream-6.2/sources/libs/nvmsgconv
 
+* nvmsgconv開啟除錯功能
+debug-payload-dir : Absolute path of the directory to dump payloads for debugging
+
 1. 以deepstream-test4為例，首先將模型的偵測結果`NvDsObjectMeta`轉換成`NvDsEventMsgMeta`，在這步將訊息struct加到`extMsg`上
 2. 將製作好的`NvDsEventMsgMeta`加進buffer裡面，metadata為`NvDsUserMeta`，在這一步也要指定meta_copy_func、meta_free_func
 
 
+# mvmsgbroker使用方法
+以下將以rabbitmq為範例
+1. 安裝rabbitmq client
+說明文件在`/opt/nvidia/deepstream/deepstream/sources/libs/amqp_protocol_adaptor`的readme.md
+```bash
+ git clone -b v0.8.0  --recursive https://github.com/alanxz/rabbitmq-c.git
+ cd rabbitmq-c
+ mkdir build && cd build
+ cmake ..
+ cmake --build .
+ sudo cp librabbitmq/librabbitmq.so.4 /opt/nvidia/deepstream/deepstream/lib/
+ sudo ldconfig
+```
 
+2. 安裝rabbitmq server
+```bash
+#Install rabbitmq on your ubuntu system: https://www.rabbitmq.com/install-debian.html
+#The “Using rabbitmq.com APT Repository” procedure is known to work well
+
+ sudo apt-get install rabbitmq-server
+
+#Ensure rabbitmq service has started by running (should be the case):
+ sudo service rabbitmq-server status
+
+#Otherwise
+ sudo service rabbitmq-server start
+```
+
+3. 設定連線詳細資訊
+  1. 建立`cfg_amqp.txt`連線資訊檔(/opt/nvidia/deepstream/deepstream/sources/libs/amqp_protocol_adaptor 有範例)，並且傳給nvmsgbroker。內容範例如下
+```bash
+[message-broker]
+hostname = localhost
+port = 5672
+username = guest
+password = guest
+exchange = amq.topic
+topic = topicname
+amqp-framesize = 131072
+#share-connection = 1
+```
+  * exchange: 預設的exchange是`amq.topic`，可以更改成其他的
+  * Topic : 設定要發送的topic名稱
+  * share-connection : Uncommenting this field signifies that the connection created can be shared with other components within the same process.
+  
+  2. 直接將連線資訊傳給`msgapi_connect_ptr`
+```c
+ conn_handle = msgapi_connect_ptr((char *)"url;port;username;password",(nvds_msgapi_connect_cb_t) sample_msgapi_connect_cb, (char *)CFG_FILE);
+```
+
+4. 測試用程式
+在`/opt/nvidia/deepstream/deepstream/sources/libs/amqp_protocol_adaptor`有測試用的程式`test_amqp_proto_async.c`和`test_amqp_proto_sync.c`，可以用來測試連線是否成功，編譯方式如下
+```bash
+ make -f Makefile.test
+ ./test_amqp_proto_async
+ ./test_amqp_proto_sync
+```
+注意:
+* 你可能須要root權限才能在這個資料夾編譯程式
+* libnvds_amqp_proto.so 位於 /opt/nvidia/deepstream/deepstream-<version>/lib/
+
+
+5. 測試和驗證發送出去的訊息
+    * 建立exchange , queue，並且將他們綁定在一起
+```bash
+# Rabbitmq management:
+It comes with a command line tool which you can use to create/configure all of your queues/exchanges/etc
+https://www.rabbitmq.com/management.html
+
+# Install rabbitmq management plugin:
+sudo rabbitmq-plugins enable rabbitmq_management
+
+# Use the default exchange amq.topic
+OR create an exchange as below, the same name as the one you specify within the cfg_amqp.txt
+#sudo rabbitmqadmin -u guest -p guest -V / declare exchange name=myexchange type=topic
+
+# Create a Queue
+sudo rabbitmqadmin -u guest -p guest -V / declare queue name=myqueue durable=false auto_delete=true
+
+#Bind Queue to exchange with routhing_key specification
+rabbitmqadmin -u guest -p guest -V / declare binding source=amq.topic destination=myqueue routing_key=topicname
+
+#To check if the queues were actually created, execute:
+$ sudo rabbitmqctl list_queues
+Listing queues
+myqueue      0
+```
+
+    * 接收訊息
+```bash
+#Install the amqp-tools
+sudo apt-get install amqp-tools
+
+cat <<EOF > test_amqp_recv.sh
+while read -r line; do
+    echo "\$line"
+done
+EOF
+
+chmod +x test_amqp_recv.sh
+```
+
+    * 執行consumer
+```bash
+amqp-consume  -q "myqueue" -r "topicname" -e "amq.topic" ./test_amqp_recv.sh
+```
 
 # 混用c 和 c++ 程式
 https://hackmd.io/@rhythm/HyOxzDkmD  
