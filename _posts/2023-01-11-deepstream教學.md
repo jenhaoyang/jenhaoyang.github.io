@@ -804,5 +804,11 @@ https://hackmd.io/@rhythm/HyOxzDkmD
 https://embeddedartistry.com/blog/2017/05/01/mixing-c-and-c-extern-c/  
 
 
+# async property
+某些狀況下async property 設為true會讓pipeline卡住，還需要進一步了解原因
+
+# nvinfer
+
+
 參考:  
 https://www.gclue.jp/2022/06/gstreamer.html  
