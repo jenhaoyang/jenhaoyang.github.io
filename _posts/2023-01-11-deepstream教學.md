@@ -745,7 +745,7 @@ amqp-framesize = 131072
  conn_handle = msgapi_connect_ptr((char *)"url;port;username;password",(nvds_msgapi_connect_cb_t) sample_msgapi_connect_cb, (char *)CFG_FILE);
 ```
 
-1. 測試用程式
+4. 測試用程式
 在`/opt/nvidia/deepstream/deepstream/sources/libs/amqp_protocol_adaptor`有測試用的程式`test_amqp_proto_async.c`和`test_amqp_proto_sync.c`，可以用來測試連線是否成功，編譯方式如下
 ```bash
  make -f Makefile.test
@@ -758,7 +758,8 @@ amqp-framesize = 131072
 
 
 5. 測試和驗證發送出去的訊息
-    * 建立exchange , queue，並且將他們綁定在一起
+    * 建立exchange , queue，並且將他們綁定在一起  
+
 ```bash
 # Rabbitmq management:
 It comes with a command line tool which you can use to create/configure all of your queues/exchanges/etc
