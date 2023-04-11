@@ -707,6 +707,7 @@ debug-payload-dir : Absolute path of the directory to dump payloads for debuggin
 ```
 
 2. 安裝rabbitmq server
+
 ```bash
 #Install rabbitmq on your ubuntu system: https://www.rabbitmq.com/install-debian.html
 #The “Using rabbitmq.com APT Repository” procedure is known to work well
@@ -722,6 +723,7 @@ debug-payload-dir : Absolute path of the directory to dump payloads for debuggin
 
 3. 設定連線詳細資訊
   1. 建立`cfg_amqp.txt`連線資訊檔(/opt/nvidia/deepstream/deepstream/sources/libs/amqp_protocol_adaptor 有範例)，並且傳給nvmsgbroker。內容範例如下
+
 ```bash
 [message-broker]
 hostname = localhost
@@ -737,12 +739,13 @@ amqp-framesize = 131072
   * Topic : 設定要發送的topic名稱
   * share-connection : Uncommenting this field signifies that the connection created can be shared with other components within the same process.
   
-  2. 直接將連線資訊傳給`msgapi_connect_ptr`
+  1. 直接將連線資訊傳給`msgapi_connect_ptr`
+
 ```c
  conn_handle = msgapi_connect_ptr((char *)"url;port;username;password",(nvds_msgapi_connect_cb_t) sample_msgapi_connect_cb, (char *)CFG_FILE);
 ```
 
-4. 測試用程式
+1. 測試用程式
 在`/opt/nvidia/deepstream/deepstream/sources/libs/amqp_protocol_adaptor`有測試用的程式`test_amqp_proto_async.c`和`test_amqp_proto_sync.c`，可以用來測試連線是否成功，編譯方式如下
 ```bash
  make -f Makefile.test
