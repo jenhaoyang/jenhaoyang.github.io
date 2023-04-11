@@ -706,7 +706,7 @@ debug-payload-dir : Absolute path of the directory to dump payloads for debuggin
  sudo ldconfig
 ```
 
-2. 安裝rabbitmq server
+2. 安裝rabbitmq server  
 
 ```bash
 #Install rabbitmq on your ubuntu system: https://www.rabbitmq.com/install-debian.html
