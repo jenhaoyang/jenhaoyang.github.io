@@ -811,7 +811,57 @@ https://embeddedartistry.com/blog/2017/05/01/mixing-c-and-c-extern-c/
 # async property
 某些狀況下async property 設為true會讓pipeline卡住，還需要進一步了解原因
 
-# nvinfer
+# nvmsgconv 詳細payload設定
+在`/opt/nvidia/deepstream/deepstream/sources/libs/nvmsgconv/nvmsgconv.cpp`裡面可以看到`nvds_msg2p_ctx_create`這個函式，是用來產出payload的函式。在nvmsgconv讀取的yaml檔裡面可以設定的group和屬性如下
+
+## sensor
+* enable : 是否啟用這個sensor
+* id : 對應NvDsEventMsgMeta的sensorId
+* type : 
+* description
+* location
+  * lat;lon;alt的格式
+* coordinate
+  * x;y;z的格式
+
+## place
+
+## analytics
+
+## NvDsEventMsgMeta 轉換成json的詳細實作
+在`/opt/nvidia/deepstream/deepstream-6.2/sources/libs/nvmsgconv/deepstream_schema/eventmsg_payload.cpp`這個程式裡，分別有sensor, place, analytics的轉換實作
+
+# 客製化nvmsgconv payload
+如果要客製化payload的話，可以參考`/opt/nvidia/deepstream/deepstream-6.2/sources/libs/nvmsgconv/deepstream_schema/eventmsg_payload.cpp`裡面的實作，並且加入自己需要的客製化payload。首先將整個`/opt/nvidia/deepstream/deepstream-6.2/sources/libs/nvmsgconv`複製到其他資料夾並且準備編譯環境
+
+## 編譯環境
+這裡介紹在Ubuntu20.04的桌上型主機上環境的配置方法，Jetson的環境配置方法可能略有不同。
+* 下載並且編譯protobuf
+在Ubuntu20.04下使用apt-get install protobuf 只會安裝到protobuf 3.6的版本，而許多標頭檔要到3.7以上才有，而且不能超過3.19，以免某些標頭檔又遺失。如果中間有步驟做錯，只要還沒`make install`，建議直接刪除protobuf的資料夾，重新下載並且編譯。
+
+首先直接從github下載protobuf原始碼
+```bash
+git clone https://github.com/protocolbuffers/protobuf.git
+```
+切換版本到v3.19.6，並且更新submodule。
+```bash
+cd protobuf
+git submodule update --init --recursive
+./autogen.sh
+```
+
+編譯並且安裝，`make check`過程中如果有錯誤，編譯出來的程式可能會有部分功能遺失。
+```bash
+./configure
+make
+make check
+sudo make install
+sudo ldconfig # refresh shared library cache.
+```
+
+## 編譯客製化的nvmsgconv
+接下來進到nvmsgconv的資料夾，修改一下最後產出的lib檔案名稱和install的位置，然後用`make`指令編譯
+
 
 
 參考:  
