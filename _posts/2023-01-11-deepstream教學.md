@@ -863,6 +863,11 @@ sudo ldconfig # refresh shared library cache.
 接下來進到nvmsgconv的資料夾，修改一下最後產出的lib檔案名稱和install的位置，然後用`make`指令編譯
 
 
+## 預訓練模型
+/opt/nvidia/deepstream/deepstream-6.2/samples/models/tao_pretrained_mod
+els/trafficcamnet
+
+
 
 參考:  
 https://www.gclue.jp/2022/06/gstreamer.html  
