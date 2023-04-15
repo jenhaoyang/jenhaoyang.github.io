@@ -21,6 +21,10 @@ $$\hat{\theta} = argmax_{\theta}[Pr(x_{i...I}|{\theta})] =argmax_{\theta} [\prod
 
 要計算新資料$$x^*$$的predictive distribution，只需將新資料和我們找到的參數組帶入likelihood function，計算出機率即可。
 
+## Maximum Posteriori
+在Maximum Posteriori（MAP）擬合中，我們引入有關參數$$\theta$$的先驗信息。由於我們可能對可能的參數值有所了解。例如，在時間序列中，時間 t 的參數值可以告訴我們在時間 t + 1 可能的值，於是將此信息將被編碼在先驗分佈中。  
+如同它的名稱，Maximum Posteriori方法將會找到一組參數組$$\hat{\theta}$$，使得資料$$\{x_i\}^I_{i=1}$$出現的機率最大化，並且參數$$\theta$$的機率最大化。
+
 
 ## log likehood
 log likehood好處
