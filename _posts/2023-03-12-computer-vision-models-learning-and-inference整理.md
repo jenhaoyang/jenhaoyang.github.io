@@ -23,7 +23,42 @@ $$\hat{\theta} = argmax_{\theta}[Pr(x_{i...I}|{\theta})] =argmax_{\theta} [\prod
 
 ## Maximum Posteriori
 在Maximum Posteriori（MAP）擬合中，我們引入有關參數$$\theta$$的先驗信息。由於我們可能對可能的參數值有所了解。例如，在時間序列中，時間 t 的參數值可以告訴我們在時間 t + 1 可能的值，於是將此信息將被編碼在先驗分佈中。  
-如同它的名稱，Maximum Posteriori方法將會找到一組參數組$$\hat{\theta}$$，使得資料$$\{x_i\}^I_{i=1}$$出現的機率最大化，並且參數$$\theta$$的機率最大化。
+如同它的名稱，Maximum Posteriori方法將會找到一組參數組$$\hat{\theta}$$，使得Posteriori probability $$Pr(\theta|x_{i...I})$$最大化。
+
+
+$$\hat{\theta} = argmax_{\theta}[Pr(\theta|x_{i...I})]$$
+
+$$ =argmax_{\theta} [\frac{Pr(x_{i...I}|\theta)Pr(\theta)}{Pr(x_{i...I})}]$$
+
+$$ =argmax_{\theta} [\frac{\prod_{i=1}^I Pr(x_i|\theta)Pr(\theta)}{Pr(x_{i...I})}]$$
+
+在這裡第一行可以由貝葉斯定理推得第二行。另外由於我們找的是參數組$$\theta$$的最大值，所以分母的常數$$Pr(x_{i...I})$$是可以忽略的。因此我們可以將式子簡化成
+
+$$\hat{\theta} = argmax_{\theta} [\prod_{i=1}^I Pr(x_i|\theta)Pr(\theta)]$$
+
+
+我們可以發現他其實跟maximum likelihood只差了一項先驗分佈$$Pr(\theta)$$，所以maximum likelihood其實是maximum posteriori的一種特例，也就是maximum likelihood是$$Pr(\theta)$$是一個常數的情況。
+
+## Bayesian Approach
+Bayesian Approach裡，我們不再把參數$$\theta$$當作一個常數，而是承認一件顯而易見的事實，參數組$$\theta$$可能不是唯一的。因此我們嘗試利用貝葉思定裡計算$$Pr(\theta|x_{i...I})$$，也就是在資料$$x_{i...I}$$出現的情況下，參數組$$\theta$$的機率分佈。
+
+$$Pr(\theta|x_{i...I}) = \frac{\prod_{i=1}^I Pr(x_i|\theta)Pr(\theta)}{Pr(x_{i...I})}$$
+
+而要驗證Bayesian Approach會比較複雜一點，因為跟前面不一樣我們沒有一個固定的參數組$$\theta$$可以帶入並且計算出機率，在這裡我們必須可能模型的機率分布。因此我們用以下方法計算。
+
+$$Pr(x^*|x_{i...I}) = \int Pr(x^*|\theta)Pr(\theta|x_{i...I})d\theta$$
+
+這條式子可以用以下方式解讀:  
+$$Pr(x^*|\theta)$$ 是對於給定的參數組  $$\theta$$，$$x^*$$出現的機率，因此這個積分可以視為使用不同的參數$$\theta$$所做出預測的加權總和，其中權重是由參數的posterior probability distribution $$Pr(\theta|x_{i...I})$$ 來決定的（代表我們對不同參數正確性的信心程度）。
+
+## 統一三種方法的 predictive density calculations
+如果我們將maximum likelihood, maximum posteriori 的參數的機率分布視為一種特例，也就是maximum likelihood, maximum posteriori參數分布全部集中在$$\hat{\theta}$$。正式的說法就是參數分布為一個以$$\hat{\theta}$$為中心的delta function。一個delta function $$\delta[z]$$是一個函式他的積分為1，而且在除了中心點z以外的任何地方都是0。我們將剛才predictive density帶入delta function，可以得到以下結果。
+
+
+$$Pr(x^*|x_{i...I}) = \int Pr(x^*|\theta)\delta[\theta - \hat{\theta}]d\theta$$
+
+$$= Pr(x^*|\hat{\theta})$$
+
 
 
 ## log likehood
