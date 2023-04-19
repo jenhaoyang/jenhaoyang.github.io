@@ -60,6 +60,9 @@ $$Pr(x^*|x_{i...I}) = \int Pr(x^*|\theta)\delta[\theta - \hat{\theta}]d\theta$$
 $$= Pr(x^*|\hat{\theta})$$
 
 
+## 範例一
+下面範例我們考慮擬和一個univariate normal model到一組數據$${x_i}^I_{i=1}$$
+
 
 ## log likehood
 log likehood好處
