@@ -61,7 +61,31 @@ $$= Pr(x^*|\hat{\theta})$$
 
 
 ## 範例一
-下面範例我們考慮擬和一個univariate normal model到一組數據$${x_i}^I_{i=1}$$
+下面範例我們考慮擬和一個univariate normal model到一組數據$$\{x_i\}^I_{i=1}$$。
+首先univariate normal model的probability density function為
+
+
+$$Pr(x|\mu,\sigma^2) = Norm_x[\mu,\sigma^2] = \frac{1}{\sqrt{2\pi\sigma^2}}exp[-\frac{(x-\mu)^2}{2\sigma^2}]$$  
+
+
+他有兩個參數平均$$\mu$$和變異數$$\sigma^2$$，首先我們從一個平均為1，變異數為1的normal distribution中取出$$I$$個數據$$x_{1...I}$$，我們的目標是利用前面的三種方法擬和抽取出來的數據集。
+
+### 方法一Maximum likelihood estimation
+對於觀測到的數據$Pr(x_{1...I}|\mu,\sigma^2)$$來說，參數 $$\{\mu,\sigma^2\}$$ 的概率(likelihood) Pr(x_1...I |µ, σ^2) 是通過對每個數據點分別評估概率密度函數，然後取乘積得到的。  
+
+$$Pr(x_{1...I}|\mu,\sigma^2) = \prod_{i=1}^I Pr(x_i|\mu,\sigma^2)$$
+
+$$= \prod_{i=1}^I Norm_{x_i}[\mu,\sigma^2]$$
+
+$$= \frac{1}{\sqrt{2\pi\sigma^2}}exp[-\sum_{i=1}^I \frac{(x_i-\mu)^2}{2\sigma^2}]$$
+
+很明顯的某些$$\{\mu,\sigma^2\}$$參數組會使得likelihood比其他參數組還高。而且我們可以在二維平面視覺化各種參數組的likelihood，我們將以平均$$\mu$$和變異數$$\sigma^2$$為軸，而Maximum likelihood的解答就是在圖形的頂點(圖4.2)。也就是以下式子的解答。
+
+
+$$\hat{\mu}, {\hat\sigma}^2 = argmax_{\mu,\sigma^2} [Pr(x_{1...I}|\mu,\sigma^2)]$$
+
+
+
 
 
 ## log likehood
