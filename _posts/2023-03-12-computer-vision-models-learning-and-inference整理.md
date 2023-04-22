@@ -84,8 +84,32 @@ $$= \frac{1}{\sqrt{2\pi\sigma^2}}exp[-\sum_{i=1}^I \frac{(x_i-\mu)^2}{2\sigma^2}
 
 $$\hat{\mu}, {\hat\sigma}^2 = argmax_{\mu,\sigma^2} [Pr(x_{1...I}|\mu,\sigma^2)]$$
 
+理論上我們可以藉由微分$$Pr(x_{1...I}|\mu,\sigma^2)$$來求解，但是實際上$$Pr(x_{1...I}|\mu,\sigma^2)$$太複雜，因此我們可以將$$Pr(x_{1...I}|\mu,\sigma^2)$$取log，因為log是一個單調遞增函數，經過轉換後的$$Pr(x_{1...I}|\mu,\sigma^2)$$的最大值會在相同的地方。代數上，對數把各個數據點的可能性的乘積轉化為它們的總和，因此可以將每個數據點的貢獻分離出來。於是Maximum likelihood可以用以下方式計算。
 
+$$\hat{\mu}, {\hat\sigma}^2 = argmax_{\mu,\sigma^2} [\sum_{i=1}^I log [Norm_{x_{i}}[\hat{\mu}, {\hat\sigma}^2]]]$$
 
+$$= argmax_{\mu,\sigma^2} [-0.5Ilog[2\pi] - 0.5Ilog(\sigma^2) - 0.5\sum_{i=1}^I\frac{(x_i-\mu)^2}{\sigma^2}]$$
+
+接著對對 log likelihood function L 進行$$\mu$$的偏微分。
+$$\frac{\partial L}{\partial \mu} = \sum_{i=1}^I \frac{(x_i-\mu)}{\sigma^2}$$
+$$= \frac{\sum_{i=1}^I x_i}{\sigma^2} - \frac{I\mu}{\sigma^2} = 0$$
+
+整理後可以得到
+$$\hat{\mu} = \frac{\sum_{i=1}^I x_i}{I}$$
+
+利用類似的方利用類似的方法可以得到變異數$$\sigma^2$$的解答為
+$$\hat{\sigma}^2 = \frac{\sum_{i=1}^I (x_i-\hat{\mu})^2}{I}$$
+
+### Least squares ﬁtting
+另外需要注意的是，很多文獻都是以最小二乘法來討論擬合的。我們使用maximum
+likelihood來擬和正態分佈的平均參數$$\mu$$。將前面式子將$$\sigma^2$$視為常數可以得到
+$$\hat{\mu} = argmax_{\mu,\sigma^2} [-0.5Ilog[2\pi] - 0.5Ilog(\sigma^2) - 0.5\sum_{i=1}^I\frac{(x_i-\mu)^2}{\sigma^2}]$$
+
+$$= argmax_{\mu,\sigma^2} [-\sum_{i=1}^I(x_i-\mu)^2]$$
+
+$$= argmax_{\mu,\sigma^2} [\sum_{i=1}^I(x_i-\mu)^2]$$
+
+也就是說least squares ﬁtting和使用maximum likelihood 估計常態分布的均值參數是等價的。
 
 
 ## log likehood

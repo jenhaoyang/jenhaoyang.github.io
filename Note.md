@@ -5,7 +5,7 @@ https://jekyllrb.com/docs/installation/ubuntu/
 bundle
 
 # run server
-bundle exec jekyll s
+bundle exec jekyll s --port 4001
 
 建立新文章(已設定為使用jekyll-compose)
 bundle exec jekyll help 查看有那些文章類型可以建立
