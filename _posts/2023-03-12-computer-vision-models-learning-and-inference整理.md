@@ -130,4 +130,4 @@ $$Pr(\mu,\sigma^2) = \frac{\sqrt{\gamma}}{\sigma\sqrt{2\pi}}\frac{\beta^{\alpha}
 
 而posterior distribution 與likelihood和prior的乘積成正比（見圖4.5），在與數據一致且先驗可信的區域具有最高的機率密度。
 
-而跟maximum likelihood一樣我們利用把柿子取log來計算最大值。式子如下
+而跟maximum likelihood一樣我們利用把式子取log來計算最大值。式子如下
