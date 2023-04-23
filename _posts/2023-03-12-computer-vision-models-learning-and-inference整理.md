@@ -115,3 +115,19 @@ $$= argmax_{\mu,\sigma^2} [\sum_{i=1}^I(x_i-\mu)^2]$$
 ## log likehood
 log likehood好處
 https://bookdown.org/dereksonderegger/571/13-maximum-likelihood-estimation.html#likelihood-function
+
+
+### 方法二Maximum posteriori estimation
+根據前面的定義，Maximum posteriori estimation的cost function為
+$$\hat{\mu}, {\hat\sigma}^2 = argmax_{\mu,\sigma^2} [\prod_{i=1}^I Pr(x_i|\mu,\sigma^2)Pr(\mu,\sigma^2)]$$
+
+$$= argmax_{\mu,\sigma^2} [\prod_{i=1}^I Norm_{x_i}[\mu,\sigma^2]NormInvGam_{\mu,\sigma^2}[\alpha,\beta,\gamma,\delta]]$$
+
+在這裡我們選擇我們選擇了normal inverse gamma prior，其參數為α，β，γ，δ（圖4.4），因為它與normal distribution共軛。 
+
+在式子中的prior如下
+$$Pr(\mu,\sigma^2) = \frac{\sqrt{\gamma}}{\sigma\sqrt{2\pi}}\frac{\beta^{\alpha}}{\Gamma(\alpha)}(\frac{1}{\sigma^2})^{\alpha + 1}exp[-\frac{2\beta + \gamma(\delta-\mu)^2}{2\sigma^2}]$$
+
+而posterior distribution 與likelihood和prior的乘積成正比（見圖4.5），在與數據一致且先驗可信的區域具有最高的機率密度。
+
+而跟maximum likelihood一樣我們利用把柿子取log來計算最大值。式子如下
