@@ -112,10 +112,15 @@ $$= argmax_{\mu,\sigma^2} [\sum_{i=1}^I(x_i-\mu)^2]$$
 也就是說least squares ﬁtting和使用maximum likelihood 估計常態分布的均值參數是等價的。
 
 
-## log likehood
-log likehood好處
+## log likehood好處
+likelihood function可以看到是許多乘法的結果，因此微分很不好算。
+由於log函數是monotonic的關係，所以likelihood function經過log轉換後的最大值會在相同的地方，而且經過log轉換後乘法變成加法，因此微分變得容易許多。
+
 https://bookdown.org/dereksonderegger/571/13-maximum-likelihood-estimation.html#likelihood-function
 
+https://math.stackexchange.com/questions/3053131/why-are-the-local-extrema-of-a-log-transformed-function-equal-to-local-extrema-o  
+
+https://towardsdatascience.com/log-loss-function-math-explained-5b83cd8d9c83
 
 ### 方法二Maximum posteriori estimation
 根據前面的定義，Maximum posteriori estimation的cost function為
@@ -131,3 +136,20 @@ $$Pr(\mu,\sigma^2) = \frac{\sqrt{\gamma}}{\sigma\sqrt{2\pi}}\frac{\beta^{\alpha}
 而posterior distribution 與likelihood和prior的乘積成正比（見圖4.5），在與數據一致且先驗可信的區域具有最高的機率密度。
 
 而跟maximum likelihood一樣我們利用把式子取log來計算最大值。式子如下
+$$\hat{\mu}, {\hat\sigma}^2 = argmax_{\mu,\sigma^2} [\sum_{i=1}^I log [Norm_{x_{i}}[\mu, {\sigma}^2]] + log [NormInvGam_{\mu,\sigma^2}[\alpha,\beta,\gamma,\delta]]]$$
+
+要找到MAP(maximum a posteriori)我們將式子拆成兩段並且分別對$$\mu$$和$$\sigma^2$$做偏微分。式子如下
+$$\hat{\mu} = \frac{\sum_{i=1}^I x_i + \gamma\delta}{I + \gamma}$$  
+
+$$\hat{\sigma}^2 = \frac{\sum_{i=1}^I (x_i-\hat{\mu})^2 + 2\beta + \gamma(\delta-\hat{\mu})^2}{I + 3 + 2\alpha}$$
+
+而平均數$\hat{\mu}$的解答可以進一步簡化
+$$\hat{\mu} = \frac{I\bar{x} + \gamma\delta}{I + \gamma}$$
+
+這式子是兩項的加權平均值，第一項是資料的平均$\bar{x}$並且以訓練樣本的數量$I$為權重，第二項是先驗分佈的參數$\delta$並且以先驗分佈的參數$\gamma$為權重
+
+>這裡給我們一些MAP(maximum a posteriori)的洞察。
+>1. 當資料數量越多時，MAP的解會越接近資料平均(也就是ML(Maximum likelihood)的解)
+>2. 當資料數量少一些的時候，MAP的解會在ML和prior的中間
+>3. 當完全沒有資料的時候，MAP的解就是proir
+
