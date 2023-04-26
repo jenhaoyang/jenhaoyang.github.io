@@ -6,7 +6,65 @@ categories: [環境設定與部屬]
 tags: [Ubuntu]
 ---
 
-chronyd 或是 systemd-timesyncd 已經足以應付大部分使用場景
+# timedatectl 時間管理工具
+* 顯示目前的設定狀態
+```bash
+# 顯示目前狀態
+timedatectl
+```
+
+```bash
+               Local time: 三 2023-04-26 11:00:22 CST
+           Universal time: 三 2023-04-26 03:00:22 UTC
+                 RTC time: 三 2023-04-26 03:00:22    
+                Time zone: Asia/Taipei (CST, +0800)  
+System clock synchronized: yes                       
+              NTP service: active                    
+          RTC in local TZ: no  
+```
+
+* 啟動網路校時
+輸入指令後，就會打開網路校時功能，使用的是`systemd-timesyncd`，因此等一下要設定`systemd-timesyncd`
+```bash
+# 啟用 NTP 校時
+timedatectl set-ntp yes
+```
+
+* 檢查`systemd-timesyncd`服務狀態
+```bash
+# 檢查 systemd-timesyncd 服務狀態
+systemctl status systemd-timesyncd
+```
+
+```bash
+● systemd-timesyncd.service - Network Time Synchronization
+     Loaded: loaded (/lib/systemd/system/systemd-timesyncd.service; enabled; vendor preset: enabled)
+     Active: active (running) since Wed 2023-04-26 10:58:34 CST; 1min 19s ago
+       Docs: man:systemd-timesyncd.service(8)
+   Main PID: 221565 (systemd-timesyn)
+     Status: "Synchronized to time server 91.189.89.198:123 (ntp.ubuntu.com)."
+      Tasks: 2 (limit: 38317)
+     Memory: 1.2M
+     CGroup: /system.slice/systemd-timesyncd.service
+             └─221565 /lib/systemd/systemd-timesyncd
+```
+* 設定校時伺服器
+要設定校時伺服器可以用root權限編輯以下檔案/etc/systemd/timesyncd.conf
+```bash
+[Time]
+# NTP 伺服器（以空白分隔多個伺服器）
+NTP=tw.pool.ntp.org jp.pool.ntp.org
+
+# 備用 NTP 伺服器（以空白分隔多個伺服器）
+FallbackNTP=sg.pool.ntp.org ntp.ubuntu.com
+```
+
+* 重新啟動`systemd-timesyncd`服務
+重啟服務讓更改生效
+```bash
+# 重新啟動 systemd-timesyncd 服務
+systemctl restart systemd-timesyncd
+```
 
 參考:  
 https://officeguide.cc/ubuntu-linux-timedatectl-time-synchronization-tutorial/  
