@@ -153,3 +153,58 @@ $$\hat{\mu} = \frac{I\bar{x} + \gamma\delta}{I + \gamma}$$
 >2. 當資料數量少一些的時候，MAP的解會在ML和prior的中間
 >3. 當完全沒有資料的時候，MAP的解就是proir
 
+### 方法三Bayesian estimation
+在Bayesian estimation我們利用Bayesian定理計算參數的posterior distribution。
+$$Pr(\mu, \sigma^2 | x_{1...I}) = \frac{\prod_{i=1}^I Pr(x_i|\mu,\sigma^2)Pr(\mu,\sigma^2)}{Pr(x_{1...I})}$$
+
+$$= \frac{\prod_{i=1}^I Norm_{x_i}[\mu,\sigma^2]NormInvGam_{\mu,\sigma^2}[\alpha,\beta,\gamma,\delta]}{Pr(x_{1...I})}$$
+
+$$= \frac{\kappa NormInvGam_{\mu,\sigma^2}[\~\alpha,\~\beta,\~\gamma,\~\delta]}{Pr(x_{1...I})}$$
+
+在這裡likelihood和prior有共軛關係，而$\kappa$是 associated constant。Normal likelihood和normal inverse gamma prior的乘機產生出一個關於$\mu$$\sigma^2$的posterior distribution。其參數如下
+
+$$\~\alpha = \alpha + \frac{I}{2}$$
+
+$$\~\gamma = \gamma + I$$
+
+$$\~\delta = \frac{\gamma\delta + \sum_{i=1} x_i}{\gamma + I}$$
+
+$$\~\beta = \frac{\sum_{i=1} x_i^2}{2} + \beta + \frac{\gamma\delta^2}{2} - \frac{(\gamma\delta + \sum_{i=1} x_i)^2}{2(\gamma + I)}$$
+
+需要注意的是，後驗分布（式4.20左側）必須是一個有效的概率分布，總和為一，因此共軛乘積中的常數 κ 和右側的分母必須完全抵消，才能得到：
+
+$$Pr(\mu, \sigma^2 | x_{1...I}) = NormInvGam_{\mu,\sigma^2}[\~\alpha,\~\beta,\~\gamma,\~\delta]$$
+
+現在我們可以看到conjugate prior的好處，我們保證可以得到關於參數的後驗分布的封閉形式表達式。
+
+* Predictive density
+跟maximum likelihood和MAP(maximum a posteriori)不一樣是，Bayesian estimation計算Predictive density的方式是我們計算每個可能參數集的預測值的加權平均值，其中加權由參數的後驗分布給出。
+
+$$Pr(x_*|x_{1...I}) = \int \int Pr(x^*|\mu,\sigma^2)Pr(\mu,\sigma^2|x_{1...I})d\mu d\sigma^2$$
+
+$$= \int \int Norm_{x^*}[\mu,\sigma^2]NormInvGam_{\mu,\sigma^2}[\~\alpha,\~\beta,\~\gamma,\~\delta]d\mu d\sigma^2$$
+
+$$= \int \int \kappa(x^*, \~\alpha, \~\beta, \~\gamma, \~\delta)NormInvGam_{\mu,\sigma^2}[\~\alpha,\~\beta,\~\gamma,\~\delta]d\mu d\sigma^2$$
+
+這裡我們又再次用到conjugate relation。積分包含一個與$\mu$和$\sigma^2$無關的常數乘以一個概率分布。將常數移到積分號外，可以得到：
+
+$$Pr(x^*|x_{1...I}) = \kappa(x^*, \~\alpha, \~\beta, \~\gamma, \~\delta)\int \int NormInvGam_{\mu,\sigma^2}[\~\alpha,\~\beta,\~\gamma,\~\delta]d\mu d\sigma$$
+
+因為pdf的積分為1，所以
+
+$$= \kappa(x^*, \~\alpha, \~\beta, \~\gamma, \~\delta)$$ 
+
+
+常數可以表示為：
+
+$$\kappa(x^*, \~\alpha, \~\beta, \~\gamma, \~\delta) = \frac{1}{\sqrt{2\pi}}\frac{\sqrt{\~\gamma}\~\beta^{\~\alpha}}{\sqrt{\v\gamma}\v\beta^{\v\alpha}}\frac{\Gamma(\v\alpha)}{\Gamma(\~\alpha)}$$
+
+其中
+
+$$\v\alpha = \~\alpha + \frac{I}{2}$$
+
+$$\v\gamma = \~\gamma + I$$
+
+$$\v\beta = \frac{\sum_{i=1} x_i^2}{2} + \~\beta + \frac{\~\gamma\~\delta^2}{2} - \frac{(\~\gamma\~\delta + \sum_{i=1} x_i)^2}{2(\~\gamma + I)}$$
+
+在這裡我可以看到第二個使用conjugate prior的好處，我們可以得到關於預測分佈的封閉形式表達式。
