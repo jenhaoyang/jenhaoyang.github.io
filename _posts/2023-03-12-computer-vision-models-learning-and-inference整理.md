@@ -4,6 +4,56 @@ title: Computer Vision Models Learning and Inference整理
 date: 2023-03-12 21:47 +0800
 ---
 
+# CH3 常見的probability distributions
+要利用第二章操作probabilities的規則，為了使用這些規則，我們需要定義一些機率分布。選擇機率分布的依據是取決於我們正在建模的數據x的領域。
+
+當我們在使用模型去擬合資料的時候，我們需要知道我們對擬合的不確定性有多大，而這個不確定性被表示為"對擬合模型的參數的機率分布"。也就是說每當一個模型在擬合資料的時候，都存在一個與之相關聯的參數的第二個機率分布。
+
+例如 Dirichlet 是用於categorical distribution的參數的模型。在這種狀況下 Dirichlet的參數會被稱為超參數(hyperparameters)。更一般地說，超參數確定了原始分布參數的機率分布的形狀。  
+
+|  Distribution   | Domain  | Parameters modeled by | 
+|  ----           |    ---- | ----  |
+| Bernoulli            | x ∈ {0, 1}                 | beta| |
+|categorical           |  x ∈ {1, 2, . . . , K}     |      Dirichlet |
+|univariate normal     |  x ∈ R                     |  normal inverse gamma |
+|multivariate normal   |  x ∈ Rk                    |  normal inverse Wishart |
+
+
+|Distribution          |   Domain                   | Parameters modeled by | 
+Bernoulli             |  x ∈ {0, 1}                |       beta  
+categorical           |  x ∈ {1, 2, . . . , K}     |      Dirichlet
+univariate normal     |  x ∈ R                     |  normal inverse gamma
+multivariate normal   |  x ∈ Rk                    |  normal inverse Wishart
+
+## CH3.1 Bernoulli distribution
+Bernoulli distribution是一個離散分布用於模擬二元試驗。他用於描述只有兩中輸出結果的狀況，$x \in {0, 1}$分別代表是(success)、否(failure)。在機器視覺中，Bernoulli distribution可以用來模擬資料。例如，它可以描述一個像素具有大於或小於128的強度值的概率。或者是用來描述世界的狀態。例如，它可以描述圖像中臉部存在或不存在的概率。
+
+Bernoulli distribution只有一個parameter $\lambda \in [0, 1]$，用來描述觀察到success的機率。Bernoulli distribution的機率質量函數如下
+$$Pr(x = 0) = 1 - \lambda$$
+$$Pr(x = 1) = \lambda$$
+
+我們可以用另一種表達方式，將0或1帶入就可以得到上面其中一條式子。
+$$Pr(x) = \lambda^x(1-\lambda)^{1-x}$$
+或是另一種等價的表達方式
+$$Pr(x) = Bern_x[\lambda] $$
+
+## CH3.2 Beta distribution
+Beta distribution是一個連續分布，他是定義在單變量$\lambda$上的連續分布，$\lambda \in [0, 1]$。它適用於表示伯努利分布參數$\lambda$的不確定性。
+
+beta distribution 有兩個parameter$\alpha, \beta \in [0, \infty]$，兩個parameter均為正數並且影響distribution的形狀。以數學表達如下
+$$Pr(\lambda) = \frac{\Gamma[\alpha + \beta]}{\Gamma[\alpha]\Gamma[\beta]}\lambda^{\alpha-1}(1-\lambda)^{\beta-1}$$
+
+式子中的$\Gamma[]$代表gamma function，定義為
+$$\Gamma[z] = \int_0^{\infty}t^{z-1}e^{-t}dt$$
+，他與階乘密切相關，因此對於正數的積分$\Gamma[z] = (z - 1)!$而且$\Gamma[z+1] = z\Gamma[z]$ 。
+
+
+
+
+beta distribution還有更簡單的表達式
+$$Pr(\lambda) = Beta_{\lambda}[\alpha, \beta]$$
+
+
 # CH4 擬和機率模型
 這章節的目標是將機率模型擬和到資料$$\{x_i\}^I_{i=1}$$，這個過程稱為`學習`learning，目標是找到模型的參數組$$\theta$$。此外我們也學習如何用學習後的模型對新的數據$$x^*$$計算出他的機率，這過程evaluating the predictive distribution。  
 在這章我們探討三種方法
@@ -49,7 +99,7 @@ $$Pr(\theta|x_{i...I}) = \frac{\prod_{i=1}^I Pr(x_i|\theta)Pr(\theta)}{Pr(x_{i..
 $$Pr(x^*|x_{i...I}) = \int Pr(x^*|\theta)Pr(\theta|x_{i...I})d\theta$$
 
 這條式子可以用以下方式解讀:  
-$$Pr(x^*|\theta)$$ 是對於給定的參數組  $$\theta$$，$$x^*$$出現的機率，因此這個積分可以視為使用不同的參數$$\theta$$所做出預測的加權總和，其中權重是由參數的posterior probability distribution $$Pr(\theta|x_{i...I})$$ 來決定的（代表我們對不同參數正確性的信心程度）。
+$Pr(x^*|\theta)$ 是對於給定的參數組  $$\theta$$，$$x^*$$出現的機率，因此這個積分可以視為使用不同的參數$$\theta$$所做出預測的加權總和，其中權重是由參數的posterior probability distribution $$Pr(\theta|x_{i...I})$$ 來決定的（代表我們對不同參數正確性的信心程度）。
 
 ## 統一三種方法的 predictive density calculations
 如果我們將maximum likelihood, maximum posteriori 的參數的機率分布視為一種特例，也就是maximum likelihood, maximum posteriori參數分布全部集中在$$\hat{\theta}$$。正式的說法就是參數分布為一個以$$\hat{\theta}$$為中心的delta function。一個delta function $$\delta[z]$$是一個函式他的積分為1，而且在除了中心點z以外的任何地方都是0。我們將剛才predictive density帶入delta function，可以得到以下結果。
