@@ -45,13 +45,28 @@ $$Pr(\lambda) = \frac{\Gamma[\alpha + \beta]}{\Gamma[\alpha]\Gamma[\beta]}\lambd
 
 式子中的$\Gamma[]$代表gamma function，定義為
 $$\Gamma[z] = \int_0^{\infty}t^{z-1}e^{-t}dt$$
-，他與階乘密切相關，因此對於正數的積分$\Gamma[z] = (z - 1)!$而且$\Gamma[z+1] = z\Gamma[z]$ 。
-
-
-
+，他與階乘密切相關，因此對於正數的積分$\Gamma[z] = (z - 1)!$而且$\Gamma[z+1] = z\Gamma[z]$ 。  
 
 beta distribution還有更簡單的表達式
 $$Pr(\lambda) = Beta_{\lambda}[\alpha, \beta]$$
+
+
+## CH3.3 Catagorical distribution
+Catagorical distribution是一個離散分布，他用來決定K個可能結果之一的概率。因此Bernoulli distribution是Catagorical distribution的一種特例，也就是只有兩種可能結果的Catagorical distribution。在機器視覺中也經常出現多個離散值取一個的情況，例如依照照片可能是{car,motorbike,van,truck}的其中一個。  
+對於有K種結果的Catagorical distribution，Catagorical distribution會一個$K \times 1$的參數的向量$\lambda = [\lambda_1, \lambda_2 ... , \lambda_K]$其中$\lambda_K \in [0, 1]$而且$\sum^K_{k=1}\lambda_k = 1$Catagorical distributiond可以寫成  
+
+$$Pr(x = k) = \lambda_k$$
+
+更簡短的可以寫成  
+$$ Pr(x) = Cat_x[\lambda]$$
+
+或者，我們可以將數據看作取值$x \in {e_1, e_2, ...,e_K}$，其中$e_k$是第k個單位向量；除了第k個元素為1之外，$$e_k的所有元素都為零。寫成式子如下  
+
+$$Pr(x=e_k) = \prod^K_{j=1}\lambda_k^{x_j} = \lambda_k$$  
+
+其中$x_j$是$x$的第j個元素。
+
+
 
 
 # CH4 擬和機率模型
