@@ -868,6 +868,12 @@ sudo ldconfig # refresh shared library cache.
 els/trafficcamnet
 
 
+## 儲存影像
+https://forums.developer.nvidia.com/t/drawn-rectangle-is-not-available-on-encoded-frame/178022/7?u=jenhao
+
+
+# 元件速度測量
+https://forums.developer.nvidia.com/t/deepstream-sdk-faq/80236/12?u=jenhao  
 
 參考:  
 https://www.gclue.jp/2022/06/gstreamer.html  
