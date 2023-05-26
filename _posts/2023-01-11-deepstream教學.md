@@ -6,6 +6,40 @@ categories: [深度學習工具]
 tags: [deepstream]     # TAG names should always be lowercase
 ---
 
+
+# 客製化模型實作nvinfer介面
+
+## nvinfer呼叫介面
+任何客製化介面最終必須被編譯成一個獨立的shared library。nvinfer在執行期間利用`dlopen()`呼叫函式庫，並且利用`dlsym()`呼叫函式庫中的函式。進一步的資訊紀錄在`nvdsinfer_custom_impl.h`裡面https://docs.nvidia.com/metropolis/deepstream/sdk-api/nvdsinfer__custom__impl_8h.html  
+
+
+
+
+
+
+## 客製化Output Parsing
+對於detectors使用者必須自行解析模型的輸出並且將之轉化成bounding box 座標和物件類別。對於classifiers則是必須自行解析出物件屬性。範例在`/opt/nvidia/deepstream/deepstream/sources/libs/nvdsinfer_customparser`，裡面的README有關於使用custom parser的說明。  
+客製化parsing function必須為`NvDsInferParseCustomFunc`型態。客製化parsing function可以在`Gst-nvinfer`的參數檔`parse-bbox-func-name`和`custom-lib-name`屬性指定。  
+可以藉由在定義函式後呼叫`CHECK_CUSTOM_PARSE_FUNC_PROTOTYPE()`marco來驗證函式的定義。
+使用範例如下
+```c
+extern "C" bool NvDsInferParseCustomYoloV2Tiny(
+    std::vector<NvDsInferLayerInfo> const& outputLayersInfo,
+    NvDsInferNetworkInfo const& networkInfo,
+    NvDsInferParseDetectionParams const& detectionParams,
+    std::vector<NvDsInferParseObjectInfo>& objectList)
+{
+    ...
+}
+CHECK_CUSTOM_PARSE_FUNC_PROTOTYPE(NvDsInferParseCustomYoloV2Tiny);
+```
+https://forums.developer.nvidia.com/t/deepstreamsdk-4-0-1-custom-yolov3-tiny-error/108391?u=jenhao
+
+
+
+## IPlugin Implementation
+對於TensorRT不支援的network layer，Deepstream提供IPlugin interface來客製化處理。在`/opt/nvidia/deepstream/deepstream/sources`底下的`objectDetector_SSD`, `objectDetector_FasterRCNN`, 和 `objectDetector_YoloV3`資料夾展示了如何使用custom layers。
+
 # 畫出範例的結構圖
 首先在`~/.bashrc`加入下面這行設定pipeline圖儲存的位置，注意GStreamer不會幫你建立資料夾，你必須確認資料夾存在
 ```shell
@@ -874,6 +908,11 @@ https://forums.developer.nvidia.com/t/drawn-rectangle-is-not-available-on-encode
 
 # 元件速度測量
 https://forums.developer.nvidia.com/t/deepstream-sdk-faq/80236/12?u=jenhao  
+
+
+
+
+
 
 參考:  
 https://www.gclue.jp/2022/06/gstreamer.html  
