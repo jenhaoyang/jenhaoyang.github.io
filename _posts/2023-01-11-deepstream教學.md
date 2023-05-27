@@ -18,8 +18,34 @@ tags: [deepstream]     # TAG names should always be lowercase
 
 
 ## 客製化Output Parsing
-對於detectors使用者必須自行解析模型的輸出並且將之轉化成bounding box 座標和物件類別。對於classifiers則是必須自行解析出物件屬性。範例在`/opt/nvidia/deepstream/deepstream/sources/libs/nvdsinfer_customparser`，裡面的README有關於使用custom parser的說明。  
-客製化parsing function必須為`NvDsInferParseCustomFunc`型態。客製化parsing function可以在`Gst-nvinfer`的參數檔`parse-bbox-func-name`和`custom-lib-name`屬性指定。  
+* 對於detectors使用者必須自行解析模型的輸出並且將之轉化成bounding box 座標和物件類別。對於classifiers則是必須自行解析出物件屬性。範例在`/opt/nvidia/deepstream/deepstream/sources/libs/nvdsinfer_customparser`，裡面的README有關於使用custom parser的說明。  
+* 客製化parsing function必須為`NvDsInferParseCustomFunc`型態。在`nvdsinfer_custom_impl.h`的221行可以看到下面的型態定義，代表每一個客製化的解析函式都必須符合這個格式
+```c
+/**
+ * Type definition for the custom bounding box parsing function.
+ *
+ * @param[in]  outputLayersInfo A vector containing information on the output
+ *                              layers of the model.
+ * @param[in]  networkInfo      Network information.
+ * @param[in]  detectionParams  Detection parameters required for parsing
+ *                              objects.
+ * @param[out] objectList       A reference to a vector in which the function
+ *                              is to add parsed objects.
+ */
+typedef bool (* NvDsInferParseCustomFunc) (
+        std::vector<NvDsInferLayerInfo> const &outputLayersInfo,
+        NvDsInferNetworkInfo  const &networkInfo,
+        NvDsInferParseDetectionParams const &detectionParams,
+        std::vector<NvDsInferObjectDetectionInfo> &objectList);
+```
+
+
+* 客製化parsing function可以在`Gst-nvinfer`的參數檔`parse-bbox-func-name`和`custom-lib-name`屬性指定。例如我們定義了Yolov2-tiny的客製化bounding box解析函式`NvDsInferParseCustomYoloV2Tiny`，編譯出來的shared library位於`nvdsinfer_custom_impl_Yolo/libnvdsinfer_custom_impl_Yolo.so`，我們在設定檔就就必須要有以下設定
+```
+parse-bbox-func-name=NvDsInferParseCustomYoloV2Tiny
+custom-lib-path=nvdsinfer_custom_impl_Yolo/libnvdsinfer_custom_impl_Yolo.so
+```
+
 可以藉由在定義函式後呼叫`CHECK_CUSTOM_PARSE_FUNC_PROTOTYPE()`marco來驗證函式的定義。
 使用範例如下
 ```c
@@ -37,8 +63,51 @@ https://forums.developer.nvidia.com/t/deepstreamsdk-4-0-1-custom-yolov3-tiny-err
 
 
 
+
+
+
 ## IPlugin Implementation
 對於TensorRT不支援的network layer，Deepstream提供IPlugin interface來客製化處理。在`/opt/nvidia/deepstream/deepstream/sources`底下的`objectDetector_SSD`, `objectDetector_FasterRCNN`, 和 `objectDetector_YoloV3`資料夾展示了如何使用custom layers。
+
+在`objectDetector_YoloV3`範例中我們可以看到如何製作Tensorrt不支援的Yolov3的yolo layer。可以在`yolo.cpp`中看到自定義的layer是如何被呼叫使用的，程式節錄如下。
+```c
+....
+else if (m_ConfigBlocks.at(i).at("type") == "yolo") {
+            nvinfer1::Dims prevTensorDims = previous->getDimensions();
+            assert(prevTensorDims.d[1] == prevTensorDims.d[2]);
+            TensorInfo& curYoloTensor = m_OutputTensors.at(outputTensorCount);
+            curYoloTensor.gridSize = prevTensorDims.d[1];
+            curYoloTensor.stride = m_InputW / curYoloTensor.gridSize;
+            m_OutputTensors.at(outputTensorCount).volume = curYoloTensor.gridSize
+                * curYoloTensor.gridSize
+                * (curYoloTensor.numBBoxes * (5 + curYoloTensor.numClasses));
+            std::string layerName = "yolo_" + std::to_string(i);
+            curYoloTensor.blobName = layerName;
+            nvinfer1::IPluginV2* yoloPlugin
+                = new YoloLayerV3(m_OutputTensors.at(outputTensorCount).numBBoxes,
+                                  m_OutputTensors.at(outputTensorCount).numClasses,
+                                  m_OutputTensors.at(outputTensorCount).gridSize);
+            assert(yoloPlugin != nullptr);
+            nvinfer1::IPluginV2Layer* yolo =
+                network.addPluginV2(&previous, 1, *yoloPlugin);
+            assert(yolo != nullptr);
+            yolo->setName(layerName.c_str());
+            std::string inputVol = dimsToString(previous->getDimensions());
+            previous = yolo->getOutput(0);
+            assert(previous != nullptr);
+            previous->setName(layerName.c_str());
+            std::string outputVol = dimsToString(previous->getDimensions());
+            network.markOutput(*previous);
+            channels = getNumChannels(previous);
+            tensorOutputs.push_back(yolo->getOutput(0));
+            printLayerInfo(layerIndex, "yolo", inputVol, outputVol, std::to_string(weightPtr));
+            ++outputTensorCount;
+        }
+...
+```
+而其他版本的YOLO，Nvidia也已經幫我們建立好許多Plugin，例如yolov2的region layer，Nvidia已經幫我們建立，其他已經建立好的layer可以在這裡找到。
+https://github.com/NVIDIA/TensorRT/tree/1c0e3fdd039c92e584430a2ed91b4e2612e375b8/plugin
+
 
 # 畫出範例的結構圖
 首先在`~/.bashrc`加入下面這行設定pipeline圖儲存的位置，注意GStreamer不會幫你建立資料夾，你必須確認資料夾存在
