@@ -78,7 +78,7 @@ $$Pr(\lambda_{1...K}) = Dir_{\lambda_{1...K}}[\alpha_{1...K}]$$
 如同Bernoulli distribution是Catagorical distribution的特例，所以Beta distribution是Dirichlet distribution的特例，也就是$K=2$的Beta distribution。
 
 
-# 3.5 Univariate normal distribution
+## 3.5 Univariate normal distribution
 Univariate normal distribution 或是 Gaussian distribution 是一個定義在實數上$x \in [-\infty, \infty]$的連續分佈。
 在計算機視覺中，常常忽略像素強度被量化的事實，並使用連續的正態分佈模型來建模。
 Normal distribution有兩個parameter，平均數$\mu$和變異數$\sigma^2$，平均數$\mu$決定了分佈的中心的位置，變異數$\sigma^2$決定了分佈的寬度。Normal distribution的機率密度函數如下
@@ -87,14 +87,14 @@ $$Pr(x|) = \frac{1}{\sqrt{2\pi\sigma^2}}exp\{-\frac{1}{2\sigma^2}(x-\mu)^2\}$$
 或是更簡單的寫法
 $$Pr(x) = Norm_x[\mu, \sigma^2]$$
 
-# 3.6 Normal-scaled inverse gamma distribution
+## 3.6 Normal-scaled inverse gamma distribution
 Normal-scaled inverse gamma distribution是一個定義在一對實數$\mu, \sigma$上的連續分佈，他的機率密度函數如下，其中$\mu$可以為正為負，但是$\sigma$必須為正。  
 Normal-scaled inverse gamma distribution有四個parameter，$\alpha, \beta, \gamma, \delta$，其中$\alpha, \beta, \gamma$必須為正，而$\delta$可以為正為負。機率密度函數如下:
 $$Pr(\mu, \sigma^2) = \frac{\sqrt{\gamma}}{\sigma\sqrt{2\pi}}\frac{\beta^\alpha}{\Gamma[\alpha]}(\frac{1}{\sigma^2})^{\alpha + 1}exp[-\frac{2\beta + \gamma(\delta - \mu)^2}{2\sigma^2}]$$
 或者是寫成
 $$Pr(\mu, \sigma^2) = NormInvGam_{\mu, \sigma^2}[\alpha, \beta, \gamma, \delta]$$
 
-# 3.7 Multivariate normal distribution
+## 3.7 Multivariate normal distribution
 multivariate normal 也就是 D-dimensional Gaussian distribution，他的維度可以表示成D個元素 $x_1, ... x_D$每個維度都是連續並且介於$[-\infty, \infty]$。而univariate normal distribution是multivariate normal distribution的特例，也就是$D=1$。  
 在機器視覺中，多變量正態分佈可以用來模擬圖像區域內 D 個像素的強度的聯合分佈。  
 
@@ -106,14 +106,18 @@ $$Pr(x) = \frac{1}{\sqrt{(2\pi)^D|\Sigma|}}exp[-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(
 或是更簡短一點  
 $$Pr(x) = Norm_x[\mu, \Sigma]$$
 
-# 3.8 Normal inverse Wishart distribution
+## 3.8 Normal inverse Wishart distribution
 normal inverse Wishart distribution是一個定義在$D \times 1$的向量 $\mu和$D \times D$的矩陣 \Sigma$上的連續分佈。他適合用來描述 multivariate normal distribution 的參數的不確定性。normal inverse Wishart distribution有四個參數，$\alpha, \Psi, \gamma, \delta$，其中$\alpha$和$\gamma$為正純量，$\delta$為$D \times 1$的向量，$\Psi$為$D \times D$的正定矩陣。機率密度函數如下
 $$\operatorname{Pr}(\boldsymbol{\mu}, \boldsymbol{\Sigma})=\frac{\gamma^{D / 2}|\boldsymbol{\Psi}|^{\alpha / 2} \exp \left[-0.5\left(\operatorname{Tr}\left[\boldsymbol{\Psi} \boldsymbol{\Sigma}^{-1}\right]+\gamma(\boldsymbol{\mu}-\boldsymbol{\delta})^T \boldsymbol{\Sigma}^{-1}(\boldsymbol{\mu}-\boldsymbol{\delta})\right)\right]}{2^{\alpha D / 2}(2 \pi)^{D / 2}|\boldsymbol{\Sigma}|^{(\alpha+D+2) / 2} \Gamma_D[\alpha / 2]}$$
 其中$\Gamma_D[\bullet]$是multivariate gamma function and而$\operatorname{Tr}[\Psi]$回傳矩陣的迹(trace)。更簡單的寫法如下
 $$Pr(\mu, \Sigma) = NormInvWish_{\mu, \Sigma}[\alpha, \Psi, \gamma, \delta]$$
 很難將normal inverse Wishart distribution分佈可視化，但很容易抽樣並檢查樣本：每個樣本是一個常態分佈的平均值和協方差。
 
-
+## 3.9 Conjugacy
+在前面幾節有提到有些distribution可以呈現另一個distribution參數的機率分布。因為這些分布之間都有Conjugacy的關係。例如beta distribution conjugate Bernoulli distribution。Dirichlet conjugate categorical。當我們將兩個有Conjugacy的distribution相乘，結果將與共軛具有相同形式的新分佈成正比。例如  
+$$ Bern_x[\lambda]\times Beta_\lambda[\alpha, \beta] = \kappa(x, \alpha, \beta)\times Beta_\lambda[\~{\alpha}, \~{\beta}]$$
+在這裡$\kappa$是一個對於所關心的變量$\lambda$來說是常數的縮放因子。  
+conjugate重要的原因是因為在學習（擬合分佈）和評估模型（評估新數據在擬合分佈下的概率）的過程中，我們需要對分佈進行乘法運算。共軛關係意味著這些乘積都可以以封閉形式整潔地計算得出。
 
 
 
