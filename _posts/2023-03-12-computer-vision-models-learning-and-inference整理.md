@@ -179,7 +179,7 @@ $$Pr(x^*|x_{i...I}) = \int Pr(x^*|\theta)\delta[\theta - \hat{\theta}]d\theta$$
 $$= Pr(x^*|\hat{\theta})$$
 
 
-## 範例一
+## ch4.4範例一
 下面範例我們考慮擬和一個univariate normal model到一組數據$$\{x_i\}^I_{i=1}$$。
 首先univariate normal model的probability density function為
 
@@ -329,3 +329,64 @@ $$\v\beta = \frac{\sum_{i=1} x_i^2}{2} + \~\beta + \frac{\~\gamma\~\delta^2}{2} 
 在這裡我可以看到第二個使用conjugate prior的好處:可以計算積分，所以我們得到一個很好的封閉形式表達式來預測密度。
 
 在有大量訓練數據的情況下，貝葉斯預測分布和最大事後概率（MAP）預測分布非常相似，但當數據量減少時，貝葉斯預測分布的尾部明顯更長。這是貝葉斯解決方案的典型特徵：它們在預測時更加中庸（不那麼確定）。在 MAP 的情況下，錯誤地承諾一個 µ 和 σ^2 的估計值導致我們對未來的預測過於自信。
+
+## ch4.5範例一
+第二個範例我們考慮離散的資料$\{x_i\}^I_{i=1}$其中$x_i \in {1, 2, ..., 6}$。這種表達方式可以用來表達一個不均勻的骰子所出現的點數資料。我們將使用 categorical distribution來描述這些資料。
+$$ Pr(x=k|\lambda_{1...K}) = \lambda_k $$
+
+利用Maximum posteriori estimation和maximum a posteriori來推測六個參數${\lambda_k}^6_{k=1}$。而Bayesian方法則計算參數的probability distribution
+
+### 4.5.1 Maximum Likelihood
+為了找到Maximum Likelihood，我們要最大化每一個資料點的likelihood相乘的乘積
+
+$$ \hat \lambda_{1...6} = argmax_{\lambda_{1...6}}[\prod^I_{i=1}Pr(x_i|\lambda_{1...6})]  \qquad  s.t. \sum_k \lambda_k = 1$$
+
+$$ = argmax_{\lambda_{1...6}}[\prod^I_{i=1} Cat_{x_i}[\lambda_{1...6}]]  \qquad  s.t. \sum_k \lambda_k = 1$$
+
+$$ = argmax_{\lambda_{1...6}}[\prod^6_{k=1}\lambda^{N_k}_k]  \qquad  s.t. \sum_k \lambda_k = 1$$
+
+
+其中$N_k$代表在訓練資料中觀察到k的總次數。跟前一個例子一樣，利用log probability來協助尋找最大值。
+
+$$ L = \sum^6_{k=1}N_klog[\lambda_k] + \nu(\sum^6_{k=1}\lambda_k - 1) $$
+在這個式子中利用了 Lagrange multiplier $\nu$ 來達成$\sum^6_{k=1} \lambda_k = 1$的限制。接著我們對L對於$\lambda_k$和$\nu$微分並且將導數設為0，可以得到下式。
+$$ \hat \lambda_k = \frac{N_k}{\sum^6_{m=1}N_m} $$
+換句話說$\lambda_k$和觀察到k的次數成正比。  
+
+
+
+### 4.5.2 Maximum a posteriori
+要找到 maximum a posteriori 首先要定義一個prior。我們選擇和categorical likelihood共軛的 Dirichlet distribution。式子如下。
+$$ \hat \lambda_{1...6} = \underset{\lambda_{1...6}}{\mathrm{argmax}}[\prod^I_{i=1}Pr(x_i|\lambda_{1...6})Pr(\lambda_{1...6})]$$
+
+$$ = \underset{\lambda_{1...6}}{\mathrm{argmax}}[\prod^I_{i=1}Cat_{xi}[\lambda_{1...6}]Dir_{\lambda_{1...6}}[\alpha_{1...6}]]$$
+
+$$ = \underset{\lambda_{1...6}}{\mathrm{argmax}}[\prod^6_{k=1}\lambda_k^{N_k}\prod^6_{k=1}\lambda_k^{\alpha_k-1}]$$
+
+$$ = \underset{\lambda_{1...6}}{\mathrm{argmax}}[\prod^6_{k=1}\lambda^{N_k + \alpha_k -1}_k] $$
+
+接著和 maximum likelihood一樣利用 Lagrange multiplier來達成$\sum^6_{k=1} \lambda_k = 1$的限制。Maximum a posteriori推估參數的式子如下。
+$$ \hat \lambda_k = \frac{N_k + \alpha_k -1}{\sum^6_{m=1}(N_m + \alpha_m - 1)}$$
+其中$N_k$代表訓練資料中k出現的次數，這裡注意到如果$\alpha_k$全部設為1的時候，式子就變成跟 maximum likelihood的解一樣。
+
+### 4.5.3 Bayesian Approach
+在Bayesian approach中我們計算對於參數的posterior。
+$$Pr(\lambda_1 ... \lambda_6|x_{1...I}) = \frac{\prod^I_{i=1}Pr(x_i|\lambda_{1...6})Pr(\lambda_{1...6})}{Pr(x_{1...I})}$$
+$$=\frac{\prod^I_{i=1}Cat_{x_i}[\lambda_{1...6}]Dir_{\lambda_{1...6}}[\alpha_{1...6}]}{Pr(x_{1...I})}$$
+$$=\frac{\kappa(\alpha_{1...6}, x_{1...I})Dir_{\lambda_{1...6}}[\~\alpha_{1...6}]}{Pr(x_{1...I})}$$
+$$=Dir_{\lambda_{1...6}}[\~\alpha_{1...6}]$$
+
+其中$\~\alpha_k=N_k+\alpha_k$。我們再次利用共軛關係，以產生具有與先驗分布相同形式的後驗分布。為了確保左邊的概率分布有效，常數κ必須再次與分母相抵消。
+
+### Predictive Density
+Maximum Likelihood和Maximum a posteriori計算Predictive Density的方式就是把新的資料點代入求出來的參數。注意到如果prior是uniform(也就是$\alpha_{1...6}=1$)，則MAP和ML會完全一樣，而預測結果會和觀察資料的頻率一樣。  
+對於Bayesian Approach，我們計算每個可能的參數集的預測的加權平均值，其中加權由參數的後驗分布給出。
+$$Pr(x^*|x_{1...I})=\int Pr(x^*|\lambda_{1...6})Pr(\lambda_{1...6}|x_{1...I})d\lambda_{1...6}$$
+$$=\int Cat_{x^*}[\lambda_{1...6}]Dir_{\lambda_{1...6}}[\~\alpha_{1...6}]d\lambda_{1...6}$$
+$$=\int \kappa(x^*, \~\alpha_{1...6})Dir_{\lambda_{1...6}}[\breve\alpha_{1...6}]d\lambda_{1...6}$$
+$$=\kappa(x^*, \~\alpha_{1...6})$$
+
+在這裡，我們再次利用共軛關係，得到一個常數乘以一個概率分布，而積分則簡單地等於該常數，因為概率分布的積分為一。
+$$Pr(x^*=k|x_{1...I})=\kappa(x^*, \~\alpha_{1...6})=\frac{N_k+\alpha_k}{\sum^6_{j=1}(N_j+\alpha_j)}$$
+
+再次強調貝葉斯預測密度比 ML/MAP解更不自信。特別是，儘管在訓練數據中從未觀察到$x^*=4$這個值，但它並未將觀察到該值的概率分配為零。這是合理的；僅僅因為在15次觀察中我們並未抽到4這個數字，並不意味著我們將永遠不會看到它。我們可能只是運氣不好。貝葉斯方法將這一點納入考慮，並給予這個類別一個小的概率。
