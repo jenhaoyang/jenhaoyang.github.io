@@ -9,7 +9,10 @@ pin: true
 這裡將介紹一個只需要使用SSH連線到一台可以連到對網網路的主機，就可以讓防火牆內的主機上網的方法
 [圖片說明](https://ma.ttias.be/socks-proxy-linux-ssh-bypass-content-filters/)
 
-
+# 利用ssh連接到可以上網的機器
+```shell
+ssh -D 4444 -q -C -N user@ma.ttias.be
+```
 # 檢查SOCKS是否開通了
 https://superuser.com/questions/303251/how-to-check-if-a-socks5-proxy-works
 
