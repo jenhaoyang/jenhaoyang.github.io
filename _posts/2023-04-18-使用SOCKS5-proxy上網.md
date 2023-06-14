@@ -12,8 +12,13 @@ pin: true
 # 設定putty
 https://www.simplified.guide/putty/create-socks-proxy
 
-
-
+# 或是用ssh指令連接到可以上網的電腦
+```shell
+ssh -D 4444 -q -C -N user@ma.ttias.be
+```
 # windows 設定SOCKS5 proxy
 
 https://blog.gtwang.org/linux/ssh-tunnel-socks-proxy-forwarding-tutorial/
+
+# 新增憑證
+https://learn.microsoft.com/zh-tw/biztalk/adapters-and-accelerators/accelerator-swift/adding-certificates-to-the-certificates-store-on-the-client
