@@ -1,7 +1,7 @@
 ---
 layout: post
-title: Windows使用SOCKS5-proxy上網
-date: 2023-04-19 10:54 +0800
+title: Linux使用SOCKS5-proxy上網
+date: 2023-06-09 10:54 +0800
 pin: true
 ---
 
