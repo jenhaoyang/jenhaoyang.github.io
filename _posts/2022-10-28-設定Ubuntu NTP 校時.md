@@ -24,11 +24,12 @@ System clock synchronized: yes
 ```
 
 * 啟動網路校時
-輸入指令後，就會打開網路校時功能，使用的是`systemd-timesyncd`，因此等一下要設定`systemd-timesyncd`
+輸入下面指令後，就會打開網路校時功能
 ```bash
 # 啟用 NTP 校時
 timedatectl set-ntp yes
 ```
+Ubuntu使用的是`systemd-timesyncd`，因此等一下要設定`systemd-timesyncd`
 
 * 檢查`systemd-timesyncd`服務狀態
 ```bash
@@ -67,6 +68,7 @@ systemctl restart systemd-timesyncd
 ```
 
 參考:  
+https://www.cnblogs.com/pipci/p/12833228.html  
 https://officeguide.cc/ubuntu-linux-timedatectl-time-synchronization-tutorial/  
 https://www.digitalocean.com/community/tutorials/how-to-set-up-time-synchronization-on-ubuntu-20-04  
 https://www.tenable.com/audits/items/CIS_Ubuntu_18.04_LTS_Server_v2.1.0_L1.audit:26286d27c59292cfdb9c7b04593edbed  

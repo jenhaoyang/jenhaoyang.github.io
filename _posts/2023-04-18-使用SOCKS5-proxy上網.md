@@ -22,3 +22,6 @@ https://blog.gtwang.org/linux/ssh-tunnel-socks-proxy-forwarding-tutorial/
 
 # 新增憑證
 https://learn.microsoft.com/zh-tw/biztalk/adapters-and-accelerators/accelerator-swift/adding-certificates-to-the-certificates-store-on-the-client
+
+# windows下設定git proxy command
+https://serverfault.com/questions/956613/windows-10-ssh-proxycommand-posix-spawn-no-such-file-or-directory
