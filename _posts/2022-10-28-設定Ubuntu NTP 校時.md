@@ -4,6 +4,7 @@ title: Ubuntu NTP 校時
 date: 2022-10-28 12:20 +0800
 categories: [環境設定與部屬]
 tags: [Ubuntu]
+pin: true
 ---
 
 # timedatectl 時間管理工具
@@ -50,7 +51,7 @@ systemctl status systemd-timesyncd
              └─221565 /lib/systemd/systemd-timesyncd
 ```
 * 設定校時伺服器
-要設定校時伺服器可以用root權限編輯以下檔案/etc/systemd/timesyncd.conf  
+要設定校時伺服器可以用root權限編輯以下檔案`/etc/systemd/timesyncd.conf`
 
 ```bash
 [Time]
@@ -67,6 +68,23 @@ FallbackNTP=sg.pool.ntp.org ntp.ubuntu.com
 # 重新啟動 systemd-timesyncd 服務
 systemctl restart systemd-timesyncd
 ```
+
+* 檢查一下是不是有跟NTP校時了
+
+# 錯誤排除
+* 出現Server has too large root distance. Disconnecting.訊息
+表示機器跟ntp server之間回應的時間太久，因此可以去修改`/etc/systemd/timesyncd.conf`並加入`RootDistanceMaxSec=`，通常家道30秒已經很夠用了
+```shell
+# See timesyncd.conf(5) for details.
+[Time]
+NTP=10.10.1.30
+#FallbackNTP=
+RootDistanceMaxSec=30
+#PollIntervalMinSec=32
+#PollIntervalMaxSec=2048
+```
+詳細說明如下
+https://unix.stackexchange.com/a/655489
 
 參考:  
 https://www.cnblogs.com/pipci/p/12833228.html  
