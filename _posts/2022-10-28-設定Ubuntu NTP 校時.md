@@ -50,7 +50,8 @@ systemctl status systemd-timesyncd
              └─221565 /lib/systemd/systemd-timesyncd
 ```
 * 設定校時伺服器
-要設定校時伺服器可以用root權限編輯以下檔案/etc/systemd/timesyncd.conf
+要設定校時伺服器可以用root權限編輯以下檔案/etc/systemd/timesyncd.conf  
+
 ```bash
 [Time]
 # NTP 伺服器（以空白分隔多個伺服器）
