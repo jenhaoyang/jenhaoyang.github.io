@@ -70,10 +70,12 @@ systemctl restart systemd-timesyncd
 ```
 
 * 檢查一下是不是有跟NTP校時了
+用指令`systemctl status systemd-timesyncd`看一下目前服務狀態，如果有更新成功會顯示出來
+
 
 # 錯誤排除
 * 出現Server has too large root distance. Disconnecting.訊息
-表示機器跟ntp server之間回應的時間太久，因此可以去修改`/etc/systemd/timesyncd.conf`並加入`RootDistanceMaxSec=`，通常家道30秒已經很夠用了
+表示機器跟ntp server之間回應的時間太久，因此可以去修改`/etc/systemd/timesyncd.conf`並加入`RootDistanceMaxSec=`，通常30秒已經很夠用了
 ```shell
 # See timesyncd.conf(5) for details.
 [Time]
