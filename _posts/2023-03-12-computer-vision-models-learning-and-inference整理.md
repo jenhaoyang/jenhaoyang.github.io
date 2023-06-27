@@ -390,3 +390,30 @@ $$=\kappa(x^*, \~\alpha_{1...6})$$
 $$Pr(x^*=k|x_{1...I})=\kappa(x^*, \~\alpha_{1...6})=\frac{N_k+\alpha_k}{\sum^6_{j=1}(N_j+\alpha_j)}$$
 
 再次強調貝葉斯預測密度比 ML/MAP解更不自信。特別是，儘管在訓練數據中從未觀察到$x^*=4$這個值，但它並未將觀察到該值的概率分配為零。這是合理的；僅僅因為在15次觀察中我們並未抽到4這個數字，並不意味著我們將永遠不會看到它。我們可能只是運氣不好。貝葉斯方法將這一點納入考慮，並給予這個類別一個小的概率。
+
+
+# CH5 The normal distribution 
+回顧第三章 multivariate normal distribution有兩個參數:平均$\mu$和變異數$\Sigma$。Proability density function為:
+$$Pr(x) = \frac{1}{(2\pi)^{D/2}|\Sigma|^{1/2}}exp[-0.5(x - \mu)^T\Sigma^{-1}(x-\mu)]$$
+
+或是簡短的
+$$Pr(x)=Norm_x[\mu, \Sigma]$$
+
+# 5.1 covariance矩陣的種類
+covariance矩陣有三種類型
+1. spherical:對角元素全部都是同樣的正數，而且除了對角元素以外都是0
+2. diagonal:對角元素數字不一樣且均為正數，而且除了對角元素以外都是0
+3. full covariances:所有元素都不為0的正數，此外矩陣式對稱的也就是$\sigma_{12}^2=\sigma_{21}^2$
+   
+對於bivariate的情況spherical covariances產生出圓的圖形，Diagonal covariances產生出橢圓的圖形，而且橢圓的主軸和座標軸重疊，Full covariances產生出橢圓但是他的主軸方向可以是任意方向。 
+如果為 covariance 為 spherical 或 diagonal，則個別的變數均為獨立的，也就是
+$$Pr(x_1, x_2) = Pr(x_1)Pr(x_2)$$
+
+## 5.2  Decomposition of covariance
+利用幾何的觀點可以Decomposition full covariances matric。想像一下有一個新的座標軸對齊full covariances所產生的橢圓圖形的兩個主軸，在這個新的座標軸上觀察這這個圖形，他的covariance matric就變成diagonal covariance matric。所以用座標轉換的觀點，我們可以得到新坐標軸上的diagonal covariance matric和原作標軸上full covariances matric的關係。其中R為座標旋轉矩陣。
+$$\Sigma_{full}=R^T\Sigma'_{diag}R$$
+拆解過後，$\Sigma'_{diag}$裡面隱含了varience，也就是在新座標軸上圖形的寬度資訊，因此可以再利用eigen-decomposition得在空間中哪一個方向對圖形比較重要。
+
+## 5.3 Linear transformations of variables
+multivariate normal pdf 經過線性轉換後，依然是一個multivariate normal，而轉換後的multivariate normal他的mean和covarience會和轉換前的multivariate normal有關，也和線性轉換方程式的$y=Ax+b$的係數和常數有關。  
+這個關係讓我麼可以簡化抽樣normal distribitaion的過程。假設想要從mean為$\mu$和covarianc為$\Sigma$的normal distribitaion抽樣，首先我們可以先從一個standart normal distribution抽樣一個點(mean $\mu=0$, covariance $\Sigma=I$)，接著套用Linear transformations $y=\Sigma^{1/2}x+\mu$
