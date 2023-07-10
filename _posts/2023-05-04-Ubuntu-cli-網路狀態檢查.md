@@ -10,4 +10,8 @@ tags: [network]     # TAG names should always be lowercase
 # 下載tracetcp
 https://github.com/0xcafed00d/tracetcp
 
-
+# 檢查遠端伺服器有沒有開port
+```shell
+nc -z -v -w5 <host> <port>
+```
+https://stackoverflow.com/a/9463554
