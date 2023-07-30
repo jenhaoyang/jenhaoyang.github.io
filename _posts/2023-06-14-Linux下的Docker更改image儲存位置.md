@@ -2,7 +2,6 @@
 layout: post
 title: Linux下的Docker更改image儲存位置
 date: 2023-06-14 10:54 +0800
-pin: true
 ---
 
 # 步驟參考

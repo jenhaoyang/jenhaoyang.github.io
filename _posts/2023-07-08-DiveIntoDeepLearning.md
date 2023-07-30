@@ -4,6 +4,7 @@ title: Dive into DeepLearning
 date: 2023-07-05 16:50 +0800
 categories: [深度學習]
 tags: [book]
+pin: true
 ---
 # 數學符號說明
 $z = g \circ f $就是z(x) = g(f(x))，也就是$y = f(x), z = g(y)$
@@ -120,3 +121,44 @@ $$\lfloor(n_h-k_h+p_h+s_h)/s_h\rfloor \times \lfloor(n_w-k_w+p_w+s_w)/s_w\rfloor
 
 # 7.4 Multiple Input and Multiple Output Channels
 ## 7.4.1 Multiple Input Channels
+當輸入的channel數量大於1的時候，每一個channel會需要至少一個kernel。假設現在輸入有3個channel，每一個channel分別對一個kernel之後相加結果就是輸出。
+```python
+def corr2d_multi_in(X, K):
+    # Iterate through the 0th dimension (channel) of K first, then add them up
+    return sum(d2l.corr2d(x, k) for x, k in zip(X, K))
+X = torch.tensor([[[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0]],
+[[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]]])
+K = torch.tensor([[[0.0, 1.0], [2.0, 3.0]], [[1.0, 2.0], [3.0, 4.0]]])
+corr2d_multi_in(X, K)
+# tensor([[ 56., 72.],
+# [104., 120.]])
+```
+## 7.4.2 Multiple Output Channels
+為了讓神經網路學到更多feature，我們嘗試讓同一層conv layer的kernel為三維而且第三個維度和輸入的channel數一樣$c_i\times k_h \times k_w$，例如輸入為3個channel，我們就設計kernel的第三個維度為3。由於每一組kernel最後的輸出都是一個channel。所以最後輸出的channel數就是kernel的組數。因此 convolution layer的維度就變成$c_o \times c_i \times k_h \times k_w$
+
+* `stack()`在這裡會把沿著指定的dimension把tensor堆疊
+```python
+def corr2d_multi_in_out(X, K):
+    # Iterate through the 0th dimension of K, and each time, perform
+    # cross-correlation operations with input X. All of the results are
+    # stacked together
+    return torch.stack([corr2d_multi_in(X, k) for k in K], 0)
+K = torch.stack((K, K + 1, K + 2), 0)
+K.shape
+#torch.Size([3, 2, 2, 2])
+corr2d_multi_in_out(X, K)
+# tensor([[[ 56., 72.],
+#         [104., 120.]],
+#         [[ 76., 100.],
+#         [148., 172.]],
+#         [[ 96., 128.],
+#         [192., 224.]]])
+```
+
+## 7.4.3 1 × 1 Convolutional Layer
+1 × 1 Convolutional Layer唯一能夠影像的就是channel這個維度。
+1 × 1 Convolutional Layer可以視為在每一個單獨的像素位置上的channel的fully conection layer。並且將channel數由$c_i$轉換成$c_o$。
+
+# 7.5 Pooling
+
+## 7.5.1 Maximum Pooling and Average Pooling

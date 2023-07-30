@@ -4,7 +4,6 @@ title: gdb pretty print
 date: 2023-07-15 17:31 +0800
 categories: [開發工具]
 tags: [cpp]
-pin: true
 ---
 
 # STL Support Tools
