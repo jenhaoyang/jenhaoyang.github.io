@@ -44,15 +44,15 @@ https://youtu.be/CfW845LNObM
 https://angeloyeo.github.io/2020/07/24/Jacobian_en.html  
 # CH7
 
-## 7.2.1 The Cross-Correlation Operation
+### 7.2.1 The Cross-Correlation Operation
 經過Cross-Correlation Operation後，輸出的tensor尺寸為
 $(n_h − k_h + 1 ) × (n_w − k_w + 1 )$
 
-## 7.2.2 Convolutional Layers
+### 7.2.2 Convolutional Layers
 Convolutional Layers就是經過Cross-Correlation Operation之後的tensor對每一個element都加上一個bias。Conv的kernel如同前面MLP的權重，初始化的時候我們是用亂數初始化
-## 7.2.3 Object Edge Detection in Images
+### 7.2.3 Object Edge Detection in Images
 已知一個人工製作的邊緣偵測器kernel為[1, -1]可以偵測垂直線，等一下會嘗試讓電腦自己學習出這個kernel
-## 7.2.4 Learning a Kernel
+### 7.2.4 Learning a Kernel
 接下來我們要常識讓電腦自動學習kernel，為了簡單起見bias為0。(為什麼先sum再backward?)(https://www.youtube.com/watch?v=Q7KekwUricc)(https://dlvu.github.io/)
 以下程式可以自動學習kernel
 
@@ -99,28 +99,28 @@ print(conv2d.weight.data.reshape((1, 2)))
 https://jarvislabs.ai/blogs/PyTorch-lazy-modules/
 
 
-## 7.2.5 Cross-Correlation and Convolution
+### 7.2.5 Cross-Correlation and Convolution
 再Deeplearning 使用的Convolution計算方式其實真正的名稱是Cross-Correlation，但是由於Cross-Correlation和Convolution的差別只在於kernerl上下和左右都互換，但對於traing的結果影響不大，所以依然稱為Convolution
 
-## 7.2.6 Feature Map and Receptive Field
+### 7.2.6 Feature Map and Receptive Field
 convolutional layer的輸出稱為Feature Map。  
 receptive field則是影響輸出結果之前的所有元素。()
 
 
-# 7.3 Padding and Stride
+## 7.3 Padding and Stride
 單純使用conv會使得後面layer的input快速變小。Padding可以解決這個狀況，相反的Stride則是用來快速讓輸入變小。
-## 7.3.1 Padding
+### 7.3.1 Padding
 padding和kernel關係的公式如下，假設row padding $p_h$, column padding $p_w$:
 $$(n_h − k_h + p_h + 1 ) × (n_w − k_w + p_w + 1 )$$
 我們可以藉由$p_h=k_h-1$和$p_w=k_w-1$讓輸入和輸出的長寬一樣。  
 如果$k$為奇數，則padding剛好可以填充到兩側，如果$k$為偶數則兩側的padding數量有一邊會多一個。
 
-## 7.3.2 Stride
+### 7.3.2 Stride
 當高的stride為$s_h$寬的stride為$s_w$，則輸出為
 $$\lfloor(n_h-k_h+p_h+s_h)/s_h\rfloor \times \lfloor(n_w-k_w+p_w+s_w)/s_w\rfloor$$
 
-# 7.4 Multiple Input and Multiple Output Channels
-## 7.4.1 Multiple Input Channels
+## 7.4 Multiple Input and Multiple Output Channels
+### 7.4.1 Multiple Input Channels
 當輸入的channel數量大於1的時候，每一個channel會需要至少一個kernel。假設現在輸入有3個channel，每一個channel分別對一個kernel之後相加結果就是輸出。
 ```python
 def corr2d_multi_in(X, K):
@@ -133,7 +133,7 @@ corr2d_multi_in(X, K)
 # tensor([[ 56., 72.],
 # [104., 120.]])
 ```
-## 7.4.2 Multiple Output Channels
+### 7.4.2 Multiple Output Channels
 為了讓神經網路學到更多feature，我們嘗試讓同一層conv layer的kernel為三維而且第三個維度和輸入的channel數一樣$c_i\times k_h \times k_w$，例如輸入為3個channel，我們就設計kernel的第三個維度為3。由於每一組kernel最後的輸出都是一個channel。所以最後輸出的channel數就是kernel的組數。因此 convolution layer的維度就變成$c_o \times c_i \times k_h \times k_w$
 
 * `stack()`在這裡會把沿著指定的dimension把tensor堆疊
@@ -155,10 +155,19 @@ corr2d_multi_in_out(X, K)
 #         [192., 224.]]])
 ```
 
-## 7.4.3 1 × 1 Convolutional Layer
+### 7.4.3 1 × 1 Convolutional Layer
 1 × 1 Convolutional Layer唯一能夠影像的就是channel這個維度。
 1 × 1 Convolutional Layer可以視為在每一個單獨的像素位置上的channel的fully conection layer。並且將channel數由$c_i$轉換成$c_o$。
 
-# 7.5 Pooling
+## 7.5 Pooling
+Pooling讓我們可以專注在影像比較大的區域而不會因為影像中細微的變化就影響輸出結果。
+### 7.5.1 Maximum Pooling and Average Pooling
+池化層沒有任何參數，將window所有元素平均為Average Pooling，取出最大值則為Maximum Pooling。
 
-## 7.5.1 Maximum Pooling and Average Pooling
+### 7.5.2 Padding and Stride
+跟conv layer一樣pooling也有padding和Stride，而由於pooling主要目的是從一個區域擷取資訊，所以深度學習框架預設將Stride的大小設定跟pooling window一樣大，不過我們還是可以自行修改大小。
+
+### 7.5.3 Multiple Channels
+不同於conv layer，pooling對每一個channel是分開處理的，而不像conv layer會把其他channel的結果相加。因此pooling的輸入和輸出channel數目是一樣的。
+
+## 7.6 Convolutional Neural Networks (LeNet)
