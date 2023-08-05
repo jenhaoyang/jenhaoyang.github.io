@@ -231,7 +231,7 @@ main (int argc, char *argv[])
 {:file='basic-tutorial-2.c'}
 
 ## GStreamer element
-element是GStreamer最基礎的元素，影音資料從`source`流向`sink`，過程中經過`filter`對影音資料進行處理，這三個元素組成為`pipeline`  
+element是GStreamer最根本的元素，影音資料從`source`流向`sink`，過程中經過`filter`對影音資料進行處理，這三個元素組成為`pipeline`  
 
 ![pipeline](/assets/img/2023-01-06-16-33/figure-1.png)
 
@@ -275,7 +275,14 @@ if (!pipeline || !source || !sink) {
     return -1;
   }
 ```
-Gstreamer的[bin](https://gstreamer.freedesktop.org/documentation/gstreamer/gstbin.html?gi-language=c#GstBin)是用來裝入element的。
+Gstreamer的[bin](https://gstreamer.freedesktop.org/documentation/gstreamer/gstbin.html?gi-language=c#GstBin)是也是一個element，它可以拿來成裝其他 GstElement。GstBin的類別關係圖如下  
+```
+GObject
+    ╰──GInitiallyUnowned
+        ╰──GstObject
+            ╰──GstElement
+                ╰──GstBin
+```
 
 pipeline也是[bin](https://gstreamer.freedesktop.org/documentation/gstreamer/gstbin.html?gi-language=c#GstBin)，用來裝入element。  
 
