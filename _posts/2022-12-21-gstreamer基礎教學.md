@@ -1363,6 +1363,19 @@ if (gst_element_link_many (audio_source, tee, NULL) != TRUE ||
 
 在tee的文件中可以看到他有兩個Pad Template，一個是"sink"，另一個是"src_%u"(也就是Request pads)，我們可以用`gst_element_request_pad_simple()`函式來請求兩個Pads(一個給audio一個給video)。
 
+```
+Pad Templates:
+  SRC template: 'src_%u'
+    Availability: On request
+    Capabilities:
+      ANY
+  
+  SINK template: 'sink'
+    Availability: Always
+    Capabilities:
+      ANY
+```
+
 接著我們需要取得下游queue element的Always pad，因此用`gst_element_get_static_pad()`。
 
 我們用`gst_pad_link()`連接Pads。`gst_pad_link()`內部其實就是`gst_element_link()`和`gst_element_link_many()`

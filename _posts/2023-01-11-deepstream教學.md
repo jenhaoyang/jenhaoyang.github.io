@@ -971,6 +971,11 @@ sudo ldconfig # refresh shared library cache.
 els/trafficcamnet
 
 
+# usb相機
+https://docs.nvidia.com/jetson/archives/r35.4.1/DeveloperGuide/text/SD/CameraDevelopment/CameraSoftwareDevelopmentSolution.html#applications-using-gstreamer-with-the-nvarguscamerasrc-plugin
+
+
+
 ## 儲存影像
 https://forums.developer.nvidia.com/t/drawn-rectangle-is-not-available-on-encoded-frame/178022/7?u=jenhao
 

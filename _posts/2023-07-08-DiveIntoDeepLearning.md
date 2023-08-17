@@ -199,3 +199,29 @@ class LeNet(d2l.Classifier): #@save
 
 ### 7.6.2 Training
 雖然CNN的參數比較少，但是計算量並不少，用GPU計算更適合。
+
+# 8 Modern Convolutional Neural Networks
+## 8.1 Deep Convolutional Neural Networks (AlexNet)
+硬體運算速度的提升增加了CNN可行性。
+
+### 8.1.1 Representation Learning
+有一派的研究員相信圖片中的feature是可以讓電腦自己學習得到的。AlexNet在地層layer所學到的kernel跟傳統機器學習手工製作的feature很像。  
+推動CNN兩大因素別是"資料"和"電腦硬體"，過去的資料集都很小而且電腦運算速度很慢。
+### 8.1.2 AlenNet
+AlexNet把sigmoid activation function改成ReLU activtion function。  
+ReLU activation function，讓模型訓練變得更加容易。因為如果初始化的參數很接近0或1，sigmoid activation function的輸出值會很接近0，這使的反向傳播幾乎沒有作用。而ReLU activation function卻不會有這種情形。  
+AlexNet在訓練的時候也大量的利用圖片擴增的技巧，這使得訓練結果不會overfitting。  
+
+### 8.1.4 Discussion
+AlexNet弱點是他最後的兩個layer佔用了非常大量的記憶體和運算，這對需要高速運算的場景非常不利。
+另外一個可以注意的點是即使AlexNet的參數量遠大於資料及照片總數，AlexNet也幾乎沒有Overfitting。這是因為有用到現代化的正規化方法如Dropout。
+
+## 8.2 Networks Using Blocks (VGG)
+神經網絡架構的設計日益抽象化，研究人員從思考個別神經元逐漸轉向整個層面，然後到塊狀結構，即層的重複模式。十年後，這已經進一步發展到研究人員使用完整的訓練模型，將它們重新應用於不同但相關的任務。這種大型 pretrained models通常被稱為foundation models 。  
+這種Blocks的概念最早出現在VGG network，使用迴圈和子程序，可以在任何現代深度學習框架中輕鬆地在代碼中實現這些重複的結構。
+
+### 8.2.1 VGG Blocks
+CNNs的基本構建塊是以下順序的序列：（i）帶填充的卷積層以保持解析度，（ii）如ReLU之類的非線性激活函數，（iii）如最大池化之類的池化層以減小解析度。這種方法的一個問題是空間解析度下降得相當迅速。特別是，這在所有維度（d）用完之前，對於網絡在卷積層上存在著 $log_2d$的硬限制。例如，在ImageNet的情況下，以這種方式不可能有超過8個卷積層。  
+Simonyan和Zisserman（2014）的關鍵想法是使用連續的小卷層來取代一個大卷積層，例如兩個3x3的卷積層其實涵蓋的像素跟一個5x5一樣大，經過觀察力用連續小的卷積層的效果跟直接用一個大卷積層的效果相似。  
+堆疊3×3的卷積後來成為後來的深度網絡的黃金標準，直到最近由Liu等人（2022）重新審查了這個設計決策。
+
