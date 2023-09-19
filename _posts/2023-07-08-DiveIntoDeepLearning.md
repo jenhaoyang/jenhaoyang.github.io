@@ -255,3 +255,32 @@ class VGG(d2l.Classifier):
             nn.LazyLinear(num_classes))
         self.net.apply(d2l.init_cnn)
 ```
+
+## 8.3 Network in Network (NiN)
+VGG, LeNet, VGG都有一個共通的缺點。
+1. fully connected layer有非常大的參數量。
+2. fully connected layer沒辦法放在模型最後面以外的地方。
+Network in Network解決了上面兩個問題。他利用了像面兩個方式解決。
+1. 利用$1 \times 1$ conv layer來取代fully connected layer
+2. 在模型的最後面使用global average pooling
+NiN的好處是沒有fully connected layer因此參數量大大減少。
+### 8.3.1 NiN Blocks
+由一個conv layer加上兩個$1 \times 1$ conv layer組成
+
+
+## 8.4 Multi-Branch Networks (GoogLeNet)
+GoogLeNet可以說是第一個將模型拆解成三個部位stem, body, head的模型。
+
+### 8.4.1 Inception Blocks
+Inception Blocks跟前面模型不一樣的是一個block有三個分支
+
+## 8.5 Batch Normalization
+Batch Normalization是一個能夠有效加速深度模型收斂的方法，與 residual blocks可以讓模型深度達到一百層。
+
+### 8.5.1 Training Deep Networks
+Batch normalization 可以被套用在單一個layer或是所有layer，如此一來對每一層的input都先做一次 normalization(也就是平均為0標準差為1)。
+注意到如果我們套用batch normalization在minibatches為一的狀況下，我們不會學到任何東西，因為所有的 hidden unit都會變成0。  
+因此使用Batch normalization的時候batch size的大小變成十分重要。  
+Batch normalization中scale parameter 和shift parameter是透過模型學習而得。
+
+### 8.5.2 Batch Normalization Layers
