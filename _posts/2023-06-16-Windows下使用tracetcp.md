@@ -2,18 +2,13 @@
 layout: post
 title: Windows下使用tracetcp
 date: 2023-06-16 12:28 +0800
-categories: [深度學習工具]
-tags: [deepstream]     # TAG names should always be lowercase
+categories: [網路工具]
+tags: [tool]     # TAG names should always be lowercase
 ---
 
-# Accuracy-Performance Tradeoffs
-下面這些參數的調整將會影響到準確度和效能。
 
-## Visual Feature Types and Feature Sizes
-### Visual feature types
-  * useColorNames
-  * useHog
+1.安裝wincap
+2.安裝tracetcp
+https://github.com/0xcafed00d/tracetcp
 
-### Feature sizes
-  * featureImgSizeLevel
-  * searchRegionPaddingScale
+https://blog.csdn.net/sj349781478/article/details/116704310
