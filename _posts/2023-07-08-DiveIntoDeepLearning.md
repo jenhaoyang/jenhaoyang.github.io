@@ -292,3 +292,6 @@ Batch normalization中scale parameter 和shift parameter是透過模型學習而
 在這之前我們的資料長度都是固定的，在這章將要學習如何讓模型學習長度不固定的序列資料。
 RNN利用recurrent connection讓模型可以學習序列化的資料，可以把他想成一個迴授迴路
 
+9.1 序列化資料
+在此之前我們的特徵向量長度是固定的，而序列化資料的特徵向量是以時間排序而且長度不固定的資料。
+
