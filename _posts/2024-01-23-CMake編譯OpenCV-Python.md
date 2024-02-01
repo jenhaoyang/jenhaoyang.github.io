@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 2024-01-20-CMake編譯OpenCV-Python.md
+title: 2024-01-20-CMake編譯OpenCV-Python
 date: 2024-01-20 17:31 +0800
 ---
 
@@ -43,7 +43,6 @@ https://bugs.python.org/issue43173
 ```python
 import os
 os.add_dll_directory("C:\\gstreamer\\1.0\\msvc_x86_64\\bin")
-os.add_dll_directory("C:\\gstreamer\\1.0\\msvc_x86_64\\lib\\gstreamer-1.0")
 import cv2
 gst = 'rtspsrc location=rtsp://192.168.8.57/live.sdp ! decodebin ! videoconvert ! video/x-raw,format=BGR ! appsink drop=1'
 
