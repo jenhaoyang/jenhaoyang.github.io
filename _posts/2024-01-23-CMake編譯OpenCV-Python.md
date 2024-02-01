@@ -17,7 +17,7 @@ python -m pip install --upgrade pip
 
 `<gstreamer資料夾>\1.0\msvc_x86_64`
 # 直接安裝source distributions版本的opencv-python(opencv 4.3.0之後的版本)
-pip install --verbose  --no-binary opencv-python opencv-python==4.6.0.66
+pip install --verbose  --no-binary opencv-contrib-python opencv-contrib-python==4.6.0.66
 
 # GST_PLUGIN_PATH或是GST_PLUGIN_SYSTEM_PATH(不一定要加)
 gstreamer預設尋找plugin的順序如下
