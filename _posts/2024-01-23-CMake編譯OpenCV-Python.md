@@ -17,7 +17,7 @@ python -m pip install --upgrade pip
 
 `<gstreamer資料夾>\1.0\msvc_x86_64`
 # 直接安裝source distributions版本的opencv-python(opencv 4.3.0之後的版本)
-pip install --verbose  --no-binary opencv-contrib-python opencv-contrib-python==4.6.0.66
+`pip install --verbose  --no-binary opencv-python opencv-python==4.6.0.66`
 
 # GST_PLUGIN_PATH或是GST_PLUGIN_SYSTEM_PATH(不一定要加)
 gstreamer預設尋找plugin的順序如下
@@ -42,7 +42,7 @@ https://bugs.python.org/issue43173
 # 測試
 ```python
 import os
-os.add_dll_directory("C:\\gstreamer\\1.0\\msvc_x86_64\\bin")
+os.add_dll_directory("D:\\gstreamer\\1.0\\msvc_x86_64\\bin")
 import cv2
 gst = 'rtspsrc location=rtsp://192.168.8.57/live.sdp ! decodebin ! videoconvert ! video/x-raw,format=BGR ! appsink drop=1'
 
