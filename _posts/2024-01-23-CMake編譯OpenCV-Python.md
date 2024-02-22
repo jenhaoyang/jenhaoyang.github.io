@@ -4,6 +4,45 @@ title: 2024-01-20-CMake編譯OpenCV-Python
 date: 2024-01-20 17:31 +0800
 ---
 
+Here is the minimal steps.
+Here is my enviornment
+* Windows 10
+* Visual Studio Build Tools 2019
+* CMake 3.29.0-rc1 (use default install setting)
+* Gstreamer:(Use default install setting)
+MSVC 64-bit (VS 2019, Release CRT)
+1.22.10 runtime installer
+1.22.10 development installer
+* Python3.8.10
+
+For example, my gstreamer is install in D disk by default.
+1. Add System Environment Variable `GSTREAMER_ROOT_X86_64` value `D:\gstreamer\1.0\msvc_x86_64`
+https://gstreamer.freedesktop.org/documentation/installing/on-windows.html?gi-language=c#building-the-tutorials
+1. Add enviornment variable `GST_PLUGIN_PATH` value `D:\gstreamer\1.0\msvc_x86_64\lib\gstreamer-1.0`
+2. Add `Path` enviornment variable value `D:\gstreamer\1.0\msvc_x86_64\bin`
+3. re-login the computer
+4. create a Python venv and use it
+5. `pip install --verbose  --no-binary opencv-python opencv-python==4.6.0.66`
+6. os.add_dll_directory() Shoud be add to code since from Python 3.8+, Python will NOT search DLL from PATH enviornment variable.(https://bugs.python.org/issue43173)
+7. test code
+```python
+import os
+os.add_dll_directory("D:\\gstreamer\\1.0\\msvc_x86_64\\bin")
+import cv2
+gst = 'rtspsrc location=rtsp://192.168.8.57/live1s3.sdp timeout= 30000 ! decodebin ! videoconvert ! video/x-raw,format=BGR ! appsink drop=1'
+
+cap = cv2.VideoCapture(gst,cv2.CAP_GSTREAMER)
+while(cap.isOpened()):
+  ret, frame = cap.read()
+  if not ret:
+    break
+  cv2.imshow('frame', frame)
+  if cv2.waitKey(1) & 0xFF == ord('q'):
+    break
+
+cv2.destroyAllWindows()
+cap.release()
+```
 
 # 安裝cmake
 # 安裝msvc2019 build tool
@@ -11,8 +50,8 @@ date: 2024-01-20 17:31 +0800
 # 設定GSTREAMER_ROOT_X86_64環境變數
 https://gstreamer.freedesktop.org/documentation/installing/on-windows.html#building-the-tutorials
 
-# 更新pip
-python -m pip install --upgrade pip
+<!-- # 更新pip
+python -m pip install --upgrade pip -->
 
 
 `<gstreamer資料夾>\1.0\msvc_x86_64`
@@ -44,10 +83,7 @@ https://bugs.python.org/issue43173
 import os
 os.add_dll_directory("D:\\gstreamer\\1.0\\msvc_x86_64\\bin")
 import cv2
-gst = 'rtspsrc location=rtsp://192.168.8.57/live.sdp ! decodebin ! videoconvert ! video/x-raw,format=BGR ! appsink drop=1'
-
-# Variant for NVIDIA decoder that may be selected by decodebin:
-# gst = 'rtspsrc location=rtsp://username:pasword@10.2.9.164:554/h264Preview_01_main latency=300 ! decodebin ! nvvidconv ! video/x-raw,format=BGRx ! videoconvert ! video/x-raw,format=BGR ! appsink drop=1'
+gst = 'rtspsrc location=rtsp://192.168.8.57/live1s3.sdp timeout= 30000 ! decodebin ! videoconvert ! video/x-raw,format=BGR ! appsink drop=1'
 
 cap = cv2.VideoCapture(gst,cv2.CAP_GSTREAMER)
 while(cap.isOpened()):
