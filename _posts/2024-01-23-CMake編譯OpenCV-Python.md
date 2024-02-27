@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 2024-01-20-CMake編譯OpenCV-Python
+title: 2024-01-23-CMake編譯OpenCV-Python
 date: 2024-01-20 17:31 +0800
 ---
 
@@ -18,13 +18,15 @@ MSVC 64-bit (VS 2019, Release CRT)
 For example, my gstreamer is install in D disk by default.
 1. Add System Environment Variable `GSTREAMER_ROOT_X86_64` value `D:\gstreamer\1.0\msvc_x86_64`
 https://gstreamer.freedesktop.org/documentation/installing/on-windows.html?gi-language=c#building-the-tutorials
-1. Add enviornment variable `GST_PLUGIN_PATH` value `D:\gstreamer\1.0\msvc_x86_64\lib\gstreamer-1.0`
-2. Add `Path` enviornment variable value `D:\gstreamer\1.0\msvc_x86_64\bin`
-3. re-login the computer
-4. create a Python venv and use it
-5. `pip install --verbose  --no-binary opencv-python opencv-python==4.6.0.66`
-6. os.add_dll_directory() Shoud be add to code since from Python 3.8+, Python will NOT search DLL from PATH enviornment variable.(https://bugs.python.org/issue43173)
-7. test code
+2. Add enviornment variable `GST_PLUGIN_PATH` value `D:\gstreamer\1.0\msvc_x86_64\lib\gstreamer-1.0`
+3. Add `Path` enviornment variable value `D:\gstreamer\1.0\msvc_x86_64\bin`
+4. re-login the computer
+5. create a Python venv and use it
+6. `pip install --verbose  --no-binary opencv-python opencv-python==4.6.0.66`
+7. os.add_dll_directory() Shoud be add to code since from Python 3.8+, Python will NOT search DLL from PATH enviornment variable.(https://bugs.python.org/issue43173)
+8. test code  
+
+
 ```python
 import os
 os.add_dll_directory("D:\\gstreamer\\1.0\\msvc_x86_64\\bin")
