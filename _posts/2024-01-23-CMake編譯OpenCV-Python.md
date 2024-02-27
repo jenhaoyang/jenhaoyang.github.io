@@ -52,9 +52,6 @@ cap.release()
 # 設定GSTREAMER_ROOT_X86_64環境變數
 https://gstreamer.freedesktop.org/documentation/installing/on-windows.html#building-the-tutorials
 
-<!-- # 更新pip
-python -m pip install --upgrade pip -->
-
 
 `<gstreamer資料夾>\1.0\msvc_x86_64`
 # 直接安裝source distributions版本的opencv-python(opencv 4.3.0之後的版本)
