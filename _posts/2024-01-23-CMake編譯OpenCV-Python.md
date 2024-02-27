@@ -9,10 +9,10 @@ Here is my enviornment
 * Windows 10
 * Visual Studio Build Tools 2019
 * CMake 3.29.0-rc1 (use default install setting)
-* Gstreamer:(Use default install setting)
-MSVC 64-bit (VS 2019, Release CRT)
-1.22.10 runtime installer
-1.22.10 development installer
+* Gstreamer:(Use default install setting)  
+MSVC 64-bit (VS 2019, Release CRT)  
+1.22.10 runtime installer  
+1.22.10 development installer  
 * Python3.8.10
 
 For example, my gstreamer is install in D disk by default.
