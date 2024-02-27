@@ -16,14 +16,14 @@ MSVC 64-bit (VS 2019, Release CRT)
 * Python3.8.10
 
 For example, my gstreamer is install in D disk by default.
-1. Add System Environment Variable `GSTREAMER_ROOT_X86_64` value `D:\gstreamer\1.0\msvc_x86_64`
-https://gstreamer.freedesktop.org/documentation/installing/on-windows.html?gi-language=c#building-the-tutorials
+1. Add System Environment Variable `GSTREAMER_ROOT_X86_64` value `D:\gstreamer\1.0\msvc_x86_64`  
+[gstreamer doc](https://gstreamer.freedesktop.org/documentation/installing/on-windows.html?gi-language=c#building-the-tutorials)
 2. Add enviornment variable `GST_PLUGIN_PATH` value `D:\gstreamer\1.0\msvc_x86_64\lib\gstreamer-1.0`
 3. Add `Path` enviornment variable value `D:\gstreamer\1.0\msvc_x86_64\bin`
 4. re-login the computer
 5. create a Python venv and use it
 6. `pip install --verbose  --no-binary opencv-python opencv-python==4.6.0.66`
-7. os.add_dll_directory() Shoud be add to code since from Python 3.8+, Python will NOT search DLL from PATH enviornment variable.(https://bugs.python.org/issue43173)
+7. os.add_dll_directory() Shoud be add to code since from Python 3.8+, Python will NOT search DLL from PATH enviornment variable.[ref](https://bugs.python.org/issue43173)
 8. test code  
 
 
@@ -50,7 +50,7 @@ cap.release()
 # 安裝msvc2019 build tool
 # 安裝python3.8.10
 # 設定GSTREAMER_ROOT_X86_64環境變數
-https://gstreamer.freedesktop.org/documentation/installing/on-windows.html#building-the-tutorials
+[gstreamer doc](https://gstreamer.freedesktop.org/documentation/installing/on-windows.html#building-the-tutorials)
 
 
 `<gstreamer資料夾>\1.0\msvc_x86_64`
@@ -63,9 +63,10 @@ gstreamer預設尋找plugin的順序如下
 2. C:\gstreamer\1.0\x86\lib\gstreamer-1.0
 3. <location of gstreamer-1.0-0.dll>\..\lib\gstreamer-1.0
 4. %GST_PLUGIN_PATH%
-
-https://gstreamer.freedesktop.org/documentation/installing/on-windows.html#download-and-install-gstreamer-binaries
 `<gstreamer資料夾>\1.0\msvc_x86_64\lib\gstreamer-1.0`
+
+[gstreamer doc](https://gstreamer.freedesktop.org/documentation/installing/on-windows.html#download-and-install-gstreamer-binaries)
+
 
 # Path變數
 `<gstreamer資料夾>\1.0\msvc_x86_64\bin`
@@ -73,7 +74,7 @@ https://gstreamer.freedesktop.org/documentation/installing/on-windows.html#downl
 
 # 載入時手動加入dll路徑
 os.add_dll_directory()
-https://bugs.python.org/issue43173
+[ref](https://bugs.python.org/issue43173)
 
 
 
