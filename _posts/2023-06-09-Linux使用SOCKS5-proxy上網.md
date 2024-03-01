@@ -25,7 +25,23 @@ netstat -tlnp
 tcp        0      0 127.0.0.1:4444          0.0.0.0:*               LISTEN  
 ```
 
-# 用apt update測試
+# 安裝Proxychains4
+https://blog.csdn.net/leishupei/article/details/120736869
+sudo apt-get install proxychains4
+
+# 設定Proxychains4
+https://feifei.tw/proxychains4/
+sudo nano /usr/local/etc/proxychains.conf
+
+# 手動設定DNS server
+export DNS_SERVER=8.8.8.8
+
+https://github.com/rofl0r/proxychains-ng/issues/178#issuecomment-347439800
+
+# 測試apt指令
+proxychains4 sudo apt install zip
+
+<!-- # 用apt update測試
 用下面指令測試看看是否可以更新套件
 ```shell
 sudo apt -o Acquire::http::proxy="socks5h://127.0.0.1:4444,/" update
@@ -71,4 +87,4 @@ User git
 ProxyCommand nc -v -x 127.0.0.1:1080 %h %p
 ```
 # 圖解參考
-https://erev0s.com/blog/ssh-local-remote-and-dynamic-port-forwarding-explain-it-i-am-five/
+https://erev0s.com/blog/ssh-local-remote-and-dynamic-port-forwarding-explain-it-i-am-five/ -->
