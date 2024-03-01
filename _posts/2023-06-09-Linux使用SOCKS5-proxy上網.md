@@ -33,6 +33,8 @@ sudo apt-get install proxychains4
 https://feifei.tw/proxychains4/
 sudo nano /usr/local/etc/proxychains.conf
 
+proxy_dns 的功能不要關掉
+
 # 手動設定DNS server
 export DNS_SERVER=8.8.8.8
 
