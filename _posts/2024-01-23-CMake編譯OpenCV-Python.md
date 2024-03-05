@@ -22,7 +22,7 @@ For example, my gstreamer is install in D disk by default.
 3. Add `Path` enviornment variable value `D:\gstreamer\1.0\msvc_x86_64\bin`
 4. re-login the computer
 5. create a Python venv and use it
-6. `pip install --verbose  --no-binary opencv-python opencv-python==4.6.0.66`
+6. `pip install --verbose  --no-binary opencv-python opencv-python`
 7. os.add_dll_directory() Shoud be add to code since from Python 3.8+, Python will NOT search DLL from PATH enviornment variable.[ref](https://bugs.python.org/issue43173)
 8. test code  
 
@@ -46,7 +46,7 @@ cv2.destroyAllWindows()
 cap.release()
 ```
 
-# 安裝cmake
+# 安裝cmake(不一定要裝)
 # 安裝msvc2019 build tool
 # 安裝python3.8.10
 # 設定GSTREAMER_ROOT_X86_64環境變數
@@ -55,7 +55,7 @@ cap.release()
 
 `<gstreamer資料夾>\1.0\msvc_x86_64`
 # 直接安裝source distributions版本的opencv-python(opencv 4.3.0之後的版本)
-`pip install --verbose  --no-binary opencv-python opencv-python==4.6.0.66`
+`pip install --verbose  --no-binary opencv-python opencv-python`
 
 # GST_PLUGIN_PATH或是GST_PLUGIN_SYSTEM_PATH(不一定要加)
 gstreamer預設尋找plugin的順序如下
@@ -108,7 +108,7 @@ cap.release()
 從4.0之後CUDA相關的功能被移到opencv_contrib，必須要編一opencv_contrib才能啟用CUDA功能
 
 1. `set CMAKE_ARGS="-DWITH_CUDA=ON"`
-2. pip install --verbose  --no-binary opencv-contrib-python opencv-contrib-python==4.6.0.66
+2. pip install --verbose  --no-binary opencv-contrib-python opencv-contrib-python
 
 
 
