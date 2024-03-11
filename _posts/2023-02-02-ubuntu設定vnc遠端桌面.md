@@ -14,5 +14,14 @@ http://kito.wikidot.com/vnc
 清乾淨apt package
 https://askubuntu.com/questions/187888/what-is-the-correct-way-to-completely-remove-an-application
 
+
+
+
+# 刪除並重啟vnc server
+```
+vncserver -kill :1
+vncserver -localhost no :1
+```
+
 參考:  
 https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-vnc-on-ubuntu-20-04 

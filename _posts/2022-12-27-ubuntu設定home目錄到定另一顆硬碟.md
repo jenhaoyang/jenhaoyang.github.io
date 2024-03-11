@@ -1,20 +1,50 @@
 ---
 layout: post
-title: ubuntu設定home目錄到定另一顆硬碟
+title: Ubuntu設定home目錄到定另一顆硬碟
 date: 2022-12-27 17:39 +0800
+tags: [伺服器管理]
+pin: true
 ---
 
 
-如果在安裝Ubuntu的時候將home目錄設定在另一顆硬碟，如果系統碟故障也不用擔心資料全部消失。  
-下面教學將示範如何重新安裝系統後，將原本home目錄的東西接回來。
+在現在常見的SSD作業系統碟加上HDD資料碟的配置，下面接介紹如何手動將/home移動到HDD資料碟
 
-# 磁碟分割
-在分割硬碟的時候不需要分配home目錄
+# 將資料碟mount在一個暫時的資料夾下面
+```
+sudo mkdir /mnt/tmp
+sudo mount /dev/sdb1 /mnt/tmp
+```
+
+# 複製原本/home裡面的資料
+```
+sudo rsync -avx /home/ /mnt/tmp
+```
+
+# 建立/home的永久mount點
+* 先用以下指令查詢資料碟的UUID
+```
+sudo blkid
+```
+* 用`sudo nano /etc/fstab   # or any other editor`將下面一行寫入`/etc/fstab`文件最後面來設定mount點
+
+```
+UUID=<noted number from above>    /home    ext4    defaults   0  2
+```
+# 重開機檢查是否生效
+
+
+# (危險區)刪除舊的/home
+以下指令會刪掉舊的/home。務必先unmount新的home以免刪錯
+```
+sudo umount /home    # unmount the new home first!
+sudo rm -rf /home/*  # deletes the old home
+```
 
 # 掛載另一顆硬碟
 
 # 將/home掛載到另一顆硬碟
 
 參考: 
+https://askubuntu.com/a/50539
 https://www.tecmint.com/convert-home-directory-partition-linux/
 https://help.ubuntu.com/community/DiskSpace  
