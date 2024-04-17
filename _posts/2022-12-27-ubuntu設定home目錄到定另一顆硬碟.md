@@ -45,6 +45,8 @@ sudo rm -rf /home/*  # deletes the old home
 # 將/home掛載到另一顆硬碟
 
 參考: 
-https://askubuntu.com/a/50539
-https://www.tecmint.com/convert-home-directory-partition-linux/
+https://askubuntu.com/a/50539  
+
+https://www.tecmint.com/convert-home-directory-partition-linux/  
+
 https://help.ubuntu.com/community/DiskSpace  
