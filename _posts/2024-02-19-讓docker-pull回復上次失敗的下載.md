@@ -21,3 +21,8 @@ sudo gedit /etc/docker/daemon.json
 ```bash
 sudo systemctl restart docker
 ```
+
+# 自動重新下載docker image
+```
+while ! docker pull nvcr.io/nvidia/deepstream:6.4-gc-triton-devel; do sleep .1; done && echo OK
+```
