@@ -219,8 +219,12 @@ target_link_directories(${PROJECT_NAME} PRIVATE
 
 target_link_options(${PROJECT_NAME} PRIVATE -Wl,-rpath,/opt/nvidia/deepstream/deepstream/lib/)
 ```
+* click build button
+![Screenshot from 2024-05-27 15-31-57](https://github.com/jenhaoyang/jenhaoyang.github.io/assets/7457532/4ec27faf-f33a-4177-a1d4-d38d731ca509)
+
 
 * start debug and make a breakpoint
+![Screenshot from 2024-05-27 15-45-50](https://github.com/jenhaoyang/jenhaoyang.github.io/assets/7457532/d3e94bbe-5979-48d0-a883-7b6bfec81790)
 
 * example project
 https://github.com/jenhaoyang/deepstream-startup
