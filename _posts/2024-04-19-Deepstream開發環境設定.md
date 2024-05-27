@@ -221,7 +221,8 @@ target_link_options(${PROJECT_NAME} PRIVATE -Wl,-rpath,/opt/nvidia/deepstream/de
 
 * build project
 click the build button in VSCode and select the gcc compiler.
-![Screenshot from 2024-05-27 15-31-57](https://github.com/jenhaoyang/jenhaoyang.github.io/assets/7457532/4ec27faf-f33a-4177-a1d4-d38d731ca509)
+![334013156-4ec27faf-f33a-4177-a1d4-d38d731ca509](https://github.com/jenhaoyang/jenhaoyang.github.io/assets/7457532/2afc26aa-6ec7-48fa-a9b5-67d2dd237b0e)
+
 
 
 * start debug and make a breakpoint
