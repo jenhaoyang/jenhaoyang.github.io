@@ -228,6 +228,8 @@ click the build button in VSCode and select the gcc compiler.
 * start debug and make a breakpoint
 ![Screenshot from 2024-05-27 15-45-50](https://github.com/jenhaoyang/jenhaoyang.github.io/assets/7457532/b59ce08f-4eba-499d-9de9-4774fb1c631e)
 
+* code navigation
+![Screenshot from 2024-05-27 16-20-43](https://github.com/jenhaoyang/deepstream-startup/assets/7457532/de3a2368-fd06-4833-9bb8-88d9a0b6ecf2)
 
 * example project
 https://github.com/jenhaoyang/deepstream-startup
