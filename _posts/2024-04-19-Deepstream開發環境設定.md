@@ -218,7 +218,9 @@ target_link_directories(${PROJECT_NAME} PRIVATE
 
 target_link_options(${PROJECT_NAME} PRIVATE -Wl,-rpath,/opt/nvidia/deepstream/deepstream/lib/)
 ```
-* click build button
+
+* build project
+click the build button in VSCode and select the gcc compiler.
 ![Screenshot from 2024-05-27 15-31-57](https://github.com/jenhaoyang/jenhaoyang.github.io/assets/7457532/4ec27faf-f33a-4177-a1d4-d38d731ca509)
 
 
