@@ -130,7 +130,7 @@ In this example，we need to compile deepstream-app first and use the object fil
 
 We need to change the permission for deepstream-app source folder in order to compile the deepstream-app.
 ```
-sudo chmod -r 777 
+sudo chmod -R 777 /opt/nvidia/deepstream/deepstream/sources/apps/
 ```
 
 ```CMakeLists
@@ -189,6 +189,7 @@ SET_SOURCE_FILES_PROPERTIES(
 
 add_executable(${PROJECT_NAME}
     ${OBJS}
+    deepstream_utc.c
     deepstream_test5_app_main.c
 )
 
