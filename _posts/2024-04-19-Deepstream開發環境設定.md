@@ -224,7 +224,8 @@ target_link_options(${PROJECT_NAME} PRIVATE -Wl,-rpath,/opt/nvidia/deepstream/de
 
 
 * start debug and make a breakpoint
-![Screenshot from 2024-05-27 15-45-50](https://github.com/jenhaoyang/jenhaoyang.github.io/assets/7457532/d3e94bbe-5979-48d0-a883-7b6bfec81790)
+![Screenshot from 2024-05-27 15-45-50](https://github.com/jenhaoyang/jenhaoyang.github.io/assets/7457532/b59ce08f-4eba-499d-9de9-4774fb1c631e)
+
 
 * example project
 https://github.com/jenhaoyang/deepstream-startup
