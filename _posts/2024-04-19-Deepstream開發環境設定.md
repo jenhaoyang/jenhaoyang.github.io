@@ -51,8 +51,10 @@ cp -r /opt/nvidia/deepstream/deepstream/apps/sample_apps/deepstream-test5/* /pat
 * create launch.json and task.json
 ```bash
 * create launch.json and task.json for compile and debug
+```
 
-tasks.json use CMake to build
+tasks.json use CMake to build  
+
 ```json
 {
   "version": "2.0.0",
@@ -73,6 +75,8 @@ tasks.json use CMake to build
 ```
 
 launch.json call task in task json to build
+
+
 ```json
 {
     // Use IntelliSense to learn about possible attributes.
@@ -91,7 +95,9 @@ launch.json call task in task json to build
         }
     ]
 }
-```
+```  
+
+
 create settings.json for clangd to read compile_commands.json. clangd can generate code navigator.
 ```json
 {
