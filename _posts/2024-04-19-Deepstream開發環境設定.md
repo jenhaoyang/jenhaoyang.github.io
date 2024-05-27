@@ -35,6 +35,11 @@ sudo apt-get install cmake
 ```bash
 sudo apt-get install clangd-12
 ```
+* package to run this example
+```bash
+sudo apt-get install libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev \
+   libgstrtspserver-1.0-dev libx11-dev libjson-glib-dev libyaml-cpp-dev
+```
 
 # Setup VSCode for development
 * install VSCode extension 
@@ -123,6 +128,11 @@ create settings.json for clangd to read compile_commands.json. clangd can genera
 Create CMakeLists.txt under the workspace folder, CMake will help you find CUDA and nvcc, no more `CUDA_VER` env variable needed even in jetson.  
 In this example，we need to compile deepstream-app first and use the object file in our project.So we use `ExternalProject_Add` to do this.
 
+We need to change the permission for deepstream-app source folder in order to compile the deepstream-app.
+```
+sudo chmod -r 777 
+```
+
 ```CMakeLists
 cmake_minimum_required(VERSION 3.25)
 project(deepstream-test5 LANGUAGES C CXX) #project(deepstream-test5 LANGUAGES CUDA C CXX)
@@ -179,7 +189,7 @@ SET_SOURCE_FILES_PROPERTIES(
 
 add_executable(${PROJECT_NAME}
     ${OBJS}
-    deepstream-test5.cpp
+    deepstream_test5_app_main.c
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
