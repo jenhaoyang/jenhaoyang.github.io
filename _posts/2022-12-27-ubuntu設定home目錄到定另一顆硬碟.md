@@ -2,7 +2,7 @@
 layout: post
 title: Ubuntu設定home目錄到定另一顆硬碟
 date: 2022-12-27 17:39 +0800
-tags: [伺服器管理]
+tags: [伺服器管理, Ubuntu]
 pin: true
 ---
 
