@@ -31,16 +31,24 @@ sudo apt-get install cmake
 
 ```
 * VSCode
+* clangd
+```bash
+sudo apt-get install clangd-12
+```
 
 # Setup VSCode for development
 * install VSCode extension 
 CodeLLDB、clangd 、CMake 、CMake Tools
-* Note: after install CodeLLDB, you will prompt to install lldb, please install it.
+* Note: Do not install C/C++ extension pack from Microsoft
 
 * copy deepstream-test5 to your workspace
 deepstream-test5 is a complete example to modify deepstream-app，this will take the advantage of the module design of deepstream-app. You can add probe to customize the app. It have good config parser and error handling, those will save many effort.  
 Following our workspace is in the copy of deepstream-test5 folder.
 
+```bash
+cp -r /opt/nvidia/deepstream/deepstream/apps/sample_apps/deepstream-test5/* /path/to/your/workspace
+
+* create launch.json and task.json
 ```bash
 * create launch.json and task.json for compile and debug
 
