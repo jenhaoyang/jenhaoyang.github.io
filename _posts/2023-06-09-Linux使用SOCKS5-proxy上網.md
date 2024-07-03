@@ -30,8 +30,9 @@ https://blog.csdn.net/leishupei/article/details/120736869
 sudo apt-get install proxychains4
 
 # 設定Proxychains4
-https://feifei.tw/proxychains4/
-sudo nano /usr/local/etc/proxychains.conf
+https://feifei.tw/proxychains4/  
+
+`sudo nano /usr/local/etc/proxychains.conf`
 
 proxy_dns 的功能不要關掉
 
