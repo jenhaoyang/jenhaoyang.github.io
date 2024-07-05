@@ -34,6 +34,11 @@ https://feifei.tw/proxychains4/
 
 `sudo nano /usr/local/etc/proxychains.conf`
 
+設定檔位置
+
+
+https://askubuntu.com/a/1477936
+
 proxy_dns 的功能不要關掉
 
 # 手動設定DNS server
