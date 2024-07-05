@@ -6,6 +6,51 @@ date: 2024-04-19 17:31 +0800
 
 Setup Deepstream C development enviornment with CMake and VSCode
 
+# 2024/07/05更新
+安裝C/C++、CMake 、CMake Tools extension  
+C/C++的IntelliSense直接選compile_commands.json  
+https://code.visualstudio.com/docs/cpp/configure-intellisense
+
+
+launch.json
+```json
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${command:cmake.launchTargetPath}",
+            "args": ["-c", "licenceplate_nvmultiurisrcbin.txt"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}
+```
+
+
+
+# 2024/07/05前舊方法
 # Prequirements
 * CMake > 3.25
 ```bash
