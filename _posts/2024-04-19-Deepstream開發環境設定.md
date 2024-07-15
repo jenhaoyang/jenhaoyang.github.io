@@ -49,6 +49,9 @@ launch.json
 ```
 
 
+## 查看char *完整內容
+https://stackoverflow.com/questions/52721440/how-to-expand-an-array-while-debugging-in-visual-studio-code
+
 
 # 2024/07/05前舊方法
 # Prequirements
