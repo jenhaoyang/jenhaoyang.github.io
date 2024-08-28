@@ -49,50 +49,20 @@ https://github.com/rofl0r/proxychains-ng/issues/178#issuecomment-347439800
 # 測試apt指令
 proxychains4 sudo apt install zip
 
-<!-- # 用apt update測試
-用下面指令測試看看是否可以更新套件
-```shell
-sudo apt -o Acquire::http::proxy="socks5h://127.0.0.1:4444,/" update
+# docker pull 無法使用proxychains4的解法
+`sudo nano /etc/systemd/system/docker.service.d/proxy.conf`
+
+```
+[Service]
+Environment="HTTP_PROXY=socks5://127.0.0.1:9050"
+Environment="HTTPS_PROXY=socks5://127.0.0.1:9050"
 ```
 
-# git ssh通過SOCKS5 prosy
-https://stackoverflow.com/a/67513102
-
-設定`~/.ssh/config`並加入以下內容，下面以github為例，注意要將port改成剛剛開的proxy port。
 ```shell
-Host github.com
-HostName github.com
-User git
-ProxyCommand nc -v -x 127.0.0.1:4444 %h %p
+sudo systemctl daemon-reload
+sudo systemctl restart docker
 ```
 
-其他設定參考:
-```shell
-# Method 1. git http + proxy http
-git config --global http.proxy "http://127.0.0.1:1080"
-git config --global https.proxy "http://127.0.0.1:1080"
+https://markvanlent.dev/2022/05/10/pulling-docker-images-via-a-socks5-proxy/
 
-# Method 2. git http + proxy shocks
-git config --global http.proxy "socks5://127.0.0.1:1080"
-git config --global https.proxy "socks5://127.0.0.1:1080"
 
-# to unset
-git config --global --unset http.proxy
-git config --global --unset https.proxy
-
-# Method 3. git ssh + proxy http
-vim ~/.ssh/config
-Host github.com
-HostName github.com
-User git
-ProxyCommand socat - PROXY:127.0.0.1:%h:%p,proxyport=1087
-
-# Method 4. git ssh + proxy socks
-vim ~/.ssh/config
-Host github.com
-HostName github.com
-User git
-ProxyCommand nc -v -x 127.0.0.1:1080 %h %p
-```
-# 圖解參考
-https://erev0s.com/blog/ssh-local-remote-and-dynamic-port-forwarding-explain-it-i-am-five/ -->
