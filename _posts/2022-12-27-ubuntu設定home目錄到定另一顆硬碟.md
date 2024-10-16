@@ -9,6 +9,12 @@ pin: true
 
 在現在常見的SSD作業系統碟加上HDD資料碟的配置，下面接介紹如何手動將/home移動到HDD資料碟
 
+# 格式化硬碟(完全新的硬碟才需要)，這裡假設整顆硬碟不再分割磁碟
+```bash
+lsblk #找出硬碟的名稱
+sudo mkfs -t ext4 /dev/sdb #格式化整顆硬碟
+```
+
 # 將資料碟mount在一個暫時的資料夾下面
 ```
 sudo mkdir /mnt/tmp

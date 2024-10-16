@@ -11,6 +11,17 @@ date: 2023-06-14 10:54 +0800
 }
 ```
 
+重新啟動docker service 
+```bash
+sudo systemctl stop docker.service
+sudo systemctl start docker.service
+```
+
+確認路徑已經修改
+```bash
+docker info | grep "Docker Root Dir"
+```
+
 https://docs.docker.com/config/daemon/#daemon-data-directory
 
 # 步驟參考(Docker更新後原本設定的位置會被改回去，不推薦)
