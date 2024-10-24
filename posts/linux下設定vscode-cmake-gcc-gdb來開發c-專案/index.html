@@ -1,0 +1,375 @@
+<!DOCTYPE html><html lang="en" ><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="generator" content="Jekyll v4.2.2" /><meta property="og:title" content="Linux下設定VScode、CMake、GCC、GDB來開發C++專案" /><meta property="og:locale" content="en" /><meta name="description" content="安裝套件 cmake extension c++ extension" /><meta property="og:description" content="安裝套件 cmake extension c++ extension" /><link rel="canonical" href="https://jenhaoyang.github.io//posts/linux%E4%B8%8B%E8%A8%AD%E5%AE%9Avscode-cmake-gcc-gdb%E4%BE%86%E9%96%8B%E7%99%BCc-%E5%B0%88%E6%A1%88/" /><meta property="og:url" content="https://jenhaoyang.github.io//posts/linux%E4%B8%8B%E8%A8%AD%E5%AE%9Avscode-cmake-gcc-gdb%E4%BE%86%E9%96%8B%E7%99%BCc-%E5%B0%88%E6%A1%88/" /><meta property="og:site_name" content="Steven" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2022-10-28T17:52:00+08:00" /><meta name="twitter:card" content="summary" /><meta property="twitter:title" content="Linux下設定VScode、CMake、GCC、GDB來開發C++專案" /><meta name="twitter:site" content="@twitter_username" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-11-22T00:04:39+08:00","datePublished":"2022-10-28T17:52:00+08:00","description":"安裝套件 cmake extension c++ extension","headline":"Linux下設定VScode、CMake、GCC、GDB來開發C++專案","mainEntityOfPage":{"@type":"WebPage","@id":"https://jenhaoyang.github.io//posts/linux%E4%B8%8B%E8%A8%AD%E5%AE%9Avscode-cmake-gcc-gdb%E4%BE%86%E9%96%8B%E7%99%BCc-%E5%B0%88%E6%A1%88/"},"url":"https://jenhaoyang.github.io//posts/linux%E4%B8%8B%E8%A8%AD%E5%AE%9Avscode-cmake-gcc-gdb%E4%BE%86%E9%96%8B%E7%99%BCc-%E5%B0%88%E6%A1%88/"}</script><title>Linux下設定VScode、CMake、GCC、GDB來開發C++專案 | Steven</title><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="shortcut icon" href="/assets/img/favicons/favicon.ico"><meta name="apple-mobile-web-app-title" content="Steven"><meta name="application-name" content="Steven"><meta name="msapplication-TileColor" content="#da532c"><meta name="msapplication-config" content="/assets/img/favicons/browserconfig.xml"><meta name="theme-color" content="#ffffff"><link rel="preconnect" href="https://fonts.googleapis.com" ><link rel="dns-prefetch" href="https://fonts.googleapis.com" ><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="dns-prefetch" href="https://fonts.gstatic.com" crossorigin><link rel="preconnect" href="https://fonts.googleapis.com" ><link rel="dns-prefetch" href="https://fonts.googleapis.com" ><link rel="preconnect" href="https://cdn.jsdelivr.net" ><link rel="dns-prefetch" href="https://cdn.jsdelivr.net" ><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato&family=Source+Sans+Pro:wght@400;600;700;900&display=swap"><link rel="preconnect" href="https://www.google-analytics.com" crossorigin="use-credentials"><link rel="dns-prefetch" href="https://www.google-analytics.com"><link rel="preconnect" href="https://www.googletagmanager.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css"><link rel="stylesheet" href="/assets/css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/magnific-popup@1/dist/magnific-popup.min.css"> <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script> <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script> <script type="text/javascript"> class ModeToggle { static get MODE_KEY() { return "mode"; } static get MODE_ATTR() { return "data-mode"; } static get DARK_MODE() { return "dark"; } static get LIGHT_MODE() { return "light"; } static get ID() { return "mode-toggle"; } constructor() { if (this.hasMode) { if (this.isDarkMode) { if (!this.isSysDarkPrefer) { this.setDark(); } } else { if (this.isSysDarkPrefer) { this.setLight(); } } } let self = this; /* always follow the system prefers */ this.sysDarkPrefers.addEventListener("change", () => { if (self.hasMode) { if (self.isDarkMode) { if (!self.isSysDarkPrefer) { self.setDark(); } } else { if (self.isSysDarkPrefer) { self.setLight(); } } self.clearMode(); } self.notify(); }); } /* constructor() */ get sysDarkPrefers() { return window.matchMedia("(prefers-color-scheme: dark)"); } get isSysDarkPrefer() { return this.sysDarkPrefers.matches; } get isDarkMode() { return this.mode === ModeToggle.DARK_MODE; } get isLightMode() { return this.mode === ModeToggle.LIGHT_MODE; } get hasMode() { return this.mode != null; } get mode() { return sessionStorage.getItem(ModeToggle.MODE_KEY); } /* get the current mode on screen */ get modeStatus() { if (this.isDarkMode || (!this.hasMode && this.isSysDarkPrefer)) { return ModeToggle.DARK_MODE; } else { return ModeToggle.LIGHT_MODE; } } setDark() { $('html').attr(ModeToggle.MODE_ATTR, ModeToggle.DARK_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE); } setLight() { $('html').attr(ModeToggle.MODE_ATTR, ModeToggle.LIGHT_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE); } clearMode() { $('html').removeAttr(ModeToggle.MODE_ATTR); sessionStorage.removeItem(ModeToggle.MODE_KEY); } /* Notify another plugins that the theme mode has changed */ notify() { window.postMessage({ direction: ModeToggle.ID, message: this.modeStatus }, "*"); } } /* ModeToggle */ const toggle = new ModeToggle(); function flipMode() { if (toggle.hasMode) { if (toggle.isSysDarkPrefer) { if (toggle.isLightMode) { toggle.clearMode(); } else { toggle.setLight(); } } else { if (toggle.isDarkMode) { toggle.clearMode(); } else { toggle.setDark(); } } } else { if (toggle.isSysDarkPrefer) { toggle.setLight(); } else { toggle.setDark(); } } toggle.notify(); } /* flipMode() */ </script><body data-spy="scroll" data-target="#toc" data-topbar-visible="true"><div id="sidebar" class="d-flex flex-column align-items-end"><div class="profile-wrapper text-center"><div id="avatar"> <a href="/" class="mx-auto"> <img src="/assets/img/favicons/android-chrome-512x512.png" alt="avatar" onerror="this.style.display='none'"> </a></div><div class="site-title mt-3"> <a href="/">Steven</a></div><div class="site-subtitle font-italic">深度學習、機器學習、MLOps</div></div><ul class="w-100"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home ml-xl-3 mr-xl-3 unloaded"></i> <span>HOME</span> </a><li class="nav-item"> <a href="/categories/" class="nav-link"> <i class="fa-fw fas fa-stream ml-xl-3 mr-xl-3 unloaded"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/tags/" class="nav-link"> <i class="fa-fw fas fa-tag ml-xl-3 mr-xl-3 unloaded"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/archives/" class="nav-link"> <i class="fa-fw fas fa-archive ml-xl-3 mr-xl-3 unloaded"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info-circle ml-xl-3 mr-xl-3 unloaded"></i> <span>ABOUT</span> </a></ul><div class="sidebar-bottom mt-auto d-flex flex-wrap justify-content-center align-items-center"> <button class="mode-toggle btn" aria-label="Switch Mode"> <i class="fas fa-adjust"></i> </button> <span class="icon-border"></span> <a href="https://github.com/jenhaoyang" aria-label="github" target="_blank" rel="noopener"> <i class="fab fa-github"></i> </a> <a href=" javascript:location.href = 'mailto:' + ['steven05yang','gmail.com'].join('@')" aria-label="email" > <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss" > <i class="fas fa-rss"></i> </a> <a href="https://www.linkedin.com/in/jenhaoyang/" aria-label="linkedin" target="_blank" rel="noopener"> <i class="fab fa-linkedin"></i> </a></div></div><div id="topbar-wrapper"><div id="topbar" class="container d-flex align-items-center justify-content-between h-100 pl-3 pr-3 pl-md-4 pr-md-4"> <span id="breadcrumb"> <span> <a href="/"> Home </a> </span> <span>Linux下設定VScode、CMake、GCC、GDB來開發C++專案</span> </span> <i id="sidebar-trigger" class="fas fa-bars fa-fw"></i><div id="topbar-title"> Post</div><i id="search-trigger" class="fas fa-search fa-fw"></i> <span id="search-wrapper" class="align-items-center"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="Search..."> </span> <span id="search-cancel" >Cancel</span></div></div><div id="main-wrapper" class="d-flex justify-content-center"><div id="main" class="container pl-xl-4 pr-xl-4"><div class="row"><div id="core-wrapper" class="col-12 col-lg-11 col-xl-9 pr-xl-4"><div class="post pl-1 pr-1 pl-md-2 pr-md-2"><h1 data-toc-skip>Linux下設定VScode、CMake、GCC、GDB來開發C++專案</h1><div class="post-meta text-muted"> <span> Posted <em class="" data-ts="1666950720" data-df="ll" data-toggle="tooltip" data-placement="bottom"> Oct 28, 2022 </em> </span> <span> Updated <em class="" data-ts="1669046679" data-df="ll" data-toggle="tooltip" data-placement="bottom"> Nov 22, 2022 </em> </span><div class="d-flex justify-content-between"> <span> By <em> <a href="https://github.com/jenhaoyang">Steven Yang</a> </em> </span><div> <span class="readtime" data-toggle="tooltip" data-placement="bottom" title="2548 words"> <em>14 min</em> read</span></div></div></div><div class="post-content"><h1 id="安裝套件">安裝套件</h1><ul><li>cmake extension<li><p>c++ extension <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 700 400'%3E%3C/svg%3E" data-src="/assets/img/2022-08-24-12-30/vscode-cmake.png" alt="cmake extension" width="700" height="400" data-proofer-ignore> <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 700 400'%3E%3C/svg%3E" data-src="/assets/img/2022-08-24-12-30/vscode-cpp.png" alt="c++ extension" width="700" height="400" data-proofer-ignore></p><li>安裝編譯器GCC、除錯器DBG<div class="language-bash highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre><span class="nb">sudo </span>apt-get update
+<span class="nb">sudo </span>apt-get <span class="nb">install </span>build-essential gdb
+gcc <span class="nt">-v</span> <span class="c">#確認GCC安裝成功</span>
+</pre></table></code></div></div></ul><blockquote class="prompt-warning"><div><p>注意: GDB 12.09 版本在VSCode除錯的時候會有錯誤，可以參考下面方式將GDB升級到12.10以上版本<br /> <a href="https://stackoverflow.com/a/54239291">升級GDB</a><br /> <a href="https://github.com/microsoft/vscode-cpptools/issues/9135">GDB issue</a></p></div></blockquote><ul><li>安裝CMake 直接用<code class="language-plaintext highlighter-rouge">sudo apt install cmake</code>，安裝的版本會比較舊，因此如果想用CMake最新的功能可以按照<a href="https://apt.kitware.com/">官方網站的安裝方式</a>，安裝後我們可以測試一下CMake安裝成功，在這裡我們CMake的版本至少要大於3.15<div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>cmake --version
+</pre></table></code></div></div></ul><h1 id="編譯c檔">編譯C++檔</h1><p>用以下指令建立一個專案資料夾，最後一行<code class="language-plaintext highlighter-rouge">code .</code>會直接打開一個新的VScode並且以這個資料夾作為工作目錄</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre>mkdir projects
+cd projects
+mkdir helloworld
+cd helloworld
+code .
+</pre></table></code></div></div><p>在helloworld資料夾建立<code class="language-plaintext highlighter-rouge">helloworld.cpp</code>檔案並且寫入以下程式碼，然後按下編譯按鈕，並且選擇g++作為編譯器(如下圖所示)</p><div class="language-c highlighter-rouge"><div class="code-header"> <span data-label-text="C"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre><td class="rouge-code"><pre><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp">
+</span>
+<span class="n">using</span> <span class="n">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">msg</span> <span class="p">{</span><span class="s">"Hello"</span><span class="p">,</span> <span class="s">"C++"</span><span class="p">,</span> <span class="s">"World"</span><span class="p">,</span> <span class="s">"from"</span><span class="p">,</span> <span class="s">"VS Code"</span><span class="p">,</span> <span class="s">"and the C++ extension!"</span><span class="p">};</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">word</span> <span class="o">:</span> <span class="n">msg</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">word</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 700 400'%3E%3C/svg%3E" data-src="/assets/img/2022-10-28-18-10/cpp-run-compiler.png" alt="c++ run compiler" width="700" height="400" data-proofer-ignore> <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 700 400'%3E%3C/svg%3E" data-src="/assets/img/2022-10-28-18-10/cpp-chose-compiler.png" alt="c++ chose compiler" width="700" height="400" data-proofer-ignore></p><p>成功編譯後，你會在<code class="language-plaintext highlighter-rouge">Terminal</code>看到程式成功輸出文字 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 700 400'%3E%3C/svg%3E" data-src="/assets/img/2022-10-28-18-10/cpp-run-success.png" alt="c++ run success" width="700" height="400" data-proofer-ignore></p><p>第一次按下執行compiler後，VScode會幫你建立一個<code class="language-plaintext highlighter-rouge">.vscode</code>資料夾和一個，<code class="language-plaintext highlighter-rouge">tasks.json</code>。或是你可以自己建立一個<code class="language-plaintext highlighter-rouge">.vscode</code>資料夾並且放入<code class="language-plaintext highlighter-rouge">tasks.json</code>。</p><div file="tasks.json" class="language-json highlighter-rouge"><div class="code-header"> <span data-label-text="tasks.json"><i class="far fa-file-code"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+</pre><td class="rouge-code"><pre><span class="p">{</span><span class="w">
+    </span><span class="nl">"tasks"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cppbuild"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"C/C++: gcc-9 build active file"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"command"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/usr/bin/gcc-9"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"args"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"-fdiagnostics-color=always"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"-g"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"${file}"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"-o"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"${fileDirname}/${fileBasenameNoExtension}"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"options"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"cwd"</span><span class="p">:</span><span class="w"> </span><span class="s2">"${fileDirname}"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="nl">"problemMatcher"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"$gcc"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"group"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"kind"</span><span class="p">:</span><span class="w"> </span><span class="s2">"build"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"isDefault"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="nl">"detail"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Task generated by Debugger."</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2.0.0"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></table></code></div></div><p>在這個資料夾下可以有三種檔案，每個檔案各有自己的用處，關於<code class="language-plaintext highlighter-rouge">tasks.json</code>詳細設定可以參考<a href="https://code.visualstudio.com/docs/editor/variables-reference">這裡</a></p><ul><li>tasks.json (compiler build settings)<li>launch.json (debugger settings)<li>c_cpp_properties.json (compiler path and IntelliSense settings)</ul><p>在<code class="language-plaintext highlighter-rouge">tasks.json</code>裡面有幾個的比較重要的點</p><ul><li><code class="language-plaintext highlighter-rouge">args</code>是給GCC的參數，要符合GCC參數的順序<li>在這裡我們用<code class="language-plaintext highlighter-rouge">${file}</code>這個變數告訴GCC目前打開的檔案讓他編譯<li><code class="language-plaintext highlighter-rouge">${fileDirname}</code>這個變數告訴GCC目前的資料夾位置，讓他在這個位置產生我們的執行檔<li><code class="language-plaintext highlighter-rouge">${fileBasenameNoExtension}</code>變數取出目前開啟的檔名但是不包含副檔名，我們用這個名字作為我們的執行檔名，也就是helloworld<li><code class="language-plaintext highlighter-rouge">label</code>會顯示在task清單 <code class="language-plaintext highlighter-rouge">detail</code> 會顯示在task清單的詳細描述。先按下<code class="language-plaintext highlighter-rouge">Ctrl+P</code>並且輸入<code class="language-plaintext highlighter-rouge">task </code>(task後面有空白)，就會顯示task清單，包含我們建立的task(如下圖所示)<li>如果有多個task，可以利用<code class="language-plaintext highlighter-rouge">group</code>裡面<code class="language-plaintext highlighter-rouge">isDefault</code>屬性設定預設task</ul><p><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 700 400'%3E%3C/svg%3E" data-src="/assets/img/2022-10-28-18-10/cpp-task-list.png" alt="c++ task list" width="700" height="400" data-proofer-ignore></p><h1 id="除錯設中斷點">除錯、設中斷點</h1><ul><li>在程式碼下一個中斷點，並且點及旁邊的執行按鈕並且選擇Debug就可以開始除錯了 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 700 400'%3E%3C/svg%3E" data-src="/assets/img/2022-10-28-18-10/breakpoint.png" alt="c++ breakpoint" width="700" height="400" data-proofer-ignore> <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 700 400'%3E%3C/svg%3E" data-src="/assets/img/2022-10-28-18-10/run-debug.png" alt="c++ run debug" width="700" height="400" data-proofer-ignore> <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 350 200'%3E%3C/svg%3E" data-src="/assets/img/2022-10-28-18-10/select-run-debug.png" alt="c++ selece run debug" width="350" height="200" data-proofer-ignore></ul><h1 id="設定在啟動程式時傳入參數給程式">設定在啟動程式時傳入參數給程式</h1><p>如果像在啟動程式時傳入一些參數，可以利用<code class="language-plaintext highlighter-rouge">launch.json</code>，要建立<code class="language-plaintext highlighter-rouge">launch.json</code>只需要案價旁邊的齒輪並選擇G++，VSCode就會自動幫你建立一份 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 350 200'%3E%3C/svg%3E" data-src="/assets/img/2022-10-28-18-10/add-launch.png" alt="c++ add launch" width="350" height="200" data-proofer-ignore> <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 700 400'%3E%3C/svg%3E" data-src="/assets/img/2022-10-28-18-10/add-launch-config.png" alt="c++ add launch" width="700" height="400" data-proofer-ignore></p><p>在<code class="language-plaintext highlighter-rouge">launch.json</code>裡面有幾個的比較重要的點</p><ul><li><code class="language-plaintext highlighter-rouge">program</code>是要執行的執行檔名稱，也就是我們編譯後產生的<code class="language-plaintext highlighter-rouge">helloworld</code>檔<li><code class="language-plaintext highlighter-rouge">args</code>是執行時要傳給<strong><em>執行檔</em></strong>的參數</ul><h1 id="cc的其他設定">C/C++的其他設定</h1><p>通常編寫C/C++的時候也會用到很多函式庫，我們可以指定這些函式庫的路徑讓VSCode的Intelligence Scope懂這些函式庫。<br /> 首先按下<code class="language-plaintext highlighter-rouge">Ctrl+Shift+P</code>並且輸入C/C++，按下<code class="language-plaintext highlighter-rouge">C/C++: Edit Configurations (UI)</code>，後VSCode會幫我們產生一個<code class="language-plaintext highlighter-rouge">c_cpp_properties.json</code>。 在<code class="language-plaintext highlighter-rouge">Include path</code>的地方加入我們要包含的路徑。或者我們也可以在<code class="language-plaintext highlighter-rouge">c_cpp_properties.json</code>configurations下的includePath直接做修改</p><p><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 700 400'%3E%3C/svg%3E" data-src="/assets/img/2022-10-28-18-10/cpp-config.png" alt="c++ config" width="700" height="400" data-proofer-ignore></p><h1 id="g-include-opencv函式庫">g++ include OpenCV函式庫</h1><p>首先我們先按照<a href="/posts/Linux安裝prebuild函式庫以OpenCV為例">Linux安裝prebuild函式庫以OpenCV為例</a>這篇文章安裝prebuild的OpenCV library。 接下來建立一個ShowImage.cpp</p><div file="ShowImage.cpp" class="language-c highlighter-rouge"><div class="code-header"> <span data-label-text="ShowImage.cpp"><i class="far fa-file-code"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+</pre><td class="rouge-code"><pre><span class="cp">#include</span> <span class="cpf">&lt;opencv2/core.hpp&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;opencv2/imgcodecs.hpp&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;opencv2/highgui.hpp&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span><span class="n">using</span> <span class="n">namespace</span> <span class="n">cv</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">image_path</span> <span class="o">=</span> <span class="n">samples</span><span class="o">::</span><span class="n">findFile</span><span class="p">(</span><span class="s">"starry_night.jpg"</span><span class="p">);</span>
+    <span class="n">Mat</span> <span class="n">img</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="n">image_path</span><span class="p">,</span> <span class="n">IMREAD_COLOR</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">img</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Could not read the image: "</span> <span class="o">&lt;&lt;</span> <span class="n">image_path</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">imshow</span><span class="p">(</span><span class="s">"Display window"</span><span class="p">,</span> <span class="n">img</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="n">waitKey</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="c1">// Wait for a keystroke in the window</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">k</span> <span class="o">==</span> <span class="sc">'s'</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">imwrite</span><span class="p">(</span><span class="s">"starry_night.png"</span><span class="p">,</span> <span class="n">img</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>我們可以發現VSCode的Intelligence scope找不到OpenCV標頭檔而顯示紅色虛線。 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 700 400'%3E%3C/svg%3E" data-src="/assets/img/2022-10-28-18-10/opencv-not-found.png" alt="opencv not found" width="700" height="400" data-proofer-ignore></p><p>這時候我們需要修改前面步驟提到的<code class="language-plaintext highlighter-rouge">c_cpp_properties.json</code>include OpenCV的路徑就可以了，而因為我們是安裝prebuild的OpenCV，所以我們的標頭檔已經被安裝在<code class="language-plaintext highlighter-rouge">/usr/include/opencv4/</code>裡面，因此修改後的<code class="language-plaintext highlighter-rouge">c_cpp_properties.json</code>如下。我們在<code class="language-plaintext highlighter-rouge">includePath</code>的清單中加入了<code class="language-plaintext highlighter-rouge">/usr/include/opencv4/**</code>，之後你就可以看到Intelligence scope成功認出OpenCV，而且OpenCV的函示可以順利顯示說明文字</p><div file="c_cpp_properties.json" class="language-json highlighter-rouge"><div class="code-header"> <span data-label-text="c_cpp_properties.json"><i class="far fa-file-code"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</pre><td class="rouge-code"><pre><span class="p">{</span><span class="w">
+    </span><span class="nl">"configurations"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Linux"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"includePath"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"${workspaceFolder}/**"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"/usr/include/opencv4/**"</span><span class="w"> 
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"defines"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+            </span><span class="nl">"compilerPath"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/usr/bin/gcc"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"cStandard"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gnu17"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"cppStandard"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gnu++17"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"intelliSenseMode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"linux-gcc-x64"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></table></code></div></div><p><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 700 400'%3E%3C/svg%3E" data-src="/assets/img/2022-10-28-18-10/opencv-show-usage.png" alt="opencv show usuage" width="700" height="400" data-proofer-ignore></p><p>不過這時候g++依然不知道OpenCV的標頭檔在哪裡，所以如果直接編譯還是會出錯。</p><h2 id="pkg-config幫我們列出全部的標頭檔位置和opencv的名稱"><span class="mr-2">pkg-config幫我們列出全部的標頭檔位置和opencv的名稱</span><a href="#pkg-config幫我們列出全部的標頭檔位置和opencv的名稱" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>標頭檔路徑只需要加上g++選項<code class="language-plaintext highlighter-rouge">-I/usr/include/opencv4</code>就可以了，不過如果要把所有用到的library都手動寫出來實在很麻煩，這時候<code class="language-plaintext highlighter-rouge">pkg-config</code>可以幫我們把全部的opencv library全部列出來，我們可以試看看在終端機輸入下面指令<code class="language-plaintext highlighter-rouge">pkg-config --libs --cflags opencv4</code>(如果安裝的是opencv 2.x或3.x要輸入<code class="language-plaintext highlighter-rouge">pkg-config --libs --cflags opencv</code>)，終端機的回應應該會長的像下面這樣。</p><div class="language-bash highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre><span class="nv">$ </span>pkg-config <span class="nt">--libs</span> <span class="nt">--cflags</span> opencv4
+<span class="nt">-I</span>/usr/include/opencv4 <span class="nt">-lopencv_stitching</span> <span class="nt">-lopencv_alphamat</span> <span class="nt">-lopencv_aruco</span> <span class="nt">-lopencv_barcode</span> <span class="nt">-lopencv_bgsegm</span> <span class="nt">-lopencv_bioinspired</span> <span class="nt">-lopencv_ccalib</span> <span class="nt">-lopencv_dnn_objdetect</span> <span class="nt">-lopencv_dnn_superres</span> <span class="nt">-lopencv_dpm</span> <span class="nt">-lopencv_face</span> <span class="nt">-lopencv_freetype</span> <span class="nt">-lopencv_fuzzy</span> <span class="nt">-lopencv_hdf</span> <span class="nt">-lopencv_hfs</span> <span class="nt">-lopencv_img_hash</span> <span class="nt">-lopencv_intensity_transform</span> <span class="nt">-lopencv_line_descriptor</span> <span class="nt">-lopencv_mcc</span> <span class="nt">-lopencv_quality</span> <span class="nt">-lopencv_rapid</span> <span class="nt">-lopencv_reg</span> <span class="nt">-lopencv_rgbd</span> <span class="nt">-lopencv_saliency</span> <span class="nt">-lopencv_shape</span> <span class="nt">-lopencv_stereo</span> <span class="nt">-lopencv_structured_light</span> <span class="nt">-lopencv_phase_unwrapping</span> <span class="nt">-lopencv_superres</span> <span class="nt">-lopencv_optflow</span> <span class="nt">-lopencv_surface_matching</span> <span class="nt">-lopencv_tracking</span> <span class="nt">-lopencv_highgui</span> <span class="nt">-lopencv_datasets</span> <span class="nt">-lopencv_text</span> <span class="nt">-lopencv_plot</span> <span class="nt">-lopencv_ml</span> <span class="nt">-lopencv_videostab</span> <span class="nt">-lopencv_videoio</span> <span class="nt">-lopencv_viz</span> <span class="nt">-lopencv_wechat_qrcode</span> <span class="nt">-lopencv_ximgproc</span> <span class="nt">-lopencv_video</span> <span class="nt">-lopencv_xobjdetect</span> <span class="nt">-lopencv_objdetect</span> <span class="nt">-lopencv_calib3d</span> <span class="nt">-lopencv_imgcodecs</span> <span class="nt">-lopencv_features2d</span> <span class="nt">-lopencv_dnn</span> <span class="nt">-lopencv_flann</span> <span class="nt">-lopencv_xphoto</span> <span class="nt">-lopencv_photo</span> <span class="nt">-lopencv_imgproc</span> <span class="nt">-lopencv_core</span>
+</pre></table></code></div></div><p>我們可以發現回傳的文字可以直接當成g++的選項來用，因此我們修改<code class="language-plaintext highlighter-rouge">tasks.json</code>，在給g++的參數<code class="language-plaintext highlighter-rouge">args</code>的list加入</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>"`pkg-config --libs --cflags opencv4`"
+</pre></table></code></div></div><p>改好後<code class="language-plaintext highlighter-rouge">tasks.json</code>如下，注意<code class="language-plaintext highlighter-rouge">pkg-config --libs --cflags opencv4</code>被兩個引號包圍，因為原本g++的指令是長這樣</p><div class="language-bash highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>/usr/bin/g++ <span class="nt">-g</span> main.cpp <span class="nt">-o</span> main <span class="sb">`</span>pkg-config <span class="nt">--libs</span> <span class="nt">--cflags</span> opencv4<span class="sb">`</span>
+</pre></table></code></div></div><div file="tasks.json" class="language-json highlighter-rouge"><div class="code-header"> <span data-label-text="tasks.json"><i class="far fa-file-code"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+</pre><td class="rouge-code"><pre><span class="p">{</span><span class="w">
+    </span><span class="nl">"tasks"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cppbuild"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"C/C++: g++ build active file"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"command"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/usr/bin/g++"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"args"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"-fdiagnostics-color=always"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"-g"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"${file}"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"-o"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"${fileDirname}/${fileBasenameNoExtension}"</span><span class="p">,</span><span class="w">
+                </span><span class="s2">"`pkg-config --libs --cflags opencv4`"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"options"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"cwd"</span><span class="p">:</span><span class="w"> </span><span class="s2">"${fileDirname}"</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="nl">"problemMatcher"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="s2">"$gcc"</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"group"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nl">"kind"</span><span class="p">:</span><span class="w"> </span><span class="s2">"build"</span><span class="p">,</span><span class="w">
+                </span><span class="nl">"isDefault"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="nl">"detail"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Task generated by Debugger."</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2.0.0"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></table></code></div></div><p>接下來VSCode就可以順利編譯程式並產生執行檔了。</p><h1 id="用cmake管理跨windows和linux的c專案以darknet為例">用CMake管理跨Windows和Linux的C++專案以Darknet為例</h1><p>如果開發團隊中有人用Windows OS開發，有人用Linux OS開發，而Windows的人只熟悉Visual Studio。這時候要一起合作完成專案在編譯的時候就會遇到困難。CMake跨平台的專案產生器就是專門解決這個問題。只要寫好一次CMake檔，他就可以在Windows幫你產生Visual Studio專案檔.sln，或是在Linux產生Makefile。很多時候我們會想要直接編譯別人的開源程式，這裡我們將以Darknet作為範例。開始這個範例之前你必須先在電腦上<a href="/posts/Linux安裝prebuild函式庫以OpenCV為例/">安裝好OPenCV</a></p><h2 id="下載darknet"><span class="mr-2">下載Darknet</span><a href="#下載darknet" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><div class="language-bash highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre>git clone git@github.com:AlexeyAB/darknet.git
+<span class="nb">cd </span>darknet
+</pre></table></code></div></div><h2 id="建立cmake的taskjson"><span class="mr-2">建立CMake的<code class="language-plaintext highlighter-rouge"><span class="mr-2">task.json</code></span><a href="#建立cmake的taskjson" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>按下<code class="language-plaintext highlighter-rouge">ctrl + shift + p</code>並且輸入task，選擇<code class="language-plaintext highlighter-rouge">Tasks: Configure task</code>，然後再選擇<code class="language-plaintext highlighter-rouge">CMake: build</code>，就task設定就會產生在<code class="language-plaintext highlighter-rouge">${workspaceFolder}/.vscode/tasks.json</code> <img data-src="/assets/img/2022-10-28-18-10/config_cmake_tasks.png" alt="config cmake tasks" data-proofer-ignore></p><div file="task.json" class="language-json highlighter-rouge"><div class="code-header"> <span data-label-text="task.json"><i class="far fa-file-code"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre><td class="rouge-code"><pre><span class="p">{</span><span class="w">
+	</span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2.0.0"</span><span class="p">,</span><span class="w">
+	</span><span class="nl">"tasks"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+		</span><span class="p">{</span><span class="w">
+			</span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cmake"</span><span class="p">,</span><span class="w">
+			</span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CMake: build"</span><span class="p">,</span><span class="w">
+			</span><span class="nl">"command"</span><span class="p">:</span><span class="w"> </span><span class="s2">"build"</span><span class="p">,</span><span class="w">
+			</span><span class="nl">"targets"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+				</span><span class="s2">"all"</span><span class="w">
+			</span><span class="p">],</span><span class="w">
+			</span><span class="nl">"group"</span><span class="p">:</span><span class="w"> </span><span class="s2">"build"</span><span class="p">,</span><span class="w">
+			</span><span class="nl">"problemMatcher"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+			</span><span class="nl">"detail"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CMake template build task"</span><span class="w">
+		</span><span class="p">}</span><span class="w">
+	</span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></table></code></div></div><p>這個檔案會編譯所有的<a href="/posts/cmake教學系列二">CMake Targets</a>，你也可以指定你想編譯的targets。</p><h2 id="設定build參數"><span class="mr-2">設定build參數</span><a href="#設定build參數" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>首先我們先查看Darknet有哪些CMake項可以設定，輸入<code class="language-plaintext highlighter-rouge">cmake -S . -B build -LH</code>就可以看到選項。在這個範例不想要使用CUDA，所以要把<code class="language-plaintext highlighter-rouge">ENABLE_CUDA:BOOL=ON</code>設為<code class="language-plaintext highlighter-rouge">OFF</code>。我們可以建立一個設定檔在<code class="language-plaintext highlighter-rouge">${workspaceFolder}/.vscode/settings.json</code>，並且輸入以下內容。更多其他的CMake設定可以在<a href="https://github.com/microsoft/vscode-cmake-tools/blob/f4804bcd2d376b4ad850c537d6ebdae46cfdcf3c/docs/cmake-settings.md#cmake-settings">這裡</a>查到。另外因為Darknet已經存在build資料夾，所以我們指定其他資料夾作為build資料夾<code class="language-plaintext highlighter-rouge">cmake.buildDirectory": "${workspaceFolder}/local-build</code>，不過通常我們可以直接用預設值，並不需要另外設定<code class="language-plaintext highlighter-rouge">cmake.buildDirectory</code></p><div class="language-json highlighter-rouge"><div class="code-header"> <span data-label-text="JSON"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre><td class="rouge-code"><pre><span class="p">{</span><span class="w">
+    </span><span class="nl">"cmake.configureArgs"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"-DENABLE_CUDA=OFF"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"-DVCPKG_BUILD_OPENCV_WITH_CUDA=OFF"</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nl">"cmake.buildDirectory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"${workspaceFolder}/local-build"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></table></code></div></div><h2 id="cmake-config"><span class="mr-2">CMake Config</span><a href="#cmake-config" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>首先我們要先跑一次CMake Config，按下<code class="language-plaintext highlighter-rouge">ctrl + shift + p</code>輸入cmake選擇<code class="language-plaintext highlighter-rouge">CMake:Configure</code>，在Output的地方會看到有沒有錯誤，如果出現錯誤歡迎在下面留言板留言。 <img data-src="/assets/img/2022-10-28-18-10/run_cmake_config.png" alt="run cmake config" data-proofer-ignore></p><h2 id="建立launchjson"><span class="mr-2">建立launch.json</span><a href="#建立launchjson" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>接下來要設定啟動，先建立一個launch.json位於<code class="language-plaintext highlighter-rouge">${workspaceFolder}/.vscode/launch.json</code>，並且複製以下內容。在這裡用到許多CMake extension提供的變數，可以在<a href="https://github.com/microsoft/vscode-cmake-tools/blob/f4804bcd2d376b4ad850c537d6ebdae46cfdcf3c/docs/cmake-settings.md#command-substitution">這裡</a>查詢更多的變數。</p><div class="language-json highlighter-rouge"><div class="code-header"> <span data-label-text="JSON"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+</pre><td class="rouge-code"><pre><span class="p">{</span><span class="w">
+    </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.2.0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"configurations"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"(gdb) Launch"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cppdbg"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"request"</span><span class="p">:</span><span class="w"> </span><span class="s2">"launch"</span><span class="p">,</span><span class="w">
+            </span><span class="err">//</span><span class="w"> </span><span class="err">Resolved</span><span class="w"> </span><span class="err">by</span><span class="w"> </span><span class="err">CMake</span><span class="w"> </span><span class="err">Tools:</span><span class="w">
+            </span><span class="nl">"program"</span><span class="p">:</span><span class="w"> </span><span class="s2">"${command:cmake.launchTargetPath}"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"args"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+            </span><span class="nl">"stopAtEntry"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"cwd"</span><span class="p">:</span><span class="w"> </span><span class="s2">"${workspaceFolder}"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"environment"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+                    </span><span class="err">//</span><span class="w"> </span><span class="err">add</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">directory</span><span class="w"> </span><span class="err">where</span><span class="w"> </span><span class="err">our</span><span class="w"> </span><span class="err">target</span><span class="w"> </span><span class="err">was</span><span class="w"> </span><span class="err">built</span><span class="w"> </span><span class="err">to</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">PATHs</span><span class="w">
+                    </span><span class="err">//</span><span class="w"> </span><span class="err">it</span><span class="w"> </span><span class="err">gets</span><span class="w"> </span><span class="err">resolved</span><span class="w"> </span><span class="err">by</span><span class="w"> </span><span class="err">CMake</span><span class="w"> </span><span class="err">Tools:</span><span class="w">
+                    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PATH"</span><span class="p">,</span><span class="w">
+                    </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"${env:PATH}:${command:cmake.getLaunchTargetDirectory}"</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+                    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OTHER_VALUE"</span><span class="p">,</span><span class="w">
+                    </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Something something"</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"console"</span><span class="p">:</span><span class="w"> </span><span class="s2">"externalTerminal"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"MIMode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gdb"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"setupCommands"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="p">{</span><span class="w">
+                    </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Enable pretty-printing for gdb"</span><span class="p">,</span><span class="w">
+                    </span><span class="nl">"text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"-enable-pretty-printing"</span><span class="p">,</span><span class="w">
+                    </span><span class="nl">"ignoreFailures"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+            </span><span class="p">]</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></pre></table></code></div></div><p>{= file:’launch.json’}</p><h2 id="設定啟動時參數"><span class="mr-2">設定啟動時參數</span><a href="#設定啟動時參數" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>首先要先下載<code class="language-plaintext highlighter-rouge">yolov1.cfg</code>和<code class="language-plaintext highlighter-rouge">yolov1.weights</code>並且放到<code class="language-plaintext highlighter-rouge">cfg</code>資料夾 Darknet執行檔啟動時需要參數，我們可以在<code class="language-plaintext highlighter-rouge">launch.json</code>的<code class="language-plaintext highlighter-rouge">args</code>設定。</p><div class="language-json highlighter-rouge"><div class="code-header"> <span data-label-text="JSON"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="nl">"args"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"detect"</span><span class="p">,</span><span class="w"> </span><span class="s2">"cfg/yolov1.cfg"</span><span class="p">,</span><span class="w"> </span><span class="s2">"cfg/yolov1.weights"</span><span class="p">,</span><span class="w"> </span><span class="s2">"data/dog.jpg"</span><span class="p">]</span><span class="err">,</span><span class="w">
+</span></pre></table></code></div></div><h2 id="執行"><span class="mr-2">執行</span><a href="#執行" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>參考:</p><p>Build with CMake Tools<br /> https://github.com/microsoft/vscode-cmake-tools/blob/f4804bcd2d376b4ad850c537d6ebdae46cfdcf3c/docs/build.md</p><p>https://code.visualstudio.com/docs/cpp/config-linux</p><p>Display an image in an OpenCV window<br /> https://docs.opencv.org/4.x/db/deb/tutorial_display_image.html</p><p>pkg-config尋找opencv函式庫 https://answers.opencv.org/question/227890/using-l-in-g-command-line/</p><p>Get started with CMake Tools on Linux https://code.visualstudio.com/docs/cpp/cmake-linux</p><p>CMake Tools for Visual Studio Code documentation https://github.com/microsoft/vscode-cmake-tools/blob/main/docs/README.md</p><p>Guide: “A modern, open source C++ dev environment with Visual Studio Code, vcpkg, and CMake”<br /> https://www.reddit.com/r/cpp/comments/j1dh9w/guide_a_modern_open_source_c_dev_environment_with/</p></div><div class="post-tail-wrapper text-muted"><div class="post-meta mb-3"> <i class="far fa-folder-open fa-fw mr-1"></i> <a href='/categories/ide/'>IDE</a></div><div class="post-tags"> <i class="fa fa-tags fa-fw mr-1"></i> <a href="/tags/vscode/" class="post-tag no-text-decoration" >VSCode</a></div><div class="post-tail-bottom d-flex justify-content-between align-items-center mt-3 pt-5 pb-2"><div class="license-wrapper"> This post is licensed under <a href="https://creativecommons.org/licenses/by/4.0/"> CC BY 4.0 </a> by the author.</div><div class="share-wrapper"> <span class="share-label text-muted mr-1">Share</span> <span class="share-icons"> <a href="https://twitter.com/intent/tweet?text=Linux%E4%B8%8B%E8%A8%AD%E5%AE%9AVScode%E3%80%81CMake%E3%80%81GCC%E3%80%81GDB%E4%BE%86%E9%96%8B%E7%99%BCC%2B%2B%E5%B0%88%E6%A1%88+-+Steven&url=https%3A%2F%2Fjenhaoyang.github.io%2F%2Fposts%2Flinux%25E4%25B8%258B%25E8%25A8%25AD%25E5%25AE%259Avscode-cmake-gcc-gdb%25E4%25BE%2586%25E9%2596%258B%25E7%2599%25BCc-%25E5%25B0%2588%25E6%25A1%2588%2F" data-toggle="tooltip" data-placement="top" title="Twitter" target="_blank" rel="noopener" aria-label="Twitter"> <i class="fa-fw fab fa-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=Linux%E4%B8%8B%E8%A8%AD%E5%AE%9AVScode%E3%80%81CMake%E3%80%81GCC%E3%80%81GDB%E4%BE%86%E9%96%8B%E7%99%BCC%2B%2B%E5%B0%88%E6%A1%88+-+Steven&u=https%3A%2F%2Fjenhaoyang.github.io%2F%2Fposts%2Flinux%25E4%25B8%258B%25E8%25A8%25AD%25E5%25AE%259Avscode-cmake-gcc-gdb%25E4%25BE%2586%25E9%2596%258B%25E7%2599%25BCc-%25E5%25B0%2588%25E6%25A1%2588%2F" data-toggle="tooltip" data-placement="top" title="Facebook" target="_blank" rel="noopener" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://t.me/share/url?url=https%3A%2F%2Fjenhaoyang.github.io%2F%2Fposts%2Flinux%25E4%25B8%258B%25E8%25A8%25AD%25E5%25AE%259Avscode-cmake-gcc-gdb%25E4%25BE%2586%25E9%2596%258B%25E7%2599%25BCc-%25E5%25B0%2588%25E6%25A1%2588%2F&text=Linux%E4%B8%8B%E8%A8%AD%E5%AE%9AVScode%E3%80%81CMake%E3%80%81GCC%E3%80%81GDB%E4%BE%86%E9%96%8B%E7%99%BCC%2B%2B%E5%B0%88%E6%A1%88+-+Steven" data-toggle="tooltip" data-placement="top" title="Telegram" target="_blank" rel="noopener" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <i id="copy-link" class="fa-fw fas fa-link small" data-toggle="tooltip" data-placement="top" title="Copy link" data-title-succeed="Link copied successfully!"> </i> </span></div></div></div></div></div><div id="panel-wrapper" class="col-xl-3 pl-2 text-muted"><div class="access"><div id="access-lastmod" class="post"><div class="panel-heading">Recently Updated</div><ul class="post-content pl-0 pb-1 ml-1 mt-2"><li><a href="/posts/Windows-NTP%E6%A0%A1%E6%99%82/">Windows-NTP校時</a><li><a href="/posts/Gstreamer%E4%BD%BF%E7%94%A8%E7%AD%86%E8%A8%98/">Gstreamer使用筆記</a><li><a href="/posts/ubuntu%E8%A8%AD%E5%AE%9Ahome%E7%9B%AE%E9%8C%84%E5%88%B0%E5%AE%9A%E5%8F%A6%E4%B8%80%E9%A1%86%E7%A1%AC%E7%A2%9F/">Ubuntu設定home目錄到定另一顆硬碟</a><li><a href="/posts/Linux%E4%B8%8B%E7%9A%84Docker%E6%9B%B4%E6%94%B9image%E5%84%B2%E5%AD%98%E4%BD%8D%E7%BD%AE/">Linux下的Docker更改image儲存位置</a><li><a href="/posts/tensorrt%E7%B3%BB%E5%88%97-%E4%B8%80-%E7%92%B0%E5%A2%83%E8%A8%AD%E5%AE%9A/">TensorRT系列(一)環境設定</a></ul></div><div id="access-tags"><div class="panel-heading">Trending Tags</div><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/ubuntu/">ubuntu</a> <a class="post-tag" href="/tags/cmake/">cmake</a> <a class="post-tag" href="/tags/cpp/">cpp</a> <a class="post-tag" href="/tags/git/">git</a> <a class="post-tag" href="/tags/linux/">Linux</a> <a class="post-tag" href="/tags/deepstream/">deepstream</a> <a class="post-tag" href="/tags/peopleflow/">peopleflow</a> <a class="post-tag" href="/tags/pythoncpp/">pythoncpp</a> <a class="post-tag" href="/tags/ssh/">ssh</a> <a class="post-tag" href="/tags/ubuntu/">Ubuntu</a></div></div></div><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.js"></script><div id="toc-wrapper" class="pl-0 pr-4 mb-5"><div class="panel-heading pl-3 pt-2 mb-2">Contents</div><nav id="toc" data-toggle="toc"></nav></div></div></div><div class="row"><div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 pl-3 pr-3 pr-xl-4"><div id="related-posts" class="mt-5 mb-2 mb-sm-4"><h3 class="pt-2 mt-1 mb-4 ml-1" data-toc-skip>Further Reading</h3><div class="card-deck mb-4"><div class="card"> <a href="/posts/%E7%94%A8vim%E4%BD%9C%E7%82%BApython-ide/"><div class="card-body"> <em class="small" data-ts="1659932640" data-df="ll" > Aug 8, 2022 </em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>用vim作為Python IDE</h3><div class="text-muted small"><p> vim版本:8.2 安裝套件管理員Vundle 下載Vundle plugin manager並且放到VIM套件資料夾 git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim 建立套件管理檔 touch ~/.vimrc 將下面指令...</p></div></div></a></div><div class="card"> <a href="/posts/Ubuntu%E8%A8%AD%E5%AE%9A%E9%9D%9C%E6%85%8B%E8%B7%AF%E7%94%B1/"><div class="card-body"> <em class="small" data-ts="1729157460" data-df="ll" > Oct 17, 2024 </em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Ubuntu設定靜態路由</h3><div class="text-muted small"><p> 用nmtui設定 https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html/configuring_and_managing_networking/configuring-static-routes_configuring-and-managing-networking#proc_configuring...</p></div></div></a></div><div class="card"> <a href="/posts/Gstreamer%E4%BD%BF%E7%94%A8%E7%AD%86%E8%A8%98/"><div class="card-body"> <em class="small" data-ts="1729157460" data-df="ll" > Oct 17, 2024 </em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Gstreamer使用筆記</h3><div class="text-muted small"><p> 關閉程式前發送EOS事件給pipeline的方法 1 2 3 4 5 6 7 // 發送EOS訊號讓filesink可以正常結束 gst_element_send_event(appCtx[i]-&amp;gt;pipeline.pipeline, gst_event_new_eos()); msg = gst_bus_timed_pop_filtered(GST_ELEMENT_BUS (appC...</p></div></div></a></div></div></div><div class="post-navigation d-flex justify-content-between"> <a href="/posts/%E8%A8%AD%E5%AE%9AUbuntu-NTP-%E6%A0%A1%E6%99%82/" class="btn btn-outline-primary" prompt="Older"><p>Ubuntu NTP 校時</p></a> <a href="/posts/%E6%96%87%E7%AB%A0%E8%BD%89%E9%8C%84-Linux%E7%92%B0%E5%A2%83%E6%92%B0%E5%AF%ABShared-Library/" class="btn btn-outline-primary" prompt="Newer"><p>文章轉錄--Linux環境撰寫Shared Library</p></a></div><script type="text/javascript"> $(function () { const origin = "https://giscus.app"; const iframe = "iframe.giscus-frame"; const lightTheme = "light"; const darkTheme = "dark_dimmed"; let initTheme = lightTheme; if ($("html[data-mode=dark]").length > 0 || ($("html[data-mode]").length == 0 && window.matchMedia("(prefers-color-scheme: dark)").matches)) { initTheme = darkTheme; } let giscusAttributes = { "src": "https://giscus.app/client.js", "data-repo": "jenhaoyang/jenhaoyang.github.io", "data-repo-id": "R_kgDOGONpkw", "data-category": "Announcements", "data-category-id": "DIC_kwDOGONpk84CPyux", "data-mapping": "pathname", "data-reactions-enabled": "1", "data-emit-metadata": "0", "data-theme": initTheme, "data-input-position": "bottom", "data-lang": "en", "crossorigin": "anonymous", "async": "" }; let giscusScript = document.createElement("script"); Object.entries(giscusAttributes).forEach(([key, value]) => giscusScript.setAttribute(key, value)); document.getElementById("tail-wrapper").appendChild(giscusScript); addEventListener("message", (event) => { if (event.source === window && event.data && event.data.direction === ModeToggle.ID) { /* global theme mode changed */ const mode = event.data.message; const theme = (mode === ModeToggle.DARK_MODE ? darkTheme : lightTheme); const message = { setConfig: { theme: theme } }; const giscus = document.querySelector(iframe).contentWindow; giscus.postMessage({ giscus: message }, origin); } }); }); </script></div></div><footer class="row pl-3 pr-3"><div class="col-12 d-flex justify-content-between align-items-center text-muted pl-0 pr-0"><div class="footer-left"><p class="mb-0"> © 2024 <a href="https://github.com/jenhaoyang">Steven Yang</a>. <span data-toggle="tooltip" data-placement="top" title="Except where otherwise noted, the blog posts on this site are licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) License by the author.">Some rights reserved.</span></p></div><div class="footer-right"><p class="mb-0"> Powered by <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> with <a href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener">Chirpy</a> theme.</p></div></div></footer></div><div id="search-result-wrapper" class="d-flex justify-content-center unloaded"><div class="col-12 col-sm-11 post-content"><div id="search-hints"><div id="access-tags"><div class="panel-heading">Trending Tags</div><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/ubuntu/">ubuntu</a> <a class="post-tag" href="/tags/cmake/">cmake</a> <a class="post-tag" href="/tags/cpp/">cpp</a> <a class="post-tag" href="/tags/git/">git</a> <a class="post-tag" href="/tags/linux/">Linux</a> <a class="post-tag" href="/tags/deepstream/">deepstream</a> <a class="post-tag" href="/tags/peopleflow/">peopleflow</a> <a class="post-tag" href="/tags/pythoncpp/">pythoncpp</a> <a class="post-tag" href="/tags/ssh/">ssh</a> <a class="post-tag" href="/tags/ubuntu/">Ubuntu</a></div></div></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><div id="mask"></div><a id="back-to-top" href="#" aria-label="back-to-top" class="btn btn-lg btn-box-shadow" role="button"> <i class="fas fa-angle-up"></i> </a><div id="notification" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-animation="true" data-autohide="false"><div class="toast-header"> <button type="button" class="ml-2 ml-auto close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button></div><div class="toast-body text-center pt-0"><p class="pl-2 pr-2 mb-3">A new version of content is available.</p><button type="button" class="btn btn-primary" aria-label="Update"> Update </button></div></div><script src="https://cdn.jsdelivr.net/npm/simple-jekyll-search@1.10.0/dest/simple-jekyll-search.min.js"></script> <script> SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<div class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-lg-4 pr-lg-4 pl-xl-0 pr-xl-0"> <a href="{url}">{title}</a><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div><p>{snippet}</p></div>', noResultsText: '<p class="mt-5">Oops! No results found.</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="mr-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); </script> <script src="https://cdn.jsdelivr.net/combine/npm/magnific-popup@1/dist/jquery.magnific-popup.min.js,npm/lozad/dist/lozad.min.js,npm/clipboard@2/dist/clipboard.min.js"></script> <script src="https://cdn.jsdelivr.net/combine/npm/dayjs@1/dayjs.min.js,npm/dayjs@1/locale/en.min.js,npm/dayjs@1/plugin/relativeTime.min.js,npm/dayjs@1/plugin/localizedFormat.min.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.bundle.min.js"></script> <script defer src="/app.js"></script> <script defer src="https://www.googletagmanager.com/gtag/js?id=G-YD5Z1Y7D6R"></script> <script> document.addEventListener("DOMContentLoaded", function(event) { window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-YD5Z1Y7D6R'); }); </script>
