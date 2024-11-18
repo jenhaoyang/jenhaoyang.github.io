@@ -11,8 +11,8 @@ pin: true
 # 安裝套件
 * cmake extension
 * c++ extension
-![cmake extension](/assets/img/2022-08-24-12-30/vscode-cmake.png){: w="700" h="400" }
-![c++ extension](/assets/img/2022-08-24-12-30/vscode-cpp.png){: w="700" h="400" }
+![cmake extension](/images/2022-08-24-12-30/vscode-cmake.png){: w="700" h="400" }
+![c++ extension](/images/2022-08-24-12-30/vscode-cpp.png){: w="700" h="400" }
 
 * 安裝編譯器GCC、除錯器DBG
 ```bash
@@ -63,12 +63,12 @@ int main()
 }
 ```
 
-![c++ run compiler](/assets/img/2022-10-28-18-10/cpp-run-compiler.png){: w="700" h="400" }
-![c++ chose compiler](/assets/img/2022-10-28-18-10/cpp-chose-compiler.png){: w="700" h="400" }
+![c++ run compiler](/images/2022-10-28-18-10/cpp-run-compiler.png){: w="700" h="400" }
+![c++ chose compiler](/images/2022-10-28-18-10/cpp-chose-compiler.png){: w="700" h="400" }
 
 
 成功編譯後，你會在`Terminal`看到程式成功輸出文字
-![c++ run success](/assets/img/2022-10-28-18-10/cpp-run-success.png){: w="700" h="400" }
+![c++ run success](/images/2022-10-28-18-10/cpp-run-success.png){: w="700" h="400" }
 
 
 第一次按下執行compiler後，VScode會幫你建立一個`.vscode`資料夾和一個，`tasks.json`。或是你可以自己建立一個`.vscode`資料夾並且放入`tasks.json`。
@@ -117,18 +117,18 @@ int main()
   * `label`會顯示在task清單 `detail` 會顯示在task清單的詳細描述。先按下`Ctrl+P`並且輸入`task `(task後面有空白)，就會顯示task清單，包含我們建立的task(如下圖所示)
   * 如果有多個task，可以利用`group`裡面`isDefault`屬性設定預設task
 
-![c++ task list](/assets/img/2022-10-28-18-10/cpp-task-list.png){: w="700" h="400" }
+![c++ task list](/images/2022-10-28-18-10/cpp-task-list.png){: w="700" h="400" }
 
 # 除錯、設中斷點
 * 在程式碼下一個中斷點，並且點及旁邊的執行按鈕並且選擇Debug就可以開始除錯了
-![c++ breakpoint](/assets/img/2022-10-28-18-10/breakpoint.png){: w="700" h="400" }
-![c++ run debug](/assets/img/2022-10-28-18-10/run-debug.png){: w="700" h="400" }
-![c++ selece run debug](/assets/img/2022-10-28-18-10/select-run-debug.png){: w="350" h="200" }
+![c++ breakpoint](/images/2022-10-28-18-10/breakpoint.png){: w="700" h="400" }
+![c++ run debug](/images/2022-10-28-18-10/run-debug.png){: w="700" h="400" }
+![c++ selece run debug](/images/2022-10-28-18-10/select-run-debug.png){: w="350" h="200" }
 
 # 設定在啟動程式時傳入參數給程式
 如果像在啟動程式時傳入一些參數，可以利用`launch.json`，要建立`launch.json`只需要案價旁邊的齒輪並選擇G++，VSCode就會自動幫你建立一份
-![c++ add launch](/assets/img/2022-10-28-18-10/add-launch.png){: w="350" h="200" }
-![c++ add launch](/assets/img/2022-10-28-18-10/add-launch-config.png){: w="700" h="400" }  
+![c++ add launch](/images/2022-10-28-18-10/add-launch.png){: w="350" h="200" }
+![c++ add launch](/images/2022-10-28-18-10/add-launch-config.png){: w="700" h="400" }  
 
 在`launch.json`裡面有幾個的比較重要的點
   * `program`是要執行的執行檔名稱，也就是我們編譯後產生的`helloworld`檔
@@ -139,7 +139,7 @@ int main()
 首先按下`Ctrl+Shift+P`並且輸入C/C++，按下`C/C++: Edit Configurations (UI)`，後VSCode會幫我們產生一個`c_cpp_properties.json`。
 在`Include path`的地方加入我們要包含的路徑。或者我們也可以在`c_cpp_properties.json`configurations下的includePath直接做修改
 
-![c++ config](/assets/img/2022-10-28-18-10/cpp-config.png){: w="700" h="400" }  
+![c++ config](/images/2022-10-28-18-10/cpp-config.png){: w="700" h="400" }  
 
 # g++ include OpenCV函式庫
 首先我們先按照[Linux安裝prebuild函式庫以OpenCV為例](/posts/Linux安裝prebuild函式庫以OpenCV為例)這篇文章安裝prebuild的OpenCV library。
@@ -171,7 +171,7 @@ int main()
 {: file='ShowImage.cpp'}
 
 我們可以發現VSCode的Intelligence scope找不到OpenCV標頭檔而顯示紅色虛線。
-![opencv not found](/assets/img/2022-10-28-18-10/opencv-not-found.png){: w="700" h="400" }  
+![opencv not found](/images/2022-10-28-18-10/opencv-not-found.png){: w="700" h="400" }  
 
 這時候我們需要修改前面步驟提到的`c_cpp_properties.json`include OpenCV的路徑就可以了，而因為我們是安裝prebuild的OpenCV，所以我們的標頭檔已經被安裝在`/usr/include/opencv4/`裡面，因此修改後的`c_cpp_properties.json`如下。我們在`includePath`的清單中加入了`/usr/include/opencv4/**`，之後你就可以看到Intelligence scope成功認出OpenCV，而且OpenCV的函示可以順利顯示說明文字
 ```json
@@ -194,7 +194,7 @@ int main()
 }
 ```
 {: file='c_cpp_properties.json'}
-![opencv show usuage](/assets/img/2022-10-28-18-10/opencv-show-usage.png){: w="700" h="400" }  
+![opencv show usuage](/images/2022-10-28-18-10/opencv-show-usage.png){: w="700" h="400" }  
 
 不過這時候g++依然不知道OpenCV的標頭檔在哪裡，所以如果直接編譯還是會出錯。
 
@@ -260,7 +260,7 @@ cd darknet
 
 ## 建立CMake的`task.json`
 按下`ctrl + shift + p`並且輸入task，選擇`Tasks: Configure task`，然後再選擇`CMake: build`，就task設定就會產生在`${workspaceFolder}/.vscode/tasks.json`
-![config cmake tasks](/assets/img/2022-10-28-18-10/config_cmake_tasks.png)
+![config cmake tasks](/images/2022-10-28-18-10/config_cmake_tasks.png)
 ```json
 {
 	"version": "2.0.0",
@@ -296,7 +296,7 @@ cd darknet
 
 ## CMake Config 
 首先我們要先跑一次CMake Config，按下`ctrl + shift + p`輸入cmake選擇`CMake:Configure`，在Output的地方會看到有沒有錯誤，如果出現錯誤歡迎在下面留言板留言。
-![run cmake config](/assets/img/2022-10-28-18-10/run_cmake_config.png)
+![run cmake config](/images/2022-10-28-18-10/run_cmake_config.png)
 
 ## 建立launch.json
 接下來要設定啟動，先建立一個launch.json位於`${workspaceFolder}/.vscode/launch.json`，並且複製以下內容。在這裡用到許多CMake extension提供的變數，可以在[這裡](https://github.com/microsoft/vscode-cmake-tools/blob/f4804bcd2d376b4ad850c537d6ebdae46cfdcf3c/docs/cmake-settings.md#command-substitution)查詢更多的變數。

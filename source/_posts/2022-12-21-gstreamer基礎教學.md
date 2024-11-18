@@ -233,7 +233,7 @@ main (int argc, char *argv[])
 ## GStreamer element
 element是GStreamer最根本的元素，影音資料從`source`流向`sink`，過程中經過`filter`對影音資料進行處理，這三個元素組成為`pipeline`  
 
-![pipeline](/assets/img/2023-01-06-16-33/figure-1.png)
+![pipeline](/images/2023-01-06-16-33/figure-1.png)
 
 
 
@@ -247,7 +247,7 @@ sink = gst_element_factory_make ("autovideosink", "sink");
 
 這個教學中建立兩個element，`videotestsrc`和`autovideosink`，然後沒有建立任何`filter`。所以pipeline長的像下圖。  
 
-![basic pipeline](/assets/img/2023-01-06-16-33/basic-concepts-pipeline.png)
+![basic pipeline](/images/2023-01-06-16-33/basic-concepts-pipeline.png)
 
 [videotestsrc](https://gstreamer.freedesktop.org/documentation/videotestsrc/index.html#videotestsrc)是一個source element，他會產生除錯用的影像。
 
@@ -366,11 +366,11 @@ GStreamer bus是用來將元素所產生的GstMessage按順序傳送給應用程
 
 在GStreamer裡element用來傳遞資料的接口稱為`pad`(GstPad)，`sink pad`就是資料流進element的口，以及`source pad`就是element將資料流出的口。記憶的方式就是`source elements`只會擁有`source pad`，而`sink element`只會擁有`sink pad`。`filter element`則同時擁有`source pad`和`sink pad`。
 
-![src](/assets/img/2023-01-06-16-33/src-element.png)
+![src](/images/2023-01-06-16-33/src-element.png)
 
-![sink](/assets/img/2023-01-06-16-33/sink-element.png)
+![sink](/images/2023-01-06-16-33/sink-element.png)
 
-![filter](/assets/img/2023-01-06-16-33/filter-element.png)
+![filter](/images/2023-01-06-16-33/filter-element.png)
 
 在這個範例裡面，demuxer包含一個`sink pad` 和多個 `source pad`，而demuxer複雜的地方就在於在讀取檔案之前沒辦法確定demuxer到底有多少個`source pad`，因為demuxer要讀取到檔案之後才能決定有多少個`source pad`。
 
@@ -1217,7 +1217,7 @@ GStreamer 是一個Multithreading的框架。他會自己產生和消滅thread�
 
 ## Multithreading範例
 下面是一個多執行續的pipeline，通常多個sink的pipeline是Multithreading
-![Alt text](/assets/img/2023-01-06-16-33/basic-tutorial-7.png)
+![Alt text](/images/2023-01-06-16-33/basic-tutorial-7.png)
 
 ## Request pads
 在前面的範例我們已經知道`uridecodebin`在執行時才會確定產生多少個pad，這種pad稱為`Sometimes Pads`，而固定不變的pad稱為`Always Pads`。

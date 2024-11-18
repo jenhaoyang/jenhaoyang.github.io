@@ -7,7 +7,7 @@ logo: /img/logo.svg
 # Page metadata configurations
 head:
     # URL or path to the website's icon
-    favicon: /img/favicon.svg
+    favicon: /images/favicons/favicon.ico
     # Web application manifests configuration
     # https://developer.mozilla.org/en-US/docs/Web/Manifest
     manifest:
@@ -29,11 +29,11 @@ head:
         icons:
             -
                 # The path to the image file
-                src: ''
+                src: /images/favicons/android-chrome-512x512.png
                 # A string containing space-separated image dimensions
-                sizes: ''
+                sizes: 512x512
                 # A hint as to the media type of the image
-                type: 
+                type: image/png
     # Open Graph metadata
     # https://hexo.io/docs/helpers.html#open-graph
     open_graph:
@@ -114,7 +114,7 @@ navbar:
     links:
         Download on GitHub:
             icon: fab fa-github
-            url: https://github.com/ppoffice/hexo-theme-icarus
+            url: https://github.com/jenhaoyang
 # Page footer configurations
 footer:
     # Copyright text
@@ -229,24 +229,24 @@ widgets:
         position: left
         type: profile
         # Author name
-        author: Your name
+        author: Steven
         # Author title
-        author_title: Your title
+        author_title: AI Engineer
         # Author's current location
-        location: Your location
+        location: New Taipei City
         # URL or path to the avatar image
-        avatar: 
+        avatar: /images/favicons/android-chrome-512x512.png
         # Whether show the rounded avatar image
         avatar_rounded: false
         # Email address for the Gravatar
         gravatar: 
         # URL or path for the follow button
-        follow_link: https://github.com/ppoffice
+        follow_link: https://github.com/jenhaoyang
         # Links to be shown on the bottom of the profile widget
         social_links:
             Github:
                 icon: fab fa-github
-                url: https://github.com/ppoffice
+                url: https://github.com/jenhaoyang
             Facebook:
                 icon: fab fa-facebook
                 url: https://facebook.com

@@ -2,7 +2,9 @@
 layout: post
 title: elasticsearch API
 date: 2023-05-24 17:28 +0800
-categories: [ELK]
+categories:
+  - ELK
+  - elasticsearch API
 tags: [elk]     # TAG names should always be lowercase
 ---
 

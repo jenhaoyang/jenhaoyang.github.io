@@ -2,7 +2,8 @@
 layout: post
 title: Ubuntu更新cmake
 date: 2022-06-28 17:31 +0800
-categories: [環境設定與部屬]
+categories:
+  - CMake
 tags: [cmake]
 ---
 前一陣子在windows上編譯Nvidia triton-inference-server發現他的編譯腳本有很多方便的的操作方法，升級cmake是其中之一，注意指令中有指定ubuntu版本

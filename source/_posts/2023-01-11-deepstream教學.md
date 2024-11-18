@@ -216,7 +216,7 @@ deepstream_test3_app.c 有範例
 
 [probe使用範例 ](https://forums.developer.nvidia.com/t/how-to-make-metadata-probe-for-classification-only-pipeline/171126) 
 
-![metadata](/assets/img/deepstream/metadata.png)
+![metadata](/images/deepstream/metadata.png)
 
 
 
