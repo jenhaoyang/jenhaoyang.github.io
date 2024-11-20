@@ -165,9 +165,16 @@ search:
 # Comment plugin configurations
 # https://ppoffice.github.io/hexo-theme-icarus/categories/Plugins/Comment/
 comment:
-    type: disqus
-    # Disqus shortname
-    shortname: ''
+    # type: disqus
+    # # Disqus shortname
+    # shortname: ''
+    type: gitalk
+    client_id: Ov23lioZMTexEgXkesmE
+    client_secret: dbdad0be3c7373840b3ec8c0f793f66c4aef3679
+    repo: jenhaoyang.github.io
+    owner: jenhaoyang
+    admin:
+        - jenhaoyang
 # Donate plugin configurations
 # https://ppoffice.github.io/hexo-theme-icarus/categories/Plugins/Donation/
 donates:
