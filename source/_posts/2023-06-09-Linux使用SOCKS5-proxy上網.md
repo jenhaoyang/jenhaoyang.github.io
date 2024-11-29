@@ -10,13 +10,15 @@ pin: true
 [圖片說明](https://ma.ttias.be/socks-proxy-linux-ssh-bypass-content-filters/)
 
 # 利用ssh連接到可以上網的機器
+首先本機電腦和遠端電腦都必須有ssh server
+首先在本機電腦ssh登入到遠端沒有外網的遠端電腦，然後在`遠端電腦`使用以下指令連回去`本機電腦`建立一條SOCKS5 proxy的通道。
 ```shell
-ssh -D 4444 -q -C -N user@ma.ttias.be
+ssh -D 4444 -q -C -N local_username@192.168.50.1
 ```
 # 檢查SOCKS是否開通了
 https://superuser.com/questions/303251/how-to-check-if-a-socks5-proxy-works
 
-以下指令可以檢查開通的port
+在`遠端電腦`用以下指令可以檢查開通的port
 ```shell
 netstat -tlnp
 ```
@@ -29,17 +31,21 @@ tcp        0      0 127.0.0.1:4444          0.0.0.0:*               LISTEN
 https://blog.csdn.net/leishupei/article/details/120736869
 sudo apt-get install proxychains4
 
+# 在還沒安裝Proxychains4機器上用SOCKS5安裝Proxychains4
+```
+ apt -o Acquire::http::Proxy="socks5h://127.0.0.1:4444" -o Acquire::https::Proxy="socks5h://127.0.0.1:4444" update
+
+apt -o Acquire::http::Proxy="socks5h://127.0.0.1:4444" -o Acquire::https::Proxy="socks5h://127.0.0.1:4444" install proxychains4 
+```
+
 # 設定Proxychains4
 https://feifei.tw/proxychains4/  
 
 `sudo nano /usr/local/etc/proxychains.conf`
+proxy_dns 的功能不要關掉
 
 設定檔位置
-
-
 https://askubuntu.com/a/1477936
-
-proxy_dns 的功能不要關掉
 
 # 手動設定DNS server
 export DNS_SERVER=8.8.8.8
@@ -54,8 +60,8 @@ proxychains4 sudo apt install zip
 
 ```
 [Service]
-Environment="HTTP_PROXY=socks5://127.0.0.1:9050"
-Environment="HTTPS_PROXY=socks5://127.0.0.1:9050"
+Environment="HTTP_PROXY=socks5://127.0.0.1:4444"
+Environment="HTTPS_PROXY=socks5://127.0.0.1:4444"
 ```
 
 ```shell
