@@ -85,6 +85,25 @@ RootDistanceMaxSec=30
 #PollIntervalMinSec=32
 #PollIntervalMaxSec=2048
 ```
+
+# timedatectl的NTP service為active的時候查看目前使用的是哪一個NTP服務
+* systemd-timesyncd
+```
+systemctl status systemd-timesyncd.service
+```
+# ntpd 或 chronyd
+```
+ps -e | grep ntp
+```
+
+```
+ps -e | grep chrony
+```
+
+# chronyc說明書
+https://chrony-project.org/doc/4.6.1/chronyc.html
+
+
 詳細說明如下
 https://unix.stackexchange.com/a/655489
 

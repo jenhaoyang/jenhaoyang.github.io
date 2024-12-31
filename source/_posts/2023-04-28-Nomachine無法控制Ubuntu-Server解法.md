@@ -7,16 +7,16 @@ tags: [ubuntu]     # TAG names should always be lowercase
 ---
 
 
-1. 無螢幕的Server(Headless server)
-有三種方法
-* 設定x server接受headless狀態
-* 插上一個假的HDMI dongle
-* 讓Nomachine建立虛擬螢幕
-對server下指令關閉display-manager並且重啟Nomachine服務
+1. 無螢幕的Server(Headless server)並且有顯卡，登入後螢幕是黑的
+https://kb.nomachine.com/AR03P00973 根據步驟1的做法
+
 ```bash
 sudo systemctl stop display-manager
 sudo /etc/NX/nxserver --restart
 ```
+
+
+
 
 參考:
 https://forum.nomachine.com/topic/problems-connecting-with-nomachine-in-pc-client-without-monitor
