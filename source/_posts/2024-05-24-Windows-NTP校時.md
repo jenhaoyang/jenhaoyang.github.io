@@ -31,6 +31,36 @@ InputProvider: 0 (本機)
 AllowNonstandardModeCombinations: 1 (本機)
 ```
 
+w32tm /query /configuration /Verbose
+可以詳細看到設定的NTP伺服器
+
+設定w32tm log
+https://learn.microsoft.com/en-us/troubleshoot/windows-server/active-directory/turn-on-debug-logging-in-windows-time-service
+
+To turn on debug logging in the Windows Time service:
+
+Start Registry Editor.
+
+Locate and then click the registry key: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\W32Time\Config.
+
+On the Edit menu, click New Value, and then add the following registry values:
+
+Value Name: FileLogSize
+Data Type: DWORD
+Value data: 10000000
+This registry value specifies the size of the log file in bytes. A value of 10000000 bytes will limit the log file to approximately 10 MB.
+
+Value name: FileLogName
+Data Type: String
+Value data: C:\Windows\Temp\w32time.log
+This registry value specifies the location of the log file. The path is not fixed. You can use a different path.
+
+Value name: FileLogEntries
+Data Type: String
+Value: 0-116
+This registry value specifies the level of detail of the information in the debug log. If you must have more detailed logging information, contact a Microsoft Support Professional.
+
+
 執行 regedit
 執行 
 
