@@ -68,6 +68,7 @@ Environment="HTTPS_PROXY=socks5://127.0.0.1:4444"
 sudo systemctl daemon-reload
 sudo systemctl restart docker
 ```
+https://docs.docker.com/engine/daemon/proxy/  
 
 https://markvanlent.dev/2022/05/10/pulling-docker-images-via-a-socks5-proxy/
 
