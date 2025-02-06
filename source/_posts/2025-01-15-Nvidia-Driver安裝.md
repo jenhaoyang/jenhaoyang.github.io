@@ -5,6 +5,9 @@ categories:
 tags:
 ---
 
+# 使用Ubuntu driver管理器安裝(推薦)
+https://ubuntu.com/server/docs/nvidia-drivers-installation
+
 # 移除舊驅動
 https://docs.nvidia.com/datacenter/tesla/driver-installation-guide/#removing-nvidia-driver
 

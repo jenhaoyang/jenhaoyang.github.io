@@ -9,6 +9,8 @@ pin: true
 這裡將介紹一個只需要使用SSH連線到一台可以連到對網網路的主機，就可以讓防火牆內的主機上網的方法
 [圖片說明](https://ma.ttias.be/socks-proxy-linux-ssh-bypass-content-filters/)
 
+# 注意Docker pull沒辦法用proxychains，解法在後面
+
 # 利用ssh連接到可以上網的機器
 首先本機電腦和遠端電腦都必須有ssh server
 首先在本機電腦ssh登入到遠端沒有外網的遠端電腦，然後在`遠端電腦`使用以下指令連回去`本機電腦`建立一條SOCKS5 proxy的通道。
@@ -56,7 +58,10 @@ https://github.com/rofl0r/proxychains-ng/issues/178#issuecomment-347439800
 proxychains4 sudo apt install zip
 
 # docker pull 無法使用proxychains4的解法
-`sudo nano /etc/systemd/system/docker.service.d/proxy.conf`
+```
+sudo mkdir -p /etc/systemd/system/docker.service.d
+sudo nano /etc/systemd/system/docker.service.d/proxy.conf
+```
 
 ```
 [Service]
