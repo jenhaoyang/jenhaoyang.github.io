@@ -43,7 +43,7 @@ apt -o Acquire::http::Proxy="socks5h://127.0.0.1:4444" -o Acquire::https::Proxy=
 # 設定Proxychains4
 https://feifei.tw/proxychains4/  
 
-`sudo nano /usr/local/etc/proxychains.conf`
+`sudo nano /etc/proxychains4.conf`
 proxy_dns 的功能不要關掉
 
 設定檔位置
