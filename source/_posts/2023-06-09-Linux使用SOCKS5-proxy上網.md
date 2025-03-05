@@ -15,7 +15,7 @@ pin: true
 首先本機電腦和遠端電腦都必須有ssh server
 首先在本機電腦ssh登入到遠端沒有外網的遠端電腦，然後在`遠端電腦`使用以下指令連回去`本機電腦`建立一條SOCKS5 proxy的通道。
 ```shell
-ssh -D 4444 -q -C -N local_username@192.168.50.1
+ssh -D 9050 -q -C -N local_username@192.168.50.1
 ```
 # 檢查SOCKS是否開通了
 https://superuser.com/questions/303251/how-to-check-if-a-socks5-proxy-works
@@ -24,9 +24,9 @@ https://superuser.com/questions/303251/how-to-check-if-a-socks5-proxy-works
 ```shell
 netstat -tlnp
 ```
-假設我們在4444port開SOCKS proxy，如果有成功開啟SOCKS proxy，應該會看到下面這行
+假設我們在9050port開SOCKS proxy，如果有成功開啟SOCKS proxy，應該會看到下面這行
 ```shell
-tcp        0      0 127.0.0.1:4444          0.0.0.0:*               LISTEN  
+tcp        0      0 127.0.0.1:9050          0.0.0.0:*               LISTEN  
 ```
 
 # 安裝Proxychains4
@@ -35,9 +35,9 @@ sudo apt-get install proxychains4
 
 # 在還沒安裝Proxychains4機器上用SOCKS5安裝Proxychains4
 ```
- apt -o Acquire::http::Proxy="socks5h://127.0.0.1:4444" -o Acquire::https::Proxy="socks5h://127.0.0.1:4444" update
+ apt -o Acquire::http::Proxy="socks5h://127.0.0.1:9050" -o Acquire::https::Proxy="socks5h://127.0.0.1:9050" update
 
-apt -o Acquire::http::Proxy="socks5h://127.0.0.1:4444" -o Acquire::https::Proxy="socks5h://127.0.0.1:4444" install proxychains4 
+apt -o Acquire::http::Proxy="socks5h://127.0.0.1:9050" -o Acquire::https::Proxy="socks5h://127.0.0.1:9050" install proxychains4 
 ```
 
 # 設定Proxychains4
@@ -65,8 +65,8 @@ sudo nano /etc/systemd/system/docker.service.d/proxy.conf
 
 ```
 [Service]
-Environment="HTTP_PROXY=socks5://127.0.0.1:4444"
-Environment="HTTPS_PROXY=socks5://127.0.0.1:4444"
+Environment="HTTP_PROXY=socks5://127.0.0.1:9050"
+Environment="HTTPS_PROXY=socks5://127.0.0.1:9050"
 ```
 
 ```shell
