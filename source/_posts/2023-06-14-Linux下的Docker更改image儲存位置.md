@@ -7,7 +7,7 @@ date: 2023-06-14 10:54 +0800
 修改/etc/docker/daemon.json加入下面設定
 ```json
 {
-  "data-root": "/mnt/docker-data"
+  "data-root": "/home/docker-data"
 }
 ```
 
