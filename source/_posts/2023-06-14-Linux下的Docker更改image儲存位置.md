@@ -23,6 +23,3 @@ docker info | grep "Docker Root Dir"
 ```
 
 https://docs.docker.com/config/daemon/#daemon-data-directory
-
-# 步驟參考(Docker更新後原本設定的位置會被改回去，不推薦)
-https://linuxconfig.org/how-to-move-docker-s-default-var-lib-docker-to-another-directory-on-ubuntu-debian-linux
