@@ -10,8 +10,8 @@ https://ubuntu.com/server/docs/nvidia-drivers-installation
 
 ```bash
 sudo apt install linux-headers-$(uname -r)
-sudo ubuntu-drivers list --gpgpu
-sudo ubuntu-drivers install --gpgpu nvidia:570-server
+sudo ubuntu-drivers list
+sudo ubuntu-drivers install nvidia:570
 ```
 
 
