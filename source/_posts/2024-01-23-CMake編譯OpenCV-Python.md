@@ -45,19 +45,23 @@ while(cap.isOpened()):
 cv2.destroyAllWindows()
 cap.release()
 ```
+# 步驟
 
-# 安裝cmake(不一定要裝)
-# 安裝msvc2019 build tool
-# 安裝python3.8.10
-# 設定GSTREAMER_ROOT_X86_64環境變數
+* 安裝msvc2019 build tool
+* 安裝python3.10.10
+* 安裝gstreamer 1.25.90 [runtime installer](https://gstreamer.freedesktop.org/data/pkg/windows/1.25.90/msvc/gstreamer-1.0-msvc-x86_64-1.25.90.msi)和[development installer](https://gstreamer.freedesktop.org/data/pkg/windows/1.25.90/msvc/gstreamer-1.0-devel-msvc-x86_64-1.25.90.msi) 都必須要裝!!
+* 
+* 設定GSTREAMER_ROOT_X86_64環境變數
 [gstreamer doc](https://gstreamer.freedesktop.org/documentation/installing/on-windows.html#building-the-tutorials)
 
 
 `<gstreamer資料夾>\1.0\msvc_x86_64`
-# 直接安裝source distributions版本的opencv-python(opencv 4.3.0之後的版本)
+
+
+* 直接安裝source distributions版本的opencv-python(opencv 4.3.0之後的版本)
 `pip install --verbose  --no-binary opencv-python opencv-python`
 
-# GST_PLUGIN_PATH或是GST_PLUGIN_SYSTEM_PATH(不一定要加)
+## GST_PLUGIN_PATH或是GST_PLUGIN_SYSTEM_PATH(不一定要加)
 gstreamer預設尋找plugin的順序如下
 1. %HOMEDRIVE%%HOMEFOLDER%/.gstreamer-1.0/plugins
 2. C:\gstreamer\1.0\x86\lib\gstreamer-1.0
@@ -100,6 +104,7 @@ cap.release()
 
 # gstreamer載入時錯誤檢查
 1. 用 [Dependencies](https://github.com/lucasg/Dependencies) 軟體檢查dll缺少哪一些東西
+   1. 下載後免安裝直接打開DependenciesGui.exe，打開venv\Lib\site-packages\cv2\cv2.pyd
 2. plugin找不到的錯誤可能是找不到plugin的dll本身，或是找不到plugin所需要的dll
 
 # 安裝CUDA
