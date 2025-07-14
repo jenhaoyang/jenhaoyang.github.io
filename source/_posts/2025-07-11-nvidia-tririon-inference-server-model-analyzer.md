@@ -31,6 +31,13 @@ model-analyzer profile \
      --export-path profile_results
 ```
 
+# 查詢
+https://github.com/triton-inference-server/model_analyzer/blob/5e3746f738b56118b31f28d9472db04f7361aaf8/docs/config_search.md#examples-of-additional-model-config-parameters
+
+https://github.com/triton-inference-server/tutorials/blob/main/Conceptual_Guide/Part_4-inference_acceleration/README.md
+
+onnx execution_accelerators?
+
 
 # 參考:
 https://github.com/triton-inference-server/model_analyzer/blob/4b45d2daeb9f574d13ae0e774677c87c04ef2124/docs/quick_start.md
