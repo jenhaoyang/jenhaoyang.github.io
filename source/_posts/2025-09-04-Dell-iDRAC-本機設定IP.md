@@ -12,7 +12,7 @@ Dell-iDRACTools-Web-WINX64-11.3.0.0-609_A00
 #查IP
 racadm get iDRAC.IPv4
 #設定IP
-racadm set iDRAC.IPv4.Address 10.179.104.203
+racadm set iDRAC.IPv4.Address 192.168.0.1
 racadm set iDRAC.IPv4.Netmask 255.255.255.0
-racadm set iDRAC.IPv4.Gateway 10.179.104.254
+racadm set iDRAC.IPv4.Gateway 192.168.0.254
 ```
