@@ -4,7 +4,7 @@ date: 2025-09-04 10:45:54
 categories:
 tags:
 ---
-先安裝racadm
+先安裝racadm，在輸入service tag後的軟體下載頁面`適用於 Microsoft Windows Server(R) 的 Dell EMC iDRAC 工具，v11.0.0.0`
 Dell-iDRACTools-Web-WINX64-11.3.0.0-609_A00
 
 
